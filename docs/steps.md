@@ -1,27 +1,48 @@
-nav 
+# Navigation (use appropriate one for your OS)
 cd ~/Desktop/tracker-final
 cd "C:\Users\willh\Desktop\tracker-final"
 
-creating next.js project
+# Creating Next.js project
 npx create-next-app@latest draft-tracker
 
-install dependencies
-npm install @supabase/supabase-js @dnd-kit/core @dnd-kit/sortable @dnd-kit/utilities uuid
+# Navigate into project directory
+cd draft-tracker
 
-initialize shadcn
-npx shadcn-ui@latest init
+# Install dependencies
+npm install @supabase/supabase-js @dnd-kit/core @dnd-kit/sortable @dnd-kit/utilities uuid sonner
 
-shadcn components
-npx shadcn-ui@latest add button
-npx shadcn-ui@latest add table
-npx shadcn-ui@latest add dialog
-npx shadcn-ui@latest add select
-npx shadcn-ui@latest add tabs
-npx shadcn-ui@latest add card
-npx shadcn-ui@latest add separator
-npx shadcn-ui@latest add badge
-npx shadcn-ui@latest add avatar
-npx shadcn-ui@latest add checkbox
-npx shadcn-ui@latest add input
-npx shadcn-ui@latest add toast
+# Initialize shadcn
+npx shadcn@latest init
+
+# Shadcn components
+npx shadcn@latest add button
+npx shadcn@latest add table
+npx shadcn@latest add dialog
+npx shadcn@latest add select
+npx shadcn@latest add tabs
+npx shadcn@latest add card
+npx shadcn@latest add separator
+npx shadcn@latest add badge
+npx shadcn@latest add avatar
+npx shadcn@latest add checkbox
+npx shadcn@latest add input
+
+# Git setup
+git init
+git add .
+git commit -m "Initial setup: Next.js project with dependencies and Shadcn UI components"
+git remote add origin https://github.com/srwlli/draft-tracker.git
+git push -u origin main
+
+# Git update
+git add .
+git commit -m "Your specific change description here"
+git push
+
+# Check Dependencies
+npm list --depth=0
+
+# Check Shadcn Components
+ls src/components/ui
+
 

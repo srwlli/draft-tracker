@@ -20,6 +20,7 @@ Helps track which players have been drafted during a fantasy football draft in r
 - Shows a running count of total drafted players
 - Provides position-specific views (can filter to see only quarterbacks, only running backs, etc.)
 - Modern, accessible UI using Shadcn UI components with Tailwind CSS
+- Toast notifications using Sonner for user feedback
 
 ## How It Works
 
@@ -32,6 +33,7 @@ Helps track which players have been drafted during a fantasy football draft in r
 - The admin can undo mistakes by clicking "UNDO"
 - The app keeps count of how many QBs, RBs, etc. have been drafted and updates for all users
 - All users see the same synchronized draft state but with their own customized player order
+- Sonner toast notifications provide feedback on actions (successful drafts, errors, etc.)
 
 ## Use Case
 
@@ -66,6 +68,7 @@ This would typically be used by a fantasy football league during their draft day
 - Shadcn UI for accessible, customizable components
 - Supabase for database and real-time subscriptions
 - @dnd-kit/core for drag-and-drop functionality
+- Sonner for toast notifications
 
 ## Security Model
 

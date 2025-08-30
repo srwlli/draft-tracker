@@ -11,6 +11,7 @@ This is a Fantasy Football Draft Tracker - a real-time web application for manag
 - **Language**: TypeScript for type safety
 - **Styling**: Tailwind CSS
 - **UI Components**: Shadcn UI for accessible, customizable components
+- **Notifications**: Sonner for toast notifications
 - **Database**: Supabase (PostgreSQL with real-time subscriptions)
 - **Drag & Drop**: @dnd-kit/core for ranking customization
 
@@ -80,6 +81,7 @@ npx shadcn-ui@latest add button card table dialog
 # Install additional dependencies:
 npm install @supabase/supabase-js
 npm install @dnd-kit/core @dnd-kit/sortable @dnd-kit/utilities
+npm install sonner
 
 # Development commands:
 npm run dev      # Development server
