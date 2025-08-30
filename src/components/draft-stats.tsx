@@ -16,40 +16,42 @@ export function DraftStats({ totalPicks, positionCounts }: DraftStatsProps) {
         <CardTitle className="text-lg">Draft Statistics</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
-          <div className="text-center">
-            <div className="text-2xl font-bold text-primary">{totalPicks}</div>
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex items-center justify-between">
+              <Badge variant="secondary">QB</Badge>
+              <span className="text-xl font-semibold">{positionCounts.QB}</span>
+            </div>
+            
+            <div className="flex items-center justify-between">
+              <Badge variant="secondary">RB</Badge>
+              <span className="text-xl font-semibold">{positionCounts.RB}</span>
+            </div>
+            
+            <div className="flex items-center justify-between">
+              <Badge variant="secondary">WR</Badge>
+              <span className="text-xl font-semibold">{positionCounts.WR}</span>
+            </div>
+            
+            <div className="flex items-center justify-between">
+              <Badge variant="secondary">TE</Badge>
+              <span className="text-xl font-semibold">{positionCounts.TE}</span>
+            </div>
+            
+            <div className="flex items-center justify-between">
+              <Badge variant="secondary">K</Badge>
+              <span className="text-xl font-semibold">{positionCounts.K}</span>
+            </div>
+            
+            <div className="flex items-center justify-between">
+              <Badge variant="secondary">DEF</Badge>
+              <span className="text-xl font-semibold">{positionCounts.DEF}</span>
+            </div>
+          </div>
+          
+          <div className="border-t pt-4 text-center">
             <div className="text-sm text-muted-foreground">Total Picks</div>
-          </div>
-          
-          <div className="text-center">
-            <div className="text-xl font-semibold">{positionCounts.QB}</div>
-            <Badge variant="secondary" className="text-xs">QB</Badge>
-          </div>
-          
-          <div className="text-center">
-            <div className="text-xl font-semibold">{positionCounts.RB}</div>
-            <Badge variant="secondary" className="text-xs">RB</Badge>
-          </div>
-          
-          <div className="text-center">
-            <div className="text-xl font-semibold">{positionCounts.WR}</div>
-            <Badge variant="secondary" className="text-xs">WR</Badge>
-          </div>
-          
-          <div className="text-center">
-            <div className="text-xl font-semibold">{positionCounts.TE}</div>
-            <Badge variant="secondary" className="text-xs">TE</Badge>
-          </div>
-          
-          <div className="text-center">
-            <div className="text-xl font-semibold">{positionCounts.K}</div>
-            <Badge variant="secondary" className="text-xs">K</Badge>
-          </div>
-          
-          <div className="text-center">
-            <div className="text-xl font-semibold">{positionCounts.DEF}</div>
-            <Badge variant="secondary" className="text-xs">DEF</Badge>
+            <div className="text-2xl font-bold text-primary">{totalPicks}</div>
           </div>
         </div>
       </CardContent>
