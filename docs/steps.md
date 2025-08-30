@@ -34,15 +34,15 @@ git commit -m "Initial setup: Next.js project with dependencies and Shadcn UI co
 git remote add origin https://github.com/srwlli/draft-tracker.git
 git push -u origin main
 
-# Git update
-git add .
-git commit -m "Your specific change description here"
-git push
-
 # Check Dependencies
 npm list --depth=0
 
 # Check Shadcn Components
 ls src/components/ui
+
+# Git update
+git add .
+git commit -m "Your specific change description here"
+git push
 
 

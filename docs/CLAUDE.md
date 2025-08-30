@@ -4,26 +4,30 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a Fantasy Football Draft Tracker - a real-time web application for managing fantasy football drafts. The project is currently in specification phase with no implementation code present.
+This is a Fantasy Football Draft Tracker - a real-time web application for managing fantasy football drafts. The project has completed its foundation phase with TypeScript types, Supabase integration, and UI component setup. Ready for feature implementation.
 
 ## Technology Stack
-- **Framework**: Next.js with App Router
-- **Language**: TypeScript for type safety
-- **Styling**: Tailwind CSS
-- **UI Components**: Shadcn UI for accessible, customizable components
+- **Framework**: Next.js 15.5.2 with App Router
+- **Language**: TypeScript 5 for type safety
+- **UI Framework**: React 19.1.0
+- **Styling**: Tailwind CSS 4 with PostCSS
+- **UI Components**: Shadcn UI (11 components installed) with Radix UI primitives
+- **Icons**: Lucide React
 - **Notifications**: Sonner for toast notifications
-- **Database**: Supabase (PostgreSQL with real-time subscriptions)
-- **Drag & Drop**: @dnd-kit/core for ranking customization
+- **Database**: Supabase with real-time subscriptions
+- **Drag & Drop**: @dnd-kit/core, @dnd-kit/sortable, @dnd-kit/utilities
+- **Development**: ESLint with Next.js configuration
 
 ## Architecture Requirements
 
 ### Database
 - **Platform**: Supabase (PostgreSQL)
-- **Connection**: Available in `supabase-creds.txt`
+- **Connection**: Configured in `.env.local` with credentials from `supabase-creds.txt`
+- **Client**: Available at `src/lib/supabase.ts` with environment validation
 - **Schema needs**: 
   - Players table (name, team, position, default_rank)
-  - Drafts table (id, admin_token, created_at)
-  - Draft_state table (draft_id, player_id, is_drafted)
+  - Drafts table (id, admin_token, created_at, name)
+  - Draft_picks table (id, draft_id, player_id, pick_number, timestamp)
 
 ### Frontend Architecture
 - Real-time updates for all connected users
@@ -66,36 +70,61 @@ This is a Fantasy Football Draft Tracker - a real-time web application for manag
    - Undo functionality
    - Confirmation dialogs
 
+## Current Implementation Status
+
+### ✅ Completed Foundation
+- **TypeScript Types**: Complete type system in `src/types/index.ts`
+  - Player, Draft, DraftPick, PersonalRanking interfaces
+  - Position type safety with validation
+  - PlayerWithStatus for UI display
+- **Supabase Integration**: Client setup in `src/lib/supabase.ts`
+- **Real-time Hook**: Custom hook at `src/hooks/useSupabaseRealtime.ts`
+- **UI Components**: 11 Shadcn UI components installed and configured
+- **Environment**: Supabase credentials configured in `.env.local`
+
+### 🔄 Next Implementation Phase
+1. **Database Schema**: Create Supabase tables and seed player data
+2. **Core Pages**: Homepage, draft viewer, and admin interfaces
+3. **Components**: PlayerTable, PositionFilter, DraftControls
+4. **Real-time Features**: Live draft updates and synchronization
+
 ## Development Commands
 
-Since no implementation exists yet, suggested setup:
 ```bash
-# Next.js with TypeScript setup:
-npx create-next-app@latest draft-tracker --typescript --tailwind --app
-cd draft-tracker
+# Development server:
+npm run dev      # Runs on http://localhost:3000
 
-# Install Shadcn UI:
-npx shadcn-ui@latest init
-npx shadcn-ui@latest add button card table dialog
+# Production build:
+npm run build    # Build for production
+npm run start    # Start production server
 
-# Install additional dependencies:
-npm install @supabase/supabase-js
-npm install @dnd-kit/core @dnd-kit/sortable @dnd-kit/utilities
-npm install sonner
+# Code quality:
+npm run lint     # ESLint with Next.js rules
 
-# Development commands:
-npm run dev      # Development server
-npm run build    # Production build
-npm run lint     # Code linting
-npm test         # Run tests
+# Component management:
+npx shadcn-ui@latest add [component]  # Add new UI components
 
-# For Supabase integration:
-npx supabase init
+# Database operations (when Supabase CLI is set up):
 npx supabase db push    # Push schema changes
+npx supabase db reset   # Reset database
 ```
 
+## File Structure Reference
+
+### Key Files
+- `src/types/index.ts` - TypeScript type definitions
+- `src/lib/supabase.ts` - Supabase client configuration  
+- `src/hooks/useSupabaseRealtime.ts` - Real-time subscription hook
+- `.env.local` - Environment variables (Supabase credentials)
+- `components.json` - Shadcn UI configuration
+- `docs/supabase-creds.txt` - Original Supabase credentials
+
+### Available Components
+Shadcn UI components ready for use:
+- avatar, badge, button, card, checkbox, dialog, input, select, separator, table, tabs
+
 ## Testing Approach
-- Unit tests for ranking logic
+- Unit tests for ranking logic and type validation
 - Integration tests for Supabase operations
 - E2E tests for real-time synchronization
-- Test admin vs viewer permissions
+- Test admin vs viewer permissions and URL routing

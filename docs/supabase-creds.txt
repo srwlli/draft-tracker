@@ -1,5 +1,0 @@
-URL: 
-https://sjjmrxggvrddkdbpiqwl.supabase.co
-
-anon public:
-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNqam1yeGdndnJkZGtkYnBpcXdsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY1Njk5NDcsImV4cCI6MjA3MjE0NTk0N30.5gpDjjsoDlytyn6mUKd2tBHlWqHgFjV5EvpThxmGioI
