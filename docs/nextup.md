@@ -23,3 +23,7 @@ Implement the URL-based security model:
 
 Generate admin tokens when creating a draft
 Create separate routes for admin and viewer access
+
+---
+
+all tab restore

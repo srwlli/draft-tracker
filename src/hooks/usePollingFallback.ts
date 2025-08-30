@@ -5,7 +5,7 @@ interface PollingConfig {
   table: string;
   interval?: number; // milliseconds
   filter?: { column: string; value: string | number };
-  onUpdate: (data: any[]) => void;
+  onUpdate: (data: Record<string, unknown>[]) => void;
   enabled?: boolean;
 }
 
@@ -52,5 +52,5 @@ export function usePollingFallback({
       console.log(`Stopping polling fallback for ${table}`);
       clearInterval(intervalId);
     };
-  }, [table, interval, filter?.column, filter?.value, onUpdate, enabled]);
+  }, [table, interval, filter, onUpdate, enabled]);
 }

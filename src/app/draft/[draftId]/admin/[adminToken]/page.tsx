@@ -17,7 +17,7 @@ export default function DraftAdminPage() {
   const [players, setPlayers] = useState<Player[]>([]);
   const [draft, setDraft] = useState<Draft | null>(null);
   const [draftPicks, setDraftPicks] = useState<DraftPick[]>([]);
-  const [selectedPosition, setSelectedPosition] = useState<Position | 'ALL'>('ALL');
+  const [selectedPosition, setSelectedPosition] = useState<Position | 'ALL'>('QB');
   const [isLoading, setIsLoading] = useState(true);
   const [isValidAdmin, setIsValidAdmin] = useState(false);
   const [realtimeConnected, setRealtimeConnected] = useState(false);
@@ -75,16 +75,16 @@ export default function DraftAdminPage() {
       console.log('Draft picks update (admin):', payload.eventType, payload);
       setRealtimeConnected(true);
       
-      if (payload.eventType === 'INSERT') {
-        setDraftPicks((current) => [...current, payload.new]);
-      } else if (payload.eventType === 'DELETE') {
+      if (payload.eventType === 'INSERT' && payload.new) {
+        setDraftPicks((current) => [...current, payload.new as unknown as DraftPick]);
+      } else if (payload.eventType === 'DELETE' && payload.old) {
         setDraftPicks((current) => 
-          current.filter((pick) => pick.id !== payload.old.id)
+          current.filter((pick) => pick.id !== (payload.old as unknown as DraftPick).id)
         );
-      } else if (payload.eventType === 'UPDATE') {
+      } else if (payload.eventType === 'UPDATE' && payload.new) {
         setDraftPicks((current) => 
           current.map((pick) => 
-            pick.id === payload.new.id ? payload.new : pick
+            pick.id === (payload.new as unknown as DraftPick).id ? payload.new as unknown as DraftPick : pick
           )
         );
       }
@@ -100,7 +100,7 @@ export default function DraftAdminPage() {
     onUpdate: (data) => {
       if (!realtimeConnected) {
         console.log('Using polling fallback (admin), updating draft picks');
-        setDraftPicks(data);
+        setDraftPicks(data as unknown as DraftPick[]);
       }
     },
     enabled: !realtimeConnected
@@ -111,14 +111,13 @@ export default function DraftAdminPage() {
     try {
       const pickNumber = draftPicks.length + 1;
       
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('draft_picks')
         .insert([{
           draft_id: draftId,
           player_id: playerId,
           pick_number: pickNumber
-        }])
-        .select();
+        }]);
       
       if (error) throw error;
       
@@ -196,14 +195,14 @@ export default function DraftAdminPage() {
           <p className="text-muted-foreground">Admin Mode</p>
         </div>
         <div className="space-x-2">
-          <Button variant="outline" onClick={() => {
-            navigator.clipboard.writeText(`${window.location.origin}/draft/${draftId}`);
+          <Button variant="outline" onClick={async () => {
+            await navigator.clipboard.writeText(`${window.location.origin}/draft/${draftId}`);
             toast.success('Viewer link copied to clipboard');
           }}>
             Copy Viewer Link
           </Button>
-          <Button variant="outline" onClick={() => {
-            navigator.clipboard.writeText(window.location.href);
+          <Button variant="outline" onClick={async () => {
+            await navigator.clipboard.writeText(window.location.href);
             toast.success('Admin link copied to clipboard');
           }}>
             Copy Admin Link
@@ -216,9 +215,8 @@ export default function DraftAdminPage() {
         positionCounts={positionCounts}
       />
       
-      <Tabs defaultValue="all" className="mt-6">
+      <Tabs defaultValue="QB" className="mt-6">
         <TabsList>
-          <TabsTrigger value="all" onClick={() => setSelectedPosition('ALL')}>All</TabsTrigger>
           <TabsTrigger value="QB" onClick={() => setSelectedPosition('QB')}>QB</TabsTrigger>
           <TabsTrigger value="RB" onClick={() => setSelectedPosition('RB')}>RB</TabsTrigger>
           <TabsTrigger value="WR" onClick={() => setSelectedPosition('WR')}>WR</TabsTrigger>
@@ -226,15 +224,6 @@ export default function DraftAdminPage() {
           <TabsTrigger value="K" onClick={() => setSelectedPosition('K')}>K</TabsTrigger>
           <TabsTrigger value="DEF" onClick={() => setSelectedPosition('DEF')}>DEF</TabsTrigger>
         </TabsList>
-        
-        <TabsContent value="all" className="mt-4">
-          <PlayerTable 
-            players={playersWithStatus}
-            isAdmin={true}
-            onDraft={handleDraftPlayer}
-            onUndraft={handleUndraftPlayer}
-          />
-        </TabsContent>
         
         <TabsContent value="QB" className="mt-4">
           <PlayerTable 

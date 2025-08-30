@@ -15,7 +15,7 @@ export default function DraftViewerPage() {
   const [players, setPlayers] = useState<Player[]>([]);
   const [draft, setDraft] = useState<Draft | null>(null);
   const [draftPicks, setDraftPicks] = useState<DraftPick[]>([]);
-  const [selectedPosition, setSelectedPosition] = useState<Position | 'ALL'>('ALL');
+  const [selectedPosition, setSelectedPosition] = useState<Position | 'ALL'>('QB');
   const [isLoading, setIsLoading] = useState(true);
   const [realtimeConnected, setRealtimeConnected] = useState(false);
 
@@ -65,16 +65,16 @@ export default function DraftViewerPage() {
       console.log('Draft picks update:', payload.eventType, payload);
       setRealtimeConnected(true);
       
-      if (payload.eventType === 'INSERT') {
-        setDraftPicks((current) => [...current, payload.new]);
-      } else if (payload.eventType === 'DELETE') {
+      if (payload.eventType === 'INSERT' && payload.new) {
+        setDraftPicks((current) => [...current, payload.new as unknown as DraftPick]);
+      } else if (payload.eventType === 'DELETE' && payload.old) {
         setDraftPicks((current) => 
-          current.filter((pick) => pick.id !== payload.old.id)
+          current.filter((pick) => pick.id !== (payload.old as unknown as DraftPick).id)
         );
-      } else if (payload.eventType === 'UPDATE') {
+      } else if (payload.eventType === 'UPDATE' && payload.new) {
         setDraftPicks((current) => 
           current.map((pick) => 
-            pick.id === payload.new.id ? payload.new : pick
+            pick.id === (payload.new as unknown as DraftPick).id ? payload.new as unknown as DraftPick : pick
           )
         );
       }
@@ -90,7 +90,7 @@ export default function DraftViewerPage() {
     onUpdate: (data) => {
       if (!realtimeConnected) {
         console.log('Using polling fallback, updating draft picks');
-        setDraftPicks(data);
+        setDraftPicks(data as unknown as DraftPick[]);
       }
     },
     enabled: !realtimeConnected
@@ -143,9 +143,8 @@ export default function DraftViewerPage() {
         positionCounts={positionCounts}
       />
       
-      <Tabs defaultValue="all" className="mt-6">
+      <Tabs defaultValue="QB" className="mt-6">
         <TabsList>
-          <TabsTrigger value="all" onClick={() => setSelectedPosition('ALL')}>All</TabsTrigger>
           <TabsTrigger value="QB" onClick={() => setSelectedPosition('QB')}>QB</TabsTrigger>
           <TabsTrigger value="RB" onClick={() => setSelectedPosition('RB')}>RB</TabsTrigger>
           <TabsTrigger value="WR" onClick={() => setSelectedPosition('WR')}>WR</TabsTrigger>
@@ -153,15 +152,6 @@ export default function DraftViewerPage() {
           <TabsTrigger value="K" onClick={() => setSelectedPosition('K')}>K</TabsTrigger>
           <TabsTrigger value="DEF" onClick={() => setSelectedPosition('DEF')}>DEF</TabsTrigger>
         </TabsList>
-        
-        <TabsContent value="all" className="mt-4">
-          <PlayerTable 
-            players={playersWithStatus}
-            isAdmin={false}
-            onDraft={() => {}}
-            onUndraft={() => {}}
-          />
-        </TabsContent>
         
         <TabsContent value="QB" className="mt-4">
           <PlayerTable 
