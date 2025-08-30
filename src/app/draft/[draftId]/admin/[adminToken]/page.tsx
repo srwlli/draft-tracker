@@ -188,27 +188,42 @@ export default function DraftAdminPage() {
   }
 
   return (
-    <div className="container mx-auto p-4">
-      <div className="flex items-center justify-between mb-4">
-        <div>
-          <h1 className="text-3xl font-bold mb-2">{draft?.name || 'Fantasy Draft'}</h1>
+    <div className="min-h-screen flex flex-col">
+      {/* Header */}
+      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="container flex h-14 items-center justify-between">
+          <h1 className="text-lg font-semibold">BBFL Draft Tracker</h1>
+          <div className="flex items-center space-x-2">
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={async () => {
+                await navigator.clipboard.writeText(`${window.location.origin}/draft/${draftId}`);
+                toast.success('Viewer link copied to clipboard');
+              }}
+            >
+              Viewer Link
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={async () => {
+                await navigator.clipboard.writeText(window.location.href);
+                toast.success('Admin link copied to clipboard');
+              }}
+            >
+              Admin Link
+            </Button>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="flex-1 container mx-auto p-4">
+        <div className="mb-4">
+          <h2 className="text-2xl font-bold">{draft?.name || 'Fantasy Draft'}</h2>
           <p className="text-muted-foreground">Admin Mode</p>
         </div>
-        <div className="space-x-2">
-          <Button variant="outline" onClick={async () => {
-            await navigator.clipboard.writeText(`${window.location.origin}/draft/${draftId}`);
-            toast.success('Viewer link copied to clipboard');
-          }}>
-            Copy Viewer Link
-          </Button>
-          <Button variant="outline" onClick={async () => {
-            await navigator.clipboard.writeText(window.location.href);
-            toast.success('Admin link copied to clipboard');
-          }}>
-            Copy Admin Link
-          </Button>
-        </div>
-      </div>
       
       <DraftStats 
         totalPicks={draftPicks.length}
@@ -216,7 +231,7 @@ export default function DraftAdminPage() {
       />
       
       <Tabs defaultValue="QB" className="mt-6">
-        <TabsList>
+        <TabsList className="w-full px-2 grid grid-cols-6">
           <TabsTrigger value="QB" onClick={() => setSelectedPosition('QB')}>QB</TabsTrigger>
           <TabsTrigger value="RB" onClick={() => setSelectedPosition('RB')}>RB</TabsTrigger>
           <TabsTrigger value="WR" onClick={() => setSelectedPosition('WR')}>WR</TabsTrigger>
@@ -279,6 +294,12 @@ export default function DraftAdminPage() {
           />
         </TabsContent>
       </Tabs>
+      </main>
+
+      {/* Footer */}
+      <footer className="border-t py-3 text-center text-sm text-muted-foreground">
+        BBFL Draft Tracker 2025
+      </footer>
     </div>
   );
 }

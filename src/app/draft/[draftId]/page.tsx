@@ -134,9 +134,20 @@ export default function DraftViewerPage() {
   }
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-2">{draft?.name || 'Fantasy Draft'}</h1>
-      <p className="text-muted-foreground mb-6">Viewer Mode</p>
+    <div className="min-h-screen flex flex-col">
+      {/* Header */}
+      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="container flex h-14 items-center">
+          <h1 className="text-lg font-semibold">BBFL Draft Tracker</h1>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="flex-1 container mx-auto p-4">
+        <div className="mb-4">
+          <h2 className="text-2xl font-bold">{draft?.name || 'Fantasy Draft'}</h2>
+          <p className="text-muted-foreground">Viewer Mode</p>
+        </div>
       
       <DraftStats 
         totalPicks={draftPicks.length}
@@ -144,7 +155,7 @@ export default function DraftViewerPage() {
       />
       
       <Tabs defaultValue="QB" className="mt-6">
-        <TabsList>
+        <TabsList className="w-full px-2 grid grid-cols-6">
           <TabsTrigger value="QB" onClick={() => setSelectedPosition('QB')}>QB</TabsTrigger>
           <TabsTrigger value="RB" onClick={() => setSelectedPosition('RB')}>RB</TabsTrigger>
           <TabsTrigger value="WR" onClick={() => setSelectedPosition('WR')}>WR</TabsTrigger>
@@ -207,6 +218,12 @@ export default function DraftViewerPage() {
           />
         </TabsContent>
       </Tabs>
+      </main>
+
+      {/* Footer */}
+      <footer className="border-t py-3 text-center text-sm text-muted-foreground">
+        BBFL Draft Tracker 2025
+      </footer>
     </div>
   );
 }
