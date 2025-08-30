@@ -8,6 +8,7 @@ import { DraftStats } from '@/components/draft-stats';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Player, DraftPick, Draft, Position } from '@/types';
 import { useSupabaseRealtime } from '@/hooks/useSupabaseRealtime';
+import { usePollingFallback } from '@/hooks/usePollingFallback';
 
 export default function DraftViewerPage() {
   const { draftId } = useParams();
@@ -16,6 +17,7 @@ export default function DraftViewerPage() {
   const [draftPicks, setDraftPicks] = useState<DraftPick[]>([]);
   const [selectedPosition, setSelectedPosition] = useState<Position | 'ALL'>('ALL');
   const [isLoading, setIsLoading] = useState(true);
+  const [realtimeConnected, setRealtimeConnected] = useState(false);
 
   // Load initial data
   useEffect(() => {
@@ -59,23 +61,40 @@ export default function DraftViewerPage() {
   // Subscribe to real-time updates
   useSupabaseRealtime(
     'draft_picks',
-    'INSERT',
     (payload) => {
-      setDraftPicks((current) => [...current, payload.new]);
+      console.log('Draft picks update:', payload.eventType, payload);
+      setRealtimeConnected(true);
+      
+      if (payload.eventType === 'INSERT') {
+        setDraftPicks((current) => [...current, payload.new]);
+      } else if (payload.eventType === 'DELETE') {
+        setDraftPicks((current) => 
+          current.filter((pick) => pick.id !== payload.old.id)
+        );
+      } else if (payload.eventType === 'UPDATE') {
+        setDraftPicks((current) => 
+          current.map((pick) => 
+            pick.id === payload.new.id ? payload.new : pick
+          )
+        );
+      }
     },
     { column: 'draft_id', value: draftId as string }
   );
 
-  useSupabaseRealtime(
-    'draft_picks',
-    'DELETE',
-    (payload) => {
-      setDraftPicks((current) => 
-        current.filter((pick) => pick.id !== payload.old.id)
-      );
+  // Polling fallback when realtime isn't working
+  usePollingFallback({
+    table: 'draft_picks',
+    interval: 5000,
+    filter: { column: 'draft_id', value: draftId as string },
+    onUpdate: (data) => {
+      if (!realtimeConnected) {
+        console.log('Using polling fallback, updating draft picks');
+        setDraftPicks(data);
+      }
     },
-    { column: 'draft_id', value: draftId as string }
-  );
+    enabled: !realtimeConnected
+  });
 
   // Filter players by position
   const filteredPlayers = players.filter(player => 

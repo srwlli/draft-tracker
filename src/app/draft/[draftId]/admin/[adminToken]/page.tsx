@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { Player, DraftPick, Draft, Position } from '@/types';
 import { useSupabaseRealtime } from '@/hooks/useSupabaseRealtime';
+import { usePollingFallback } from '@/hooks/usePollingFallback';
 
 export default function DraftAdminPage() {
   const { draftId, adminToken } = useParams();
@@ -19,6 +20,7 @@ export default function DraftAdminPage() {
   const [selectedPosition, setSelectedPosition] = useState<Position | 'ALL'>('ALL');
   const [isLoading, setIsLoading] = useState(true);
   const [isValidAdmin, setIsValidAdmin] = useState(false);
+  const [realtimeConnected, setRealtimeConnected] = useState(false);
   const router = useRouter();
 
   // Load initial data and validate admin token
@@ -69,23 +71,40 @@ export default function DraftAdminPage() {
   // Subscribe to real-time updates
   useSupabaseRealtime(
     'draft_picks',
-    'INSERT',
     (payload) => {
-      setDraftPicks((current) => [...current, payload.new]);
+      console.log('Draft picks update (admin):', payload.eventType, payload);
+      setRealtimeConnected(true);
+      
+      if (payload.eventType === 'INSERT') {
+        setDraftPicks((current) => [...current, payload.new]);
+      } else if (payload.eventType === 'DELETE') {
+        setDraftPicks((current) => 
+          current.filter((pick) => pick.id !== payload.old.id)
+        );
+      } else if (payload.eventType === 'UPDATE') {
+        setDraftPicks((current) => 
+          current.map((pick) => 
+            pick.id === payload.new.id ? payload.new : pick
+          )
+        );
+      }
     },
     { column: 'draft_id', value: draftId as string }
   );
 
-  useSupabaseRealtime(
-    'draft_picks',
-    'DELETE',
-    (payload) => {
-      setDraftPicks((current) => 
-        current.filter((pick) => pick.id !== payload.old.id)
-      );
+  // Polling fallback when realtime isn't working
+  usePollingFallback({
+    table: 'draft_picks',
+    interval: 5000,
+    filter: { column: 'draft_id', value: draftId as string },
+    onUpdate: (data) => {
+      if (!realtimeConnected) {
+        console.log('Using polling fallback (admin), updating draft picks');
+        setDraftPicks(data);
+      }
     },
-    { column: 'draft_id', value: draftId as string }
-  );
+    enabled: !realtimeConnected
+  });
 
   // Handle drafting a player
   const handleDraftPlayer = async (playerId: number) => {
