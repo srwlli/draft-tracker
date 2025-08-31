@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a Fantasy Football Draft Tracker - a real-time web application for managing fantasy football drafts. The project has completed its foundation phase with TypeScript types, Supabase integration, and UI component setup. Ready for feature implementation.
+This is a Fantasy Football Draft Tracker - a real-time web application for managing fantasy football drafts. The application is fully deployed and production-ready with real-time updates, mobile-optimized UI, and complete admin/viewer functionality.
 
 ## Technology Stack
 - **Framework**: Next.js 15.5.2 with App Router
@@ -48,45 +48,66 @@ This is a Fantasy Football Draft Tracker - a real-time web application for manag
 - Viewer access via public URL: `/draft/{draft_id}`
 - No user authentication required - security through URL obscurity
 
-## Key Features to Implement
+## Remaining Features to Implement
 
-1. **Player Management**
-   - Load players from Supabase
-   - Display with rank, name, team, position
-   - Position-based filtering
+1. **Database Setup**
+   - Create Supabase tables (players, drafts, draft_picks)
+   - Import 2025 NFL player data
+   - Set default rankings
 
 2. **Ranking System**
-   - Default rankings from database
-   - Drag-and-drop reordering
-   - Local storage persistence per browser
+   - Drag-and-drop reordering using @dnd-kit (already installed)
+   - Local storage persistence per browser/device
+   - Reset to default rankings option
 
-3. **Draft State**
-   - Real-time synchronization across all users
-   - Visual indication of drafted players (strikethrough, gray)
-   - Position counters (e.g., "3 QBs drafted")
-
-4. **Admin Controls**
-   - Draft button for each player
-   - Undo functionality
-   - Confirmation dialogs
+3. **Additional Features**
+   - Undo last pick functionality
+   - Draft history/log
+   - Export draft results
+   - Fix ALL tab to show by overall rank
 
 ## Current Implementation Status
 
-### ✅ Completed Foundation
+### ✅ Completed Features
 - **TypeScript Types**: Complete type system in `src/types/index.ts`
-  - Player, Draft, DraftPick, PersonalRanking interfaces
-  - Position type safety with validation
-  - PlayerWithStatus for UI display
-- **Supabase Integration**: Client setup in `src/lib/supabase.ts`
-- **Real-time Hook**: Custom hook at `src/hooks/useSupabaseRealtime.ts`
-- **UI Components**: 11 Shadcn UI components installed and configured
-- **Environment**: Supabase credentials configured in `.env.local`
+- **Supabase Integration**: Client with real-time configuration and environment validation
+- **Real-time Updates**: Working live synchronization with polling fallback (5-second intervals)
+- **Core Pages**: 
+  - Homepage with draft creation and automatic token generation
+  - Viewer page with read-only access and real-time updates
+  - Admin page with full controls and secure token validation
+- **Components**:
+  - PlayerTable with touch-and-hold draft functionality (500ms hold time)
+  - DraftStats with mobile-friendly 2x3 grid layout
+  - Alert dialog for draft confirmation ("Draft [Player Name]?")
+  - Position-based tabs (QB, RB, WR, TE, DEF, K) with full-width spacing
+- **Mobile Optimizations**:
+  - Touch-and-hold drafting with visual feedback
+  - CSS to prevent text selection and copy menus
+  - Responsive grid layouts for all screen sizes
+  - Shortened button labels ("Admin Link" / "Viewer Link")
+- **UI/UX Improvements**:
+  - BBFL branded header/footer with proper padding
+  - Mobile-optimized tab spacing using grid layout
+  - Copy link buttons in header for admin users only
+  - Professional branding throughout
+- **Deployment**: Successfully deployed to Vercel at `https://draft-tracker-ff5pf58p6-teamhart.vercel.app`
+- **Security**: URL-based authentication with UUID tokens for admin access
 
-### 🔄 Next Implementation Phase
-1. **Database Schema**: Create Supabase tables and seed player data
-2. **Core Pages**: Homepage, draft viewer, and admin interfaces
-3. **Components**: PlayerTable, PositionFilter, DraftControls
-4. **Real-time Features**: Live draft updates and synchronization
+### 🚀 Production Status
+- **Live URL**: `https://draft-tracker-ff5pf58p6-teamhart.vercel.app`
+- **Real-time Updates**: Confirmed working across all connected devices
+- **Mobile Experience**: Fully optimized with touch controls
+- **Security Model**: URL-based with admin tokens (no login required)
+- **Performance**: Instant updates with 5-second polling fallback
+- **Branding**: Professional BBFL theme throughout
+
+### 📝 Known Issues/Future Enhancements
+1. **Database Schema**: Still needs Supabase tables created and player data seeded
+2. **ALL Tab**: Currently hidden due to sorting issues (showed positions alphabetically instead of by overall rank)
+3. **Local Rankings**: Drag-and-drop ranking customization with local storage not yet implemented
+4. **Dark Mode**: Intentionally not included (per user preference)
+5. **Player Data**: Needs to be imported from NFL/fantasy sources
 
 ## Development Commands
 
@@ -113,11 +134,13 @@ npx supabase db reset   # Reset database
 
 ### Key Files
 - `src/types/index.ts` - TypeScript type definitions
-- `src/lib/supabase.ts` - Supabase client configuration  
-- `src/hooks/useSupabaseRealtime.ts` - Real-time subscription hook
+- `src/lib/supabase.ts` - Supabase client with real-time config
+- `src/hooks/useSupabaseRealtime.ts` - Unified real-time subscription hook
+- `src/hooks/usePollingFallback.ts` - 5-second polling fallback
+- `src/components/player-table.tsx` - Main table with touch controls
+- `src/components/draft-stats.tsx` - Mobile-optimized stats grid
 - `.env.local` - Environment variables (Supabase credentials)
 - `components.json` - Shadcn UI configuration
-- `docs/supabase-creds.txt` - Original Supabase credentials
 
 ### Available Components
 Shadcn UI components ready for use:

@@ -26,4 +26,4 @@ Create separate routes for admin and viewer access
 
 ---
 
-all tab restore
+vercel --prod

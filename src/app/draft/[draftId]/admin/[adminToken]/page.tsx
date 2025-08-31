@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { PlayerTable } from '@/components/player-table';
+import { DraftedPlayersTable } from '@/components/drafted-players-table';
 import { DraftStats } from '@/components/draft-stats';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -157,6 +158,12 @@ export default function DraftAdminPage() {
     is_drafted: draftPicks.some(pick => pick.player_id === player.id)
   }));
 
+  // Get all players with draft status for drafted players table
+  const allPlayersWithStatus = players.map(player => ({
+    ...player,
+    is_drafted: draftPicks.some(pick => pick.player_id === player.id)
+  }));
+
   // Get position counts
   const positionCounts = {
     QB: draftPicks.filter(pick => 
@@ -228,6 +235,12 @@ export default function DraftAdminPage() {
       <DraftStats 
         totalPicks={draftPicks.length}
         positionCounts={positionCounts}
+      />
+
+      <DraftedPlayersTable
+        players={allPlayersWithStatus}
+        isAdmin={true}
+        onUndraft={handleUndraftPlayer}
       />
       
       <Tabs defaultValue="QB" className="mt-6">
