@@ -17,13 +17,18 @@ export default function DraftViewerPage() {
   const [draft, setDraft] = useState<Draft | null>(null);
   const [draftPicks, setDraftPicks] = useState<DraftPick[]>([]);
   const [selectedPosition, setSelectedPosition] = useState<Position | 'ALL'>('QB');
-  const [activeView, setActiveView] = useState<'available' | 'drafted'>('available');
+  const [activeView, setActiveView] = useState<'available' | 'drafted' | 'stats'>('available');
   const [isClient, setIsClient] = useState(false);
 
   // Ensure client-side rendering to prevent hydration mismatch
   useEffect(() => {
     setIsClient(true);
   }, []);
+
+  // Handle tab change without scroll jumping
+  const handleViewChange = (view: 'available' | 'drafted' | 'stats') => {
+    setActiveView(view);
+  };
   const [isLoading, setIsLoading] = useState(true);
   const [realtimeConnected, setRealtimeConnected] = useState(false);
 
@@ -152,78 +157,126 @@ export default function DraftViewerPage() {
       {/* Header */}
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-14 items-center">
-          <h1 className="text-lg font-semibold">BBFL Draft Tracker</h1>
+          <h1 className="text-lg font-semibold truncate">{draft?.name || 'Fantasy Draft'}</h1>
         </div>
       </header>
 
       {/* Main Content */}
       <main className="flex-1 container mx-auto p-4">
-        <div className="mb-4">
-          <h2 className="text-2xl font-bold">{draft?.name || 'Fantasy Draft'}</h2>
-          <p className="text-muted-foreground">Viewer Mode</p>
-        </div>
       
       {isClient ? (
         <>
-          <DraftStats 
-            totalPicks={draftPicks.length}
-            positionCounts={positionCounts}
-          />
-          
-          <Tabs defaultValue="QB" className="mt-6">
-            <TabsList className="w-full px-2 grid grid-cols-6">
-              <TabsTrigger value="QB" onClick={() => setSelectedPosition('QB')}>QB</TabsTrigger>
-              <TabsTrigger value="RB" onClick={() => setSelectedPosition('RB')}>RB</TabsTrigger>
-              <TabsTrigger value="WR" onClick={() => setSelectedPosition('WR')}>WR</TabsTrigger>
-              <TabsTrigger value="TE" onClick={() => setSelectedPosition('TE')}>TE</TabsTrigger>
-              <TabsTrigger value="K" onClick={() => setSelectedPosition('K')}>K</TabsTrigger>
-              <TabsTrigger value="DEF" onClick={() => setSelectedPosition('DEF')}>DEF</TabsTrigger>
-            </TabsList>
-            
-            <div className="sticky top-14 z-40 bg-background border-b pb-2 mt-4">
-              <TabsList className="w-full grid grid-cols-2">
-                <TabsTrigger 
-                  value="available" 
-                  onClick={() => setActiveView('available')}
-                >
-                  Available
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="drafted" 
-                  onClick={() => setActiveView('drafted')}
-                >
-                  Drafted
-                </TabsTrigger>
-              </TabsList>
+          {/* Position Tabs - Sticky */}
+          <div className="sticky top-14 z-50 bg-background border-b pb-2">
+            <div className="w-full px-2 grid grid-cols-6 bg-muted rounded-lg p-1">
+              <button 
+                className={`py-2 px-3 rounded-md text-sm font-medium transition-colors ${
+                  selectedPosition === 'QB' ? 'bg-background shadow-sm' : 'hover:bg-background/50'
+                }`}
+                onClick={() => setSelectedPosition('QB')}
+              >
+                QB
+              </button>
+              <button 
+                className={`py-2 px-3 rounded-md text-sm font-medium transition-colors ${
+                  selectedPosition === 'RB' ? 'bg-background shadow-sm' : 'hover:bg-background/50'
+                }`}
+                onClick={() => setSelectedPosition('RB')}
+              >
+                RB
+              </button>
+              <button 
+                className={`py-2 px-3 rounded-md text-sm font-medium transition-colors ${
+                  selectedPosition === 'WR' ? 'bg-background shadow-sm' : 'hover:bg-background/50'
+                }`}
+                onClick={() => setSelectedPosition('WR')}
+              >
+                WR
+              </button>
+              <button 
+                className={`py-2 px-3 rounded-md text-sm font-medium transition-colors ${
+                  selectedPosition === 'TE' ? 'bg-background shadow-sm' : 'hover:bg-background/50'
+                }`}
+                onClick={() => setSelectedPosition('TE')}
+              >
+                TE
+              </button>
+              <button 
+                className={`py-2 px-3 rounded-md text-sm font-medium transition-colors ${
+                  selectedPosition === 'K' ? 'bg-background shadow-sm' : 'hover:bg-background/50'
+                }`}
+                onClick={() => setSelectedPosition('K')}
+              >
+                K
+              </button>
+              <button 
+                className={`py-2 px-3 rounded-md text-sm font-medium transition-colors ${
+                  selectedPosition === 'DEF' ? 'bg-background shadow-sm' : 'hover:bg-background/50'
+                }`}
+                onClick={() => setSelectedPosition('DEF')}
+              >
+                DEF
+              </button>
             </div>
-            
-            <div className="mt-4">
-              {activeView === 'available' && (
-                <PlayerTable 
-                  players={playersWithStatus}
-                  isAdmin={false}
-                  onDraft={() => {}}
-                  onUndraft={() => {}}
-                />
-              )}
-              
-              {activeView === 'drafted' && (
-                <DraftedPlayersTable
-                  players={allPlayersWithStatus}
-                  isAdmin={false}
-                  onUndraft={() => {}}
-                  selectedPosition={selectedPosition}
-                />
-              )}
+          </div>
+
+          {/* View Tabs - Sticky below position tabs */}
+          <div className="sticky top-28 z-40 bg-background border-b pb-2">
+            <div className="w-full grid grid-cols-3 bg-muted rounded-lg p-1">
+              <button 
+                className={`py-2 px-3 rounded-md text-sm font-medium transition-colors ${
+                  activeView === 'available' ? 'bg-background shadow-sm' : 'hover:bg-background/50'
+                }`}
+                onClick={() => handleViewChange('available')}
+              >
+                Available
+              </button>
+              <button 
+                className={`py-2 px-3 rounded-md text-sm font-medium transition-colors ${
+                  activeView === 'drafted' ? 'bg-background shadow-sm' : 'hover:bg-background/50'
+                }`}
+                onClick={() => handleViewChange('drafted')}
+              >
+                Drafted
+              </button>
+              <button 
+                className={`py-2 px-3 rounded-md text-sm font-medium transition-colors ${
+                  activeView === 'stats' ? 'bg-background shadow-sm' : 'hover:bg-background/50'
+                }`}
+                onClick={() => handleViewChange('stats')}
+              >
+                Stats
+              </button>
             </div>
+          </div>
+
+          {/* Fixed height scroll container */}
+          <div className="h-[calc(100vh-200px)] overflow-auto mt-4">
+            {activeView === 'available' && (
+              <PlayerTable 
+                players={playersWithStatus}
+                isAdmin={false}
+                onDraft={() => {}}
+                onUndraft={() => {}}
+              />
+            )}
             
-            <TabsContent value="QB" className="hidden" />
-            <TabsContent value="RB" className="hidden" />
-            <TabsContent value="WR" className="hidden" />
-            <TabsContent value="TE" className="hidden" />
-            <TabsContent value="K" className="hidden" />
-            <TabsContent value="DEF" className="hidden" />
-          </Tabs>
+            {activeView === 'drafted' && (
+              <DraftedPlayersTable
+                players={allPlayersWithStatus}
+                isAdmin={false}
+                onUndraft={() => {}}
+                selectedPosition={selectedPosition}
+              />
+            )}
+            
+            {activeView === 'stats' && (
+              <DraftStats 
+                totalPicks={draftPicks.length}
+                positionCounts={positionCounts}
+              />
+            )}
+          </div>
         </>
       ) : (
         <div className="text-center py-8">Loading...</div>
