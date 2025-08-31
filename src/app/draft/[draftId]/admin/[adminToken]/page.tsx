@@ -19,6 +19,13 @@ export default function DraftAdminPage() {
   const [draft, setDraft] = useState<Draft | null>(null);
   const [draftPicks, setDraftPicks] = useState<DraftPick[]>([]);
   const [selectedPosition, setSelectedPosition] = useState<Position | 'ALL'>('QB');
+  const [activeView, setActiveView] = useState<'available' | 'drafted'>('available');
+  const [isClient, setIsClient] = useState(false);
+
+  // Ensure client-side rendering to prevent hydration mismatch
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
   const [isLoading, setIsLoading] = useState(true);
   const [isValidAdmin, setIsValidAdmin] = useState(false);
   const [realtimeConnected, setRealtimeConnected] = useState(false);
@@ -205,8 +212,24 @@ export default function DraftAdminPage() {
               variant="outline" 
               size="sm"
               onClick={async () => {
-                await navigator.clipboard.writeText(`${window.location.origin}/draft/${draftId}`);
-                toast.success('Viewer link copied to clipboard');
+                try {
+                  const text = `${window.location.origin}/draft/${draftId}`;
+                  if (navigator.clipboard && window.isSecureContext) {
+                    await navigator.clipboard.writeText(text);
+                    toast.success('Viewer link copied to clipboard');
+                  } else {
+                    // Fallback for HTTP/localhost
+                    const textArea = document.createElement('textarea');
+                    textArea.value = text;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    toast.success('Viewer link copied to clipboard');
+                  }
+                } catch (error) {
+                  toast.error('Failed to copy link');
+                }
               }}
             >
               Viewer Link
@@ -215,8 +238,24 @@ export default function DraftAdminPage() {
               variant="outline" 
               size="sm"
               onClick={async () => {
-                await navigator.clipboard.writeText(window.location.href);
-                toast.success('Admin link copied to clipboard');
+                try {
+                  const text = window.location.href;
+                  if (navigator.clipboard && window.isSecureContext) {
+                    await navigator.clipboard.writeText(text);
+                    toast.success('Admin link copied to clipboard');
+                  } else {
+                    // Fallback for HTTP/localhost
+                    const textArea = document.createElement('textarea');
+                    textArea.value = text;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    toast.success('Admin link copied to clipboard');
+                  }
+                } catch (error) {
+                  toast.error('Failed to copy link');
+                }
               }}
             >
               Admin Link
@@ -232,81 +271,71 @@ export default function DraftAdminPage() {
           <p className="text-muted-foreground">Admin Mode</p>
         </div>
       
-      <DraftStats 
-        totalPicks={draftPicks.length}
-        positionCounts={positionCounts}
-      />
-
-      <DraftedPlayersTable
-        players={allPlayersWithStatus}
-        isAdmin={true}
-        onUndraft={handleUndraftPlayer}
-      />
-      
-      <Tabs defaultValue="QB" className="mt-6">
-        <TabsList className="w-full px-2 grid grid-cols-6">
-          <TabsTrigger value="QB" onClick={() => setSelectedPosition('QB')}>QB</TabsTrigger>
-          <TabsTrigger value="RB" onClick={() => setSelectedPosition('RB')}>RB</TabsTrigger>
-          <TabsTrigger value="WR" onClick={() => setSelectedPosition('WR')}>WR</TabsTrigger>
-          <TabsTrigger value="TE" onClick={() => setSelectedPosition('TE')}>TE</TabsTrigger>
-          <TabsTrigger value="K" onClick={() => setSelectedPosition('K')}>K</TabsTrigger>
-          <TabsTrigger value="DEF" onClick={() => setSelectedPosition('DEF')}>DEF</TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="QB" className="mt-4">
-          <PlayerTable 
-            players={playersWithStatus}
-            isAdmin={true}
-            onDraft={handleDraftPlayer}
-            onUndraft={handleUndraftPlayer}
+      {isClient ? (
+        <>
+          <DraftStats 
+            totalPicks={draftPicks.length}
+            positionCounts={positionCounts}
           />
-        </TabsContent>
-        
-        <TabsContent value="RB" className="mt-4">
-          <PlayerTable 
-            players={playersWithStatus}
-            isAdmin={true}
-            onDraft={handleDraftPlayer}
-            onUndraft={handleUndraftPlayer}
-          />
-        </TabsContent>
-        
-        <TabsContent value="WR" className="mt-4">
-          <PlayerTable 
-            players={playersWithStatus}
-            isAdmin={true}
-            onDraft={handleDraftPlayer}
-            onUndraft={handleUndraftPlayer}
-          />
-        </TabsContent>
-        
-        <TabsContent value="TE" className="mt-4">
-          <PlayerTable 
-            players={playersWithStatus}
-            isAdmin={true}
-            onDraft={handleDraftPlayer}
-            onUndraft={handleUndraftPlayer}
-          />
-        </TabsContent>
-        
-        <TabsContent value="K" className="mt-4">
-          <PlayerTable 
-            players={playersWithStatus}
-            isAdmin={true}
-            onDraft={handleDraftPlayer}
-            onUndraft={handleUndraftPlayer}
-          />
-        </TabsContent>
-        
-        <TabsContent value="DEF" className="mt-4">
-          <PlayerTable 
-            players={playersWithStatus}
-            isAdmin={true}
-            onDraft={handleDraftPlayer}
-            onUndraft={handleUndraftPlayer}
-          />
-        </TabsContent>
-      </Tabs>
+          
+          <Tabs defaultValue="QB" className="mt-6">
+            <TabsList className="w-full px-2 grid grid-cols-6">
+              <TabsTrigger value="QB" onClick={() => setSelectedPosition('QB')}>QB</TabsTrigger>
+              <TabsTrigger value="RB" onClick={() => setSelectedPosition('RB')}>RB</TabsTrigger>
+              <TabsTrigger value="WR" onClick={() => setSelectedPosition('WR')}>WR</TabsTrigger>
+              <TabsTrigger value="TE" onClick={() => setSelectedPosition('TE')}>TE</TabsTrigger>
+              <TabsTrigger value="K" onClick={() => setSelectedPosition('K')}>K</TabsTrigger>
+              <TabsTrigger value="DEF" onClick={() => setSelectedPosition('DEF')}>DEF</TabsTrigger>
+            </TabsList>
+            
+            <div className="sticky top-14 z-40 bg-background border-b pb-2 mt-4">
+              <TabsList className="w-full grid grid-cols-2">
+                <TabsTrigger 
+                  value="available" 
+                  onClick={() => setActiveView('available')}
+                >
+                  Available
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="drafted" 
+                  onClick={() => setActiveView('drafted')}
+                >
+                  Drafted
+                </TabsTrigger>
+              </TabsList>
+            </div>
+            
+            <div className="mt-4">
+              {activeView === 'available' && (
+                <PlayerTable 
+                  players={playersWithStatus}
+                  isAdmin={true}
+                  onDraft={handleDraftPlayer}
+                  onUndraft={handleUndraftPlayer}
+                />
+              )}
+              
+              {activeView === 'drafted' && (
+                <DraftedPlayersTable
+                  players={allPlayersWithStatus}
+                  isAdmin={true}
+                  onUndraft={handleUndraftPlayer}
+                  selectedPosition={selectedPosition}
+                />
+              )}
+            </div>
+            
+            <TabsContent value="QB" className="hidden" />
+            <TabsContent value="RB" className="hidden" />
+            <TabsContent value="WR" className="hidden" />
+            <TabsContent value="TE" className="hidden" />
+            <TabsContent value="K" className="hidden" />
+            <TabsContent value="DEF" className="hidden" />
+          </Tabs>
+        </>
+      ) : (
+        <div className="text-center py-8">Loading...</div>
+      )}
       </main>
 
       {/* Footer */}

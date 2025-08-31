@@ -17,6 +17,13 @@ export default function DraftViewerPage() {
   const [draft, setDraft] = useState<Draft | null>(null);
   const [draftPicks, setDraftPicks] = useState<DraftPick[]>([]);
   const [selectedPosition, setSelectedPosition] = useState<Position | 'ALL'>('QB');
+  const [activeView, setActiveView] = useState<'available' | 'drafted'>('available');
+  const [isClient, setIsClient] = useState(false);
+
+  // Ensure client-side rendering to prevent hydration mismatch
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
   const [isLoading, setIsLoading] = useState(true);
   const [realtimeConnected, setRealtimeConnected] = useState(false);
 
@@ -156,81 +163,71 @@ export default function DraftViewerPage() {
           <p className="text-muted-foreground">Viewer Mode</p>
         </div>
       
-      <DraftStats 
-        totalPicks={draftPicks.length}
-        positionCounts={positionCounts}
-      />
-
-      <DraftedPlayersTable
-        players={allPlayersWithStatus}
-        isAdmin={false}
-        onUndraft={() => {}}
-      />
-      
-      <Tabs defaultValue="QB" className="mt-6">
-        <TabsList className="w-full px-2 grid grid-cols-6">
-          <TabsTrigger value="QB" onClick={() => setSelectedPosition('QB')}>QB</TabsTrigger>
-          <TabsTrigger value="RB" onClick={() => setSelectedPosition('RB')}>RB</TabsTrigger>
-          <TabsTrigger value="WR" onClick={() => setSelectedPosition('WR')}>WR</TabsTrigger>
-          <TabsTrigger value="TE" onClick={() => setSelectedPosition('TE')}>TE</TabsTrigger>
-          <TabsTrigger value="K" onClick={() => setSelectedPosition('K')}>K</TabsTrigger>
-          <TabsTrigger value="DEF" onClick={() => setSelectedPosition('DEF')}>DEF</TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="QB" className="mt-4">
-          <PlayerTable 
-            players={playersWithStatus}
-            isAdmin={false}
-            onDraft={() => {}}
-            onUndraft={() => {}}
+      {isClient ? (
+        <>
+          <DraftStats 
+            totalPicks={draftPicks.length}
+            positionCounts={positionCounts}
           />
-        </TabsContent>
-        
-        <TabsContent value="RB" className="mt-4">
-          <PlayerTable 
-            players={playersWithStatus}
-            isAdmin={false}
-            onDraft={() => {}}
-            onUndraft={() => {}}
-          />
-        </TabsContent>
-        
-        <TabsContent value="WR" className="mt-4">
-          <PlayerTable 
-            players={playersWithStatus}
-            isAdmin={false}
-            onDraft={() => {}}
-            onUndraft={() => {}}
-          />
-        </TabsContent>
-        
-        <TabsContent value="TE" className="mt-4">
-          <PlayerTable 
-            players={playersWithStatus}
-            isAdmin={false}
-            onDraft={() => {}}
-            onUndraft={() => {}}
-          />
-        </TabsContent>
-        
-        <TabsContent value="K" className="mt-4">
-          <PlayerTable 
-            players={playersWithStatus}
-            isAdmin={false}
-            onDraft={() => {}}
-            onUndraft={() => {}}
-          />
-        </TabsContent>
-        
-        <TabsContent value="DEF" className="mt-4">
-          <PlayerTable 
-            players={playersWithStatus}
-            isAdmin={false}
-            onDraft={() => {}}
-            onUndraft={() => {}}
-          />
-        </TabsContent>
-      </Tabs>
+          
+          <Tabs defaultValue="QB" className="mt-6">
+            <TabsList className="w-full px-2 grid grid-cols-6">
+              <TabsTrigger value="QB" onClick={() => setSelectedPosition('QB')}>QB</TabsTrigger>
+              <TabsTrigger value="RB" onClick={() => setSelectedPosition('RB')}>RB</TabsTrigger>
+              <TabsTrigger value="WR" onClick={() => setSelectedPosition('WR')}>WR</TabsTrigger>
+              <TabsTrigger value="TE" onClick={() => setSelectedPosition('TE')}>TE</TabsTrigger>
+              <TabsTrigger value="K" onClick={() => setSelectedPosition('K')}>K</TabsTrigger>
+              <TabsTrigger value="DEF" onClick={() => setSelectedPosition('DEF')}>DEF</TabsTrigger>
+            </TabsList>
+            
+            <div className="sticky top-14 z-40 bg-background border-b pb-2 mt-4">
+              <TabsList className="w-full grid grid-cols-2">
+                <TabsTrigger 
+                  value="available" 
+                  onClick={() => setActiveView('available')}
+                >
+                  Available
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="drafted" 
+                  onClick={() => setActiveView('drafted')}
+                >
+                  Drafted
+                </TabsTrigger>
+              </TabsList>
+            </div>
+            
+            <div className="mt-4">
+              {activeView === 'available' && (
+                <PlayerTable 
+                  players={playersWithStatus}
+                  isAdmin={false}
+                  onDraft={() => {}}
+                  onUndraft={() => {}}
+                />
+              )}
+              
+              {activeView === 'drafted' && (
+                <DraftedPlayersTable
+                  players={allPlayersWithStatus}
+                  isAdmin={false}
+                  onUndraft={() => {}}
+                  selectedPosition={selectedPosition}
+                />
+              )}
+            </div>
+            
+            <TabsContent value="QB" className="hidden" />
+            <TabsContent value="RB" className="hidden" />
+            <TabsContent value="WR" className="hidden" />
+            <TabsContent value="TE" className="hidden" />
+            <TabsContent value="K" className="hidden" />
+            <TabsContent value="DEF" className="hidden" />
+          </Tabs>
+        </>
+      ) : (
+        <div className="text-center py-8">Loading...</div>
+      )}
       </main>
 
       {/* Footer */}

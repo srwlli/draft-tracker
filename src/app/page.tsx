@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -11,6 +11,11 @@ import { v4 as uuidv4 } from 'uuid';
 export default function Home() {
   const [draftName, setDraftName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
   const router = useRouter();
 
   const createDraft = async () => {
@@ -49,6 +54,7 @@ export default function Home() {
                 placeholder="My Fantasy Draft 2025"
                 value={draftName}
                 onChange={(e) => setDraftName(e.target.value)}
+                suppressHydrationWarning
               />
             </div>
           </div>

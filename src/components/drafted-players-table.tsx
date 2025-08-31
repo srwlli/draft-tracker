@@ -1,6 +1,6 @@
 'use client';
 
-import { PlayerWithStatus } from '@/types';
+import { PlayerWithStatus, Position } from '@/types';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -9,14 +9,24 @@ interface DraftedPlayersTableProps {
   players: PlayerWithStatus[];
   isAdmin: boolean;
   onUndraft: (playerId: number) => void;
+  selectedPosition?: Position | 'ALL';
 }
 
-export function DraftedPlayersTable({ players, isAdmin, onUndraft }: DraftedPlayersTableProps) {
-  // Sort by draft order (assuming is_drafted timestamp or we'll use array order)
-  const draftedPlayers = players.filter(p => p.is_drafted);
+export function DraftedPlayersTable({ players, isAdmin, onUndraft, selectedPosition = 'ALL' }: DraftedPlayersTableProps) {
+  // Filter drafted players by selected position
+  const draftedPlayers = players
+    .filter(p => p.is_drafted)
+    .filter(p => selectedPosition === 'ALL' || p.position === selectedPosition);
 
   if (draftedPlayers.length === 0) {
-    return null;
+    return (
+      <div className="mb-6">
+        <h2 className="text-lg font-semibold mb-3">Drafted Players</h2>
+        <div className="text-center py-8 text-muted-foreground rounded-md border">
+          No {selectedPosition === 'ALL' ? '' : selectedPosition} players drafted yet
+        </div>
+      </div>
+    );
   }
 
   return (
