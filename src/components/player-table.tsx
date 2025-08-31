@@ -61,7 +61,6 @@ export function PlayerTable({ players, isAdmin, onDraft, onUndraft }: PlayerTabl
 
   return (
     <div>
-      <h2 className="text-lg font-semibold mb-3">Available Players</h2>
       <div className="rounded-md border">
         <Table>
         <TableHeader>

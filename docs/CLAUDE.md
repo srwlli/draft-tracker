@@ -2,6 +2,27 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Development Philosophy
+
+### Code Quality Standards
+- **Modern Best Practices**: Always use contemporary web development patterns and APIs
+- **Professional Solutions**: Implement solutions that experienced developers would choose
+- **No Hacky Workarounds**: Avoid temporary fixes, magic numbers, or brittle implementations
+- **Performance First**: Choose performant, scalable solutions over quick fixes
+
+### Technical Decision Making
+When facing implementation choices, always prioritize:
+1. **Modern Web Standards**: Use Intersection Observer over scroll listeners, Flexbox/Grid over manual positioning
+2. **Maintainable Code**: Avoid magic numbers and manual calculations that break on changes
+3. **Scalable Patterns**: Choose solutions that work as requirements evolve
+4. **Industry Standards**: Follow patterns that senior developers use in production
+
+### Examples of Professional Approaches
+- **Layout**: Flexbox with `flex-shrink-0`/`flex-1` over calc() height calculations
+- **Scroll Detection**: Intersection Observer API over scroll position comparisons
+- **State Management**: React Context with proper separation of concerns
+- **Responsive Design**: Intrinsic sizing patterns over breakpoint overrides
+
 ## Project Overview
 
 This is a Fantasy Football Draft Tracker - a real-time web application for managing fantasy football drafts. The application is fully deployed and production-ready with real-time updates, mobile-optimized UI, and complete admin/viewer functionality.

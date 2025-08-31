@@ -20,19 +20,14 @@ export function DraftedPlayersTable({ players, isAdmin, onUndraft, selectedPosit
 
   if (draftedPlayers.length === 0) {
     return (
-      <div className="mb-6">
-        <h2 className="text-lg font-semibold mb-3">Drafted Players</h2>
-        <div className="text-center py-8 text-muted-foreground rounded-md border">
-          No {selectedPosition === 'ALL' ? '' : selectedPosition} players drafted yet
-        </div>
+      <div className="text-center py-8 text-muted-foreground rounded-md border">
+        No {selectedPosition === 'ALL' ? '' : selectedPosition} players drafted yet
       </div>
     );
   }
 
   return (
-    <div className="mb-6">
-      <h2 className="text-lg font-semibold mb-3">Drafted Players</h2>
-      <div className="rounded-md border">
+    <div className="rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
@@ -75,7 +70,6 @@ export function DraftedPlayersTable({ players, isAdmin, onUndraft, selectedPosit
             ))}
           </TableBody>
         </Table>
-      </div>
     </div>
   );
 }

@@ -6,29 +6,16 @@ import { supabase } from '@/lib/supabase';
 import { PlayerTable } from '@/components/player-table';
 import { DraftedPlayersTable } from '@/components/drafted-players-table';
 import { DraftStats } from '@/components/draft-stats';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Player, DraftPick, Draft, Position } from '@/types';
+import { Player, DraftPick } from '@/types';
 import { useSupabaseRealtime } from '@/hooks/useSupabaseRealtime';
 import { usePollingFallback } from '@/hooks/usePollingFallback';
+import { useDraftLayout } from '@/contexts/DraftLayoutContext';
 
 export default function DraftViewerPage() {
   const { draftId } = useParams();
+  const { selectedPosition, activeView, setDraft } = useDraftLayout();
   const [players, setPlayers] = useState<Player[]>([]);
-  const [draft, setDraft] = useState<Draft | null>(null);
   const [draftPicks, setDraftPicks] = useState<DraftPick[]>([]);
-  const [selectedPosition, setSelectedPosition] = useState<Position | 'ALL'>('QB');
-  const [activeView, setActiveView] = useState<'available' | 'drafted' | 'stats'>('available');
-  const [isClient, setIsClient] = useState(false);
-
-  // Ensure client-side rendering to prevent hydration mismatch
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  // Handle tab change without scroll jumping
-  const handleViewChange = (view: 'available' | 'drafted' | 'stats') => {
-    setActiveView(view);
-  };
   const [isLoading, setIsLoading] = useState(true);
   const [realtimeConnected, setRealtimeConnected] = useState(false);
 
@@ -69,7 +56,7 @@ export default function DraftViewerPage() {
     };
 
     fetchData();
-  }, [draftId]);
+  }, [draftId, setDraft]);
 
   // Subscribe to real-time updates
   useSupabaseRealtime(
@@ -153,140 +140,31 @@ export default function DraftViewerPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-14 items-center">
-          <h1 className="text-lg font-semibold truncate">{draft?.name || 'Fantasy Draft'}</h1>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="flex-1 container mx-auto p-4">
-      
-      {isClient ? (
-        <>
-          {/* Position Tabs - Sticky */}
-          <div className="sticky top-14 z-50 bg-background border-b pb-2">
-            <div className="w-full px-2 grid grid-cols-6 bg-muted rounded-lg p-1">
-              <button 
-                className={`py-2 px-3 rounded-md text-sm font-medium transition-colors ${
-                  selectedPosition === 'QB' ? 'bg-background shadow-sm' : 'hover:bg-background/50'
-                }`}
-                onClick={() => setSelectedPosition('QB')}
-              >
-                QB
-              </button>
-              <button 
-                className={`py-2 px-3 rounded-md text-sm font-medium transition-colors ${
-                  selectedPosition === 'RB' ? 'bg-background shadow-sm' : 'hover:bg-background/50'
-                }`}
-                onClick={() => setSelectedPosition('RB')}
-              >
-                RB
-              </button>
-              <button 
-                className={`py-2 px-3 rounded-md text-sm font-medium transition-colors ${
-                  selectedPosition === 'WR' ? 'bg-background shadow-sm' : 'hover:bg-background/50'
-                }`}
-                onClick={() => setSelectedPosition('WR')}
-              >
-                WR
-              </button>
-              <button 
-                className={`py-2 px-3 rounded-md text-sm font-medium transition-colors ${
-                  selectedPosition === 'TE' ? 'bg-background shadow-sm' : 'hover:bg-background/50'
-                }`}
-                onClick={() => setSelectedPosition('TE')}
-              >
-                TE
-              </button>
-              <button 
-                className={`py-2 px-3 rounded-md text-sm font-medium transition-colors ${
-                  selectedPosition === 'K' ? 'bg-background shadow-sm' : 'hover:bg-background/50'
-                }`}
-                onClick={() => setSelectedPosition('K')}
-              >
-                K
-              </button>
-              <button 
-                className={`py-2 px-3 rounded-md text-sm font-medium transition-colors ${
-                  selectedPosition === 'DEF' ? 'bg-background shadow-sm' : 'hover:bg-background/50'
-                }`}
-                onClick={() => setSelectedPosition('DEF')}
-              >
-                DEF
-              </button>
-            </div>
-          </div>
-
-          {/* View Tabs - Sticky below position tabs */}
-          <div className="sticky top-28 z-40 bg-background border-b pb-2">
-            <div className="w-full grid grid-cols-3 bg-muted rounded-lg p-1">
-              <button 
-                className={`py-2 px-3 rounded-md text-sm font-medium transition-colors ${
-                  activeView === 'available' ? 'bg-background shadow-sm' : 'hover:bg-background/50'
-                }`}
-                onClick={() => handleViewChange('available')}
-              >
-                Available
-              </button>
-              <button 
-                className={`py-2 px-3 rounded-md text-sm font-medium transition-colors ${
-                  activeView === 'drafted' ? 'bg-background shadow-sm' : 'hover:bg-background/50'
-                }`}
-                onClick={() => handleViewChange('drafted')}
-              >
-                Drafted
-              </button>
-              <button 
-                className={`py-2 px-3 rounded-md text-sm font-medium transition-colors ${
-                  activeView === 'stats' ? 'bg-background shadow-sm' : 'hover:bg-background/50'
-                }`}
-                onClick={() => handleViewChange('stats')}
-              >
-                Stats
-              </button>
-            </div>
-          </div>
-
-          {/* Fixed height scroll container */}
-          <div className="h-[calc(100vh-200px)] overflow-auto mt-4">
-            {activeView === 'available' && (
-              <PlayerTable 
-                players={playersWithStatus}
-                isAdmin={false}
-                onDraft={() => {}}
-                onUndraft={() => {}}
-              />
-            )}
-            
-            {activeView === 'drafted' && (
-              <DraftedPlayersTable
-                players={allPlayersWithStatus}
-                isAdmin={false}
-                onUndraft={() => {}}
-                selectedPosition={selectedPosition}
-              />
-            )}
-            
-            {activeView === 'stats' && (
-              <DraftStats 
-                totalPicks={draftPicks.length}
-                positionCounts={positionCounts}
-              />
-            )}
-          </div>
-        </>
-      ) : (
-        <div className="text-center py-8">Loading...</div>
+    <>
+      {activeView === 'available' && (
+        <PlayerTable 
+          players={playersWithStatus}
+          isAdmin={false}
+          onDraft={() => {}}
+          onUndraft={() => {}}
+        />
       )}
-      </main>
-
-      {/* Footer */}
-      <footer className="border-t py-3 text-center text-sm text-muted-foreground">
-        BBFL Draft Tracker 2025
-      </footer>
-    </div>
+      
+      {activeView === 'drafted' && (
+        <DraftedPlayersTable
+          players={allPlayersWithStatus}
+          isAdmin={false}
+          onUndraft={() => {}}
+          selectedPosition={selectedPosition}
+        />
+      )}
+      
+      {activeView === 'stats' && (
+        <DraftStats 
+          totalPicks={draftPicks.length}
+          positionCounts={positionCounts}
+        />
+      )}
+    </>
   );
 }
