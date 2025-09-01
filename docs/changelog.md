@@ -8,6 +8,7 @@
 - **Dashboard Navigation** - Added bottom navigation bar to dashboard matching draft page style
 
 ### Refactoring  
+- **Route Groups Implementation** (`114a507`) - Implemented Next.js route groups for consistent navigation across non-draft pages
 - **Navigation Components** - Refactored BottomTabBar to use BaseTabBar with props-based navigation items
 - **TypeScript Interfaces** - Added proper typing for navigation tab items and component props
 - **Code Reusability** - Eliminated duplication between dashboard and draft navigation components
@@ -43,10 +44,10 @@
 - **Patch:** Bug fixes and small improvements (clipboard, scroll behavior)
 
 ## Recent Focus Areas
-1. **Navigation System** - Unified navigation components across dashboard and draft pages
-2. **Code Architecture** - Component refactoring for reusability and maintainability
-3. **Mobile Experience** - Navigation fixes, responsive design, proper router usage
-4. **TypeScript** - Proper typing for navigation components and interfaces
+1. **Navigation Architecture** - Route groups implementation and unified navigation components
+2. **Code Organization** - Next.js best practices with (with-nav) route grouping
+3. **Component Reusability** - BaseTabBar abstraction and consistent UI patterns
+4. **Developer Experience** - Clean file structure and reduced code duplication
 
 ---
 *Last updated: 2025-09-01*
