@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Home, Share, Settings } from 'lucide-react';
 import { toast } from 'sonner';
 import { copyToClipboard } from '@/lib/clipboard';
@@ -13,6 +14,7 @@ interface BottomTabBarProps {
 export function BottomTabBar({ isAdmin }: BottomTabBarProps) {
   const [activeTab, setActiveTab] = useState<string | null>(null);
   const { user } = useAuth();
+  const router = useRouter();
 
   const handleShare = async () => {
     if (isAdmin) {
@@ -53,9 +55,9 @@ export function BottomTabBar({ isAdmin }: BottomTabBarProps) {
 
   const handleHome = () => {
     if (user) {
-      window.location.href = '/dashboard';
+      router.push('/dashboard');
     } else {
-      window.location.href = '/';
+      router.push('/');
     }
   };
 
@@ -64,7 +66,7 @@ export function BottomTabBar({ isAdmin }: BottomTabBarProps) {
   };
 
   const handleSettings = () => {
-    window.location.href = '/settings';
+    router.push('/settings');
   };
 
   return (

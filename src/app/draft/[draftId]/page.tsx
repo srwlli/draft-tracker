@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { PlayerTable } from '@/components/player-table';
 import { DraftedPlayersTable } from '@/components/drafted-players-table';
@@ -13,6 +13,7 @@ import { useDraftLayout } from '@/contexts/DraftLayoutContext';
 
 export default function DraftViewerPage() {
   const { draftId } = useParams();
+  const router = useRouter();
   const { selectedPosition, activeView, setDraft } = useDraftLayout();
   const [players, setPlayers] = useState<Player[]>([]);
   const [draftPicks, setDraftPicks] = useState<DraftPick[]>([]);
@@ -56,7 +57,18 @@ export default function DraftViewerPage() {
     };
 
     fetchData();
-  }, [draftId, setDraft]);
+
+    // Cleanup on route change (handles mobile back button)
+    const handleRouteChange = () => {
+      setRealtimeConnected(false);
+    };
+
+    router.events?.on('routeChangeStart', handleRouteChange);
+
+    return () => {
+      router.events?.off('routeChangeStart', handleRouteChange);
+    };
+  }, [draftId, setDraft, router]);
 
   // Subscribe to real-time updates
   useSupabaseRealtime(
