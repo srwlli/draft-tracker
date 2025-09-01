@@ -22,12 +22,18 @@ export default function Dashboard() {
   }, []);
 
   const createDraft = async () => {
+    if (!user) return;
+    
     setIsLoading(true);
     try {
       const adminToken = uuidv4();
       const { data, error } = await supabase
         .from('drafts')
-        .insert([{ name: draftName || 'Fantasy Draft', admin_token: adminToken }])
+        .insert([{ 
+          name: draftName || 'Fantasy Draft', 
+          admin_token: adminToken,
+          user_id: user.id
+        }])
         .select();
 
       if (error) throw error;

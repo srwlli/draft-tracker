@@ -1,85 +1,113 @@
-# Working Plan: Authentication Route Groups Implementation
+# Working Plan: Next.js Middleware Authentication
 
-## Phase 1: Create Authentication Route Group
-### 1.1 Setup Authentication Structure
-- [ ] Create `/src/app/(auth)/` directory for authenticated routes
-- [ ] Create subdirectories: `dashboard/`, `settings/`, `soon/` inside `(auth)`
+## Current State Analysis
+**Problem:** Using route groups incorrectly for URL-based authentication
+**Modern Solution:** Next.js middleware for route protection with proper authentication checks
 
-### 1.2 Create Authentication Layout
-- [ ] Create `/src/app/(auth)/layout.tsx` with auth checks and navigation
-- [ ] Import AuthContext and DashboardTabBar
-- [ ] Add redirect logic for unauthenticated users
-- [ ] Structure layout to wrap children with auth validation + navigation
+## Phase 1: Restore Proper File Structure
+### 1.1 Move Admin Page Back
+- [ ] Create `/src/app/draft/[draftId]/admin/[adminToken]/` directory
+- [ ] Move admin page from `(admin)/[adminToken]/page.tsx` to `admin/[adminToken]/page.tsx`
+- [ ] Delete `(admin)` route group directory
 
-## Phase 2: Migrate Pages from (with-nav) to (auth)
-### 2.1 Move Dashboard
-- [ ] Move `/src/app/(with-nav)/dashboard/page.tsx` to `/src/app/(auth)/dashboard/page.tsx`
-- [ ] Verify page works with new authentication layout
+### 1.2 Update Navigation URL
+- [ ] Change dashboard navigation back to `/draft/${draftId}/admin/${adminToken}`
+- [ ] Remove `(admin)` from URL path
 
-### 2.2 Move Settings  
-- [ ] Move `/src/app/(with-nav)/settings/page.tsx` to `/src/app/(auth)/settings/page.tsx`
-- [ ] Ensure back button and theme functionality remain intact
+## Phase 2: Create Middleware Authentication
+### 2.1 Create Middleware File
+- [ ] Create `/middleware.ts` in project root
+- [ ] Import NextRequest, NextResponse from Next.js
+- [ ] Add Supabase client for server-side auth checking
 
-### 2.3 Move Coming Soon
-- [ ] Move `/src/app/(with-nav)/soon/page.tsx` to `/src/app/(auth)/soon/page.tsx`
-- [ ] Verify page works with authentication wrapper
+### 2.2 Implement Authentication Logic
+- [ ] Check if request path contains `/admin/`
+- [ ] Verify user authentication via Supabase session
+- [ ] Validate draft ownership (user_id matches authenticated user)
+- [ ] Redirect unauthorized users to viewer page
 
-## Phase 3: Cleanup & Draft Admin Protection
-### 3.1 Remove Old Route Group
-- [ ] Delete `/src/app/(with-nav)/` directory and layout
-- [ ] Verify no broken imports or references
+### 2.3 Configure Middleware Matcher
+- [ ] Set matcher to protect only admin routes: `/draft/:path*/admin/:path*`
+- [ ] Ensure public routes (viewer, landing) remain unprotected
 
-### 3.2 Optional: Draft Admin Route Group
-- [ ] Create `/src/app/draft/[draftId]/(admin)/` directory
-- [ ] Move admin page to `(admin)/[adminToken]/page.tsx`
-- [ ] Create admin layout with token validation
+## Phase 3: Server-Side Authentication
+### 3.1 Middleware Implementation
+```typescript
+// middleware.ts structure
+export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+  
+  if (pathname.includes('/admin/')) {
+    // Extract draftId and adminToken from URL
+    // Check Supabase session from cookies
+    // Validate user owns the draft
+    // Redirect if unauthorized
+  }
+}
 
-## Phase 4: Testing & Validation
-### 4.1 Authentication Flow Testing
-- [ ] Test unauthenticated users are redirected from `/dashboard`, `/settings`, `/soon`
-- [ ] Test authenticated users can access all protected routes
-- [ ] Verify navigation works properly with auth checks
-
-### 4.2 Build & Quality Checks
-- [ ] Build project to check for TypeScript errors
-- [ ] Test on mobile device for responsive behavior
-- [ ] Verify no console errors during navigation
-- [ ] Test sign out functionality redirects properly
-
-## Final File Structure
-```
-src/app/
-├── layout.tsx                    # Root layout (theme, auth providers)
-├── page.tsx                      # Public landing page
-├── (auth)/                       # Protected routes group
-│   ├── layout.tsx               # Auth check + DashboardTabBar
-│   ├── dashboard/page.tsx       # Protected dashboard
-│   ├── settings/page.tsx        # Protected settings
-│   └── soon/page.tsx           # Protected coming soon
-└── draft/[draftId]/            # Public draft access
-    ├── layout.tsx              # Draft context + BottomTabBar
-    ├── page.tsx                # Public viewer
-    └── (admin)/                # Optional: Admin protection
-        └── [adminToken]/
-            ├── layout.tsx      # Admin token validation
-            └── page.tsx        # Protected admin interface
+export const config = {
+  matcher: '/draft/:path*/admin/:path*'
+}
 ```
 
-## Security Benefits
-- **Centralized Auth Checks** - All protected routes validate authentication in one place
-- **Automatic Redirects** - Unauthenticated users sent to landing page
-- **Clear Access Patterns** - Obvious which routes require authentication
-- **Admin Token Validation** - Centralized validation for draft admin access
+### 3.2 Security Validation
+- [ ] Check user authentication from request cookies
+- [ ] Query draft ownership from database
+- [ ] Validate admin token matches
+- [ ] Return appropriate redirects for each failure case
+
+## Phase 4: Remove Client-Side Auth Checks
+### 4.1 Simplify Admin Page
+- [ ] Remove authentication logic from admin page component
+- [ ] Remove admin layout authentication checks
+- [ ] Rely on middleware for all authentication
+
+### 4.2 Clean Up Context
+- [ ] Keep admin state management in DraftLayoutContext
+- [ ] Remove redundant authentication checks from components
+- [ ] Trust that middleware handles all security
+
+## Phase 5: Testing & Validation
+### 5.1 Authentication Flow Testing
+- [ ] Test unauthenticated users redirected from admin URLs
+- [ ] Test authenticated non-owners redirected from admin URLs
+- [ ] Test authenticated owners can access their admin pages
+- [ ] Verify viewer access remains completely public
+
+### 5.2 Edge Case Testing
+- [ ] Test invalid admin tokens
+- [ ] Test non-existent draft IDs
+- [ ] Test expired or invalid user sessions
+- [ ] Verify middleware doesn't affect other routes
+
+## Final Architecture
+```
+Authentication Flow:
+1. User visits /draft/123/admin/456
+2. Middleware checks:
+   - Is user authenticated? (session cookies)
+   - Does user own draft 123? (database query)
+   - Does admin token match? (token validation)
+3. If all pass: Allow access
+4. If any fail: Redirect to /draft/123 (viewer)
+
+File Structure:
+- middleware.ts (root) - Route protection
+- /draft/[id]/admin/[token]/page.tsx - Admin interface
+- /draft/[id]/page.tsx - Public viewer
+- No route groups needed
+```
+
+## Benefits of Middleware Approach
+- **Server-side security** - Runs before page loads
+- **Clean separation** - Authentication logic separate from UI
+- **Performance** - No client-side redirects or loading states
+- **Industry standard** - How experienced developers handle route protection
+- **Scalable** - Easy to add more protected routes
 
 ## Success Criteria
-- ✅ Unauthenticated users cannot access dashboard, settings, or soon pages
-- ✅ Authenticated users have seamless access to all protected routes
-- ✅ Navigation remains consistent with bottom tab bar
-- ✅ Draft pages work for both authenticated and unauthenticated users
-- ✅ Admin pages validate tokens properly
-- ✅ Clean, organized file structure following Next.js best practices
-
-## Implementation Priority
-1. **High Priority:** Basic `(auth)` route group with auth checks
-2. **Medium Priority:** Draft `(admin)` route group for better organization
-3. **Low Priority:** Additional optimizations and refinements
+- ✅ Middleware protects all admin routes automatically
+- ✅ Authentication happens server-side before page load
+- ✅ No client-side authentication complexity
+- ✅ Public viewer access unaffected
+- ✅ Clean, maintainable code following Next.js best practices

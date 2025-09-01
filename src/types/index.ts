@@ -16,6 +16,7 @@ export interface Draft {
   admin_token: string;
   created_at: string;
   name?: string;
+  user_id: string;
 }
 
 // Individual draft pick record
