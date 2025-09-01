@@ -14,7 +14,7 @@ interface DraftLayoutContextType {
   isAdmin: boolean;
   setIsAdmin: (isAdmin: boolean) => void;
   headerVisible: boolean;
-  contentRef: React.RefObject<HTMLDivElement>;
+  contentRef: React.RefObject<HTMLDivElement | null>;
 }
 
 const DraftLayoutContext = createContext<DraftLayoutContextType | undefined>(undefined);
@@ -26,7 +26,6 @@ export function DraftLayoutProvider({ children }: { children: ReactNode }) {
   const [draft, setDraft] = useState<Draft | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [headerVisible, setHeaderVisible] = useState(true);
-  const [isTabChanging, setIsTabChanging] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

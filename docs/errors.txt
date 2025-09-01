@@ -1,59 +1,62 @@
-'use client';
+Error: Command "npm run build" exited with 1
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { Position, Draft } from '@/types';
-
-interface DraftLayoutContextType {
-  selectedPosition: Position | 'ALL';
-  setSelectedPosition: (position: Position | 'ALL') => void;
-  activeView: 'available' | 'drafted' | 'stats';
-  setActiveView: (view: 'available' | 'drafted' | 'stats') => void;
-  isClient: boolean;
-  draft: Draft | null;
-  setDraft: (draft: Draft | null) => void;
-  isAdmin: boolean;
-  setIsAdmin: (isAdmin: boolean) => void;
-}
-
-const DraftLayoutContext = createContext<DraftLayoutContextType | undefined>(undefined);
-
-export function DraftLayoutProvider({ children }: { children: ReactNode }) {
-  const [selectedPosition, setSelectedPosition] = useState<Position | 'ALL'>('QB');
-  const [activeView, setActiveView] = useState<'available' | 'drafted' | 'stats'>('available');
-  const [isClient, setIsClient] = useState(false);
-  const [draft, setDraft] = useState<Draft | null>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  const handleViewChange = (view: 'available' | 'drafted' | 'stats') => {
-    setActiveView(view);
-  };
-
-  return (
-    <DraftLayoutContext.Provider value={{
-      selectedPosition,
-      setSelectedPosition,
-      activeView,
-      setActiveView: handleViewChange,
-      isClient,
-      draft,
-      setDraft,
-      isAdmin,
-      setIsAdmin,
-      headerVisible
-    }}>
-      {children}
-    </DraftLayoutContext.Provider>
-  );
-}
-
-export function useDraftLayout() {
-  const context = useContext(DraftLayoutContext);
-  if (context === undefined) {
-    throw new Error('useDraftLayout must be used within a DraftLayoutProvider');
-  }
-  return context;
-}
+2025-08-31T20:55:50.867Z  Running build in Washington, D.C., USA (East) – iad1
+2025-08-31T20:55:50.868Z  Build machine configuration: 2 cores, 8 GB
+2025-08-31T20:55:50.893Z  Retrieving list of deployment files...
+2025-08-31T20:55:51.463Z  Downloading 54 deployment files...
+2025-08-31T20:55:53.111Z  Restored build cache from previous deployment (CMteFDKn77b4pSZAEdZz5hEmT4FD)
+2025-08-31T20:55:53.651Z  Running "vercel build"
+2025-08-31T20:55:54.060Z  Vercel CLI 46.1.0
+2025-08-31T20:55:54.374Z  Installing dependencies...
+2025-08-31T20:55:55.672Z
+2025-08-31T20:55:55.673Z  up to date in 1s
+2025-08-31T20:55:55.674Z
+2025-08-31T20:55:55.674Z  145 packages are looking for funding
+2025-08-31T20:55:55.675Z    run `npm fund` for details
+2025-08-31T20:55:55.704Z  Detected Next.js version: 15.5.2
+2025-08-31T20:55:55.708Z  Running "npm run build"
+2025-08-31T20:55:55.818Z
+2025-08-31T20:55:55.818Z  > draft-tracker@0.1.0 build
+2025-08-31T20:55:55.819Z  > next build --turbopack
+2025-08-31T20:55:55.819Z
+2025-08-31T20:55:56.938Z     ▲ Next.js 15.5.2 (Turbopack)
+2025-08-31T20:55:56.939Z
+2025-08-31T20:55:57.023Z     Creating an optimized production build ...
+2025-08-31T20:56:06.120Z   ✓ Finished writing to disk in 17ms
+2025-08-31T20:56:06.145Z   ✓ Compiled successfully in 8.4s
+2025-08-31T20:56:06.150Z     Linting and checking validity of types ...
+2025-08-31T20:56:10.747Z
+2025-08-31T20:56:10.748Z  ./src/app/draft/[draftId]/admin/[adminToken]/page.tsx
+2025-08-31T20:56:10.748Z  19:10  Warning: 'draft' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+2025-08-31T20:56:10.748Z  71:6  Warning: React Hook useEffect has a missing dependency: 'setLayoutDraft'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+2025-08-31T20:56:10.748Z
+2025-08-31T20:56:10.748Z  ./src/app/draft/[draftId]/layout.tsx
+2025-08-31T20:56:10.748Z  25:14  Warning: 'error' is defined but never used.  @typescript-eslint/no-unused-vars    
+2025-08-31T20:56:10.748Z
+2025-08-31T20:56:10.748Z  ./src/app/page.tsx
+2025-08-31T20:56:10.748Z  14:10  Warning: 'isClient' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+2025-08-31T20:56:10.748Z
+2025-08-31T20:56:10.749Z  ./src/components/player-table.tsx
+2025-08-31T20:56:10.749Z  26:58  Warning: 'onUndraft' is defined but never used.  @typescript-eslint/no-unused-vars
+2025-08-31T20:56:10.749Z
+2025-08-31T20:56:10.749Z  ./src/contexts/DraftLayoutContext.tsx
+2025-08-31T20:56:10.749Z  29:10  Warning: 'isTabChanging' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+2025-08-31T20:56:10.750Z  29:25  Warning: 'setIsTabChanging' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+2025-08-31T20:56:10.750Z
+2025-08-31T20:56:10.750Z  info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules
+2025-08-31T20:56:12.696Z  Failed to compile.
+2025-08-31T20:56:12.697Z
+2025-08-31T20:56:12.697Z  ./src/contexts/DraftLayoutContext.tsx:89:7
+2025-08-31T20:56:12.698Z  Type error: Type 'RefObject<HTMLDivElement | null>' is not assignable to type 'RefObject<HTMLDivElement>'.
+2025-08-31T20:56:12.698Z    Type 'HTMLDivElement | null' is not assignable to type 'HTMLDivElement'.
+2025-08-31T20:56:12.698Z      Type 'null' is not assignable to type 'HTMLDivElement'.
+2025-08-31T20:56:12.699Z
+2025-08-31T20:56:12.699Z    87 |       setIsAdmin,
+2025-08-31T20:56:12.699Z    88 |       headerVisible,
+2025-08-31T20:56:12.699Z  > 89 |       contentRef
+2025-08-31T20:56:12.700Z       |       ^
+2025-08-31T20:56:12.700Z    90 |     }}>
+2025-08-31T20:56:12.700Z    91 |       {children}
+2025-08-31T20:56:12.700Z    92 |     </DraftLayoutContext.Provider>
+2025-08-31T20:56:12.718Z  Next.js build worker exited with code: 1 and signal: null
+2025-08-31T20:56:12.742Z  Error: Command "npm run build" exited with 1
