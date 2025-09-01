@@ -20,14 +20,14 @@ export function DraftedPlayersTable({ players, isAdmin, onUndraft, selectedPosit
 
   if (draftedPlayers.length === 0) {
     return (
-      <div className="text-center py-8 text-muted-foreground rounded-md border">
+      <div className="text-center py-8 text-muted-foreground rounded-md border min-h-screen flex items-center justify-center">
         No {selectedPosition === 'ALL' ? '' : selectedPosition} players drafted yet
       </div>
     );
   }
 
   return (
-    <div className="rounded-md border">
+    <div className="rounded-md border min-h-screen">
         <Table>
           <TableHeader>
             <TableRow>

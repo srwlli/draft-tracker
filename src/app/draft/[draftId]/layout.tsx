@@ -1,59 +1,20 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { toast } from 'sonner';
 import { DraftLayoutProvider, useDraftLayout } from '@/contexts/DraftLayoutContext';
-import { copyToClipboard } from '@/lib/clipboard';
+import { BottomTabBar } from '@/components/bottom-tab-bar';
 
 function DraftLayoutContent({ children }: { children: React.ReactNode }) {
-  const { selectedPosition, setSelectedPosition, activeView, setActiveView, isClient, draft, isAdmin, headerVisible, contentRef, sentinelRef } = useDraftLayout();
+  const { selectedPosition, setSelectedPosition, activeView, setActiveView, isClient, draft, isAdmin } = useDraftLayout();
 
-  const handleCopyLink = async (text: string, successMessage: string) => {
-    const success = await copyToClipboard(text);
-    if (success) {
-      toast.success(successMessage);
-    } else {
-      toast.error('Failed to copy link');
-    }
-  };
 
   if (!isClient) {
     return <div className="text-center py-8">Loading...</div>;
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* Auto-hide Header */}
-      <header 
-        className={`fixed top-0 left-0 right-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 transition-transform duration-300 ease-in-out ${
-          headerVisible ? 'transform-none' : '-translate-y-full'
-        }`}
-      >
-        <div className="container flex h-14 items-center justify-between">
-          <h1 className="text-lg font-semibold truncate">{draft?.name || 'Fantasy Draft'}</h1>
-          {isAdmin && (
-            <div className="flex items-center space-x-2">
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => handleCopyLink(`${window.location.origin}/draft/${window.location.pathname.split('/')[2]}`, 'Viewer link copied to clipboard')}
-              >
-                Viewer Link
-              </Button>
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => handleCopyLink(window.location.href, 'Admin link copied to clipboard')}
-              >
-                Admin Link
-              </Button>
-            </div>
-          )}
-        </div>
-      </header>
-
+    <div className="h-screen flex flex-col">
       {/* Main Content */}
-      <main className={`h-screen container mx-auto p-4 flex flex-col ${headerVisible ? 'pt-14' : ''}`}>
+      <main className="h-full container mx-auto p-4 flex flex-col">
         {/* Position Tabs - Fixed */}
         <div className="flex-shrink-0 pb-2">
           <div className="w-full px-2 grid grid-cols-6 bg-muted rounded-lg p-1">
@@ -139,17 +100,18 @@ function DraftLayoutContent({ children }: { children: React.ReactNode }) {
         </div>
 
         {/* Scrollable Content Area */}
-        <div ref={contentRef} className="flex-1 overflow-auto">
-          {/* Intersection Observer Sentinel */}
-          <div ref={sentinelRef} className="h-px" data-header-sentinel />
+        <div className="flex-1 overflow-auto">
           {children}
           
           {/* Footer */}
-          <footer className="border-t py-3 text-center text-sm text-muted-foreground mt-8">
+          <footer className="border-t py-3 text-center text-sm text-muted-foreground mt-8 mb-16">
             BBFL Draft Tracker 2025
           </footer>
         </div>
       </main>
+
+      {/* Bottom Tab Bar */}
+      <BottomTabBar isAdmin={isAdmin} />
     </div>
   );
 }

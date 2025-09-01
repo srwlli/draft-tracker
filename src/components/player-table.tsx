@@ -60,7 +60,7 @@ export function PlayerTable({ players, isAdmin, onDraft, onUndraft }: PlayerTabl
   };
 
   return (
-    <div>
+    <div className="min-h-screen">
       <div className="rounded-md border">
         <Table>
         <TableHeader>
@@ -119,7 +119,7 @@ export function PlayerTable({ players, isAdmin, onDraft, onUndraft }: PlayerTabl
       </Table>
       </div>
       {availablePlayers.length === 0 && (
-        <div className="text-center py-8 text-muted-foreground">
+        <div className="text-center py-8 text-muted-foreground min-h-screen flex items-center justify-center">
           No available players in this position
         </div>
       )}
