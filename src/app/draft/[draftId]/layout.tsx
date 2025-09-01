@@ -3,26 +3,16 @@
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { DraftLayoutProvider, useDraftLayout } from '@/contexts/DraftLayoutContext';
+import { copyToClipboard } from '@/lib/clipboard';
 
 function DraftLayoutContent({ children }: { children: React.ReactNode }) {
   const { selectedPosition, setSelectedPosition, activeView, setActiveView, isClient, draft, isAdmin, headerVisible, contentRef, sentinelRef } = useDraftLayout();
 
-  const copyToClipboard = async (text: string, successMessage: string) => {
-    try {
-      if (navigator.clipboard && window.isSecureContext) {
-        await navigator.clipboard.writeText(text);
-        toast.success(successMessage);
-      } else {
-        // Fallback for HTTP/localhost
-        const textArea = document.createElement('textarea');
-        textArea.value = text;
-        document.body.appendChild(textArea);
-        textArea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textArea);
-        toast.success(successMessage);
-      }
-    } catch (error) {
+  const handleCopyLink = async (text: string, successMessage: string) => {
+    const success = await copyToClipboard(text);
+    if (success) {
+      toast.success(successMessage);
+    } else {
       toast.error('Failed to copy link');
     }
   };
@@ -46,14 +36,14 @@ function DraftLayoutContent({ children }: { children: React.ReactNode }) {
               <Button 
                 variant="outline" 
                 size="sm"
-                onClick={() => copyToClipboard(`${window.location.origin}/draft/${window.location.pathname.split('/')[2]}`, 'Viewer link copied to clipboard')}
+                onClick={() => handleCopyLink(`${window.location.origin}/draft/${window.location.pathname.split('/')[2]}`, 'Viewer link copied to clipboard')}
               >
                 Viewer Link
               </Button>
               <Button 
                 variant="outline" 
                 size="sm"
-                onClick={() => copyToClipboard(window.location.href, 'Admin link copied to clipboard')}
+                onClick={() => handleCopyLink(window.location.href, 'Admin link copied to clipboard')}
               >
                 Admin Link
               </Button>

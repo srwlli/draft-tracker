@@ -17,11 +17,37 @@ When facing implementation choices, always prioritize:
 3. **Scalable Patterns**: Choose solutions that work as requirements evolve
 4. **Industry Standards**: Follow patterns that senior developers use in production
 
-### Examples of Professional Approaches
-- **Layout**: Flexbox with `flex-shrink-0`/`flex-1` over calc() height calculations
-- **Scroll Detection**: Intersection Observer API over scroll position comparisons
-- **State Management**: React Context with proper separation of concerns
-- **Responsive Design**: Intrinsic sizing patterns over breakpoint overrides
+### Modern Web Standards We Use
+
+#### Layout & Positioning
+- **Flexbox Layout**: `flex`, `flex-1`, `flex-shrink-0` for intrinsic sizing
+- **CSS Grid**: Grid layouts for tab navigation and responsive components
+- **Viewport Units**: `h-screen` for full-height containers
+- **Dynamic Positioning**: Conditional classes vs manual calc() calculations
+
+#### Browser APIs
+- **Intersection Observer API**: Scroll detection and visibility changes
+- **Clipboard API**: Modern copy-to-clipboard with fallback support
+- **Navigator Vibrate**: Haptic feedback for mobile interactions
+- **CSS Custom Properties**: Dynamic styling over JavaScript manipulation
+
+#### React Patterns
+- **React Context**: Centralized state management with proper typing
+- **useRef Hooks**: DOM references over getElementById/querySelector
+- **Declarative JSX**: React elements over createElement/appendChild
+- **Effect Dependencies**: Proper cleanup and dependency arrays
+
+#### CSS Techniques
+- **CSS Transitions**: Smooth animations over JavaScript animations
+- **Transform Properties**: `translate` for performant position changes
+- **Backdrop Filter**: Modern glass morphism effects
+- **Logical Properties**: Future-proof spacing and positioning
+
+#### Performance Optimizations
+- **Passive Event Listeners**: Non-blocking scroll and touch events
+- **CSS Containment**: Efficient rendering with `overflow-auto`
+- **Client-Side Hydration**: Proper SSR/client state synchronization
+- **Debounced Updates**: Efficient state changes during rapid interactions
 
 ## Project Overview
 
