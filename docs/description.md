@@ -1,82 +1,143 @@
 # Fantasy Football Draft Tracker
 
-A live draft board application used during fantasy football draft sessions.
+A real-time fantasy football draft tracking application with authentication and mobile-optimized interface.
 
 ## What It Does
 
 ### Core Purpose
-Helps track which players have been drafted during a fantasy football draft in real-time, with admin controls for managing the draft and personalized player rankings.
+Provides a comprehensive platform for managing fantasy football drafts with real-time synchronization, user authentication, and mobile-first design.
 
 ### Main Features
 
-- Shows player rankings across different positions (QB, RB, WR, TE, Defense, Kicker)
-- Database-driven player data: All player information (names, teams, positions, base rankings) stored in SupaBase
-- Editable personal rankings: Users can customize and reorder player rankings to match their personal draft strategy
-- Local storage persistence: Personal ranking changes are saved locally in the browser and persist between sessions
-- Displays all players in a table with their rank, name, team, and position
-- Admin functionality: One designated user (admin) can mark players as "drafted" which crosses them out and grays them out for all users
-- Real-time updates: When the admin drafts/undrafts a player, all other users see the changes instantly without refreshing
-- Tracks how many players have been drafted at each position
-- Shows a running count of total drafted players
-- Provides position-specific views (can filter to see only quarterbacks, only running backs, etc.)
-- Modern, accessible UI using Shadcn UI components with Tailwind CSS
-- Toast notifications using Sonner for user feedback
+#### Authentication & User Management
+- Supabase authentication with email/password sign-in
+- User dashboard for creating and managing multiple drafts
+- Persistent user sessions with automatic redirects
+
+#### Draft Management
+- Create new drafts with custom names
+- Unique admin tokens for secure draft control
+- Separate admin and viewer URLs for role-based access
+- Real-time synchronization across all connected users
+
+#### Player Tracking
+- Comprehensive player database with NFL positions (QB, RB, WR, TE, DEF, K)
+- Default rankings with support for custom user rankings (planned)
+- Touch-optimized mobile interface with long-press drafting
+- Haptic feedback for mobile interactions
+
+#### Live Draft Board
+- Three view modes: Available Players, Drafted Players, Statistics
+- Position-based filtering (QB, RB, WR, TE, DEF, K, ALL)
+- Real-time draft updates with Supabase subscriptions
+- Polling fallback when real-time connection fails
+- Mobile-first responsive design
+
+#### Statistics & Analytics
+- Live position counts and draft progress tracking
+- Pick number tracking for drafted players
+- Visual statistics dashboard
+
+#### Mobile Experience
+- Bottom tab navigation optimized for mobile use
+- Touch gestures for drafting players
+- Share functionality for admin/viewer links
+- Progressive web app capabilities
 
 ## How It Works
 
-- Base rankings: Players start with default rankings stored in the database
-- Personal customization: Each user can drag-and-drop or manually edit rankings to create their personalized draft board
-- Local persistence: Ranking changes are saved in the user's browser and reload automatically
-- Admin controls: Only the admin user can click "DRAFT" next to player names or undo drafts
-- Viewer mode: Regular users see the same live board but cannot make changes to the draft state - they only view the current draft state with their personal rankings
-- When the admin drafts a player, it gets crossed out for everyone in real-time (but each user sees it in their personal ranking order)
-- The admin can undo mistakes by clicking "UNDO"
-- The app keeps count of how many QBs, RBs, etc. have been drafted and updates for all users
-- All users see the same synchronized draft state but with their own customized player order
-- Sonner toast notifications provide feedback on actions (successful drafts, errors, etc.)
+### Authentication Flow
+- Users sign up/sign in through landing page
+- Authenticated users access dashboard
+- Dashboard allows creating new drafts or joining existing ones
+
+### Draft Creation & Access
+- Admin creates draft and receives unique admin URL with token
+- Admin shares viewer URL (without token) with participants
+- Admin token validates draft management permissions
+
+### Real-time Synchronization
+- Supabase real-time subscriptions for instant updates
+- Automatic polling fallback ensures reliability
+- All users see draft changes immediately
+
+### Mobile Interaction
+- Long-press (500ms) to draft players on mobile
+- Confirmation dialogs prevent accidental drafts
+- Bottom navigation for easy one-handed use
+- Share menu for distributing draft links
 
 ## Use Case
 
-This would typically be used by a fantasy football league during their draft day. Before the draft, each participant can customize their player rankings based on their draft strategy and research. The league commissioner or designated person would be the admin with draft control powers. Everyone else would have the app open on their devices in view-only mode with their personalized rankings displayed. As each person makes their pick in the real draft, the admin updates the digital board by marking that player as drafted. All participants instantly see which players are taken in their own preferred ranking order and can track position scarcity in real-time.
+Fantasy football leagues use this during draft day. Users sign up for accounts and create drafts from their dashboard. The league commissioner acts as admin with the admin URL, while participants use the viewer URL. Everyone sees real-time updates as players are drafted, with mobile-optimized interface for easy use during draft events.
 
-## Admin vs Viewer Roles
+## User Roles
 
-### Admin
-- Can draft/undraft players via a special admin URL
-- Sees confirmation dialogs
-- Controls the master draft state
-- Can also customize personal rankings
+### Authenticated Users
+- Sign up/sign in through Supabase authentication
+- Access personal dashboard for draft management
+- Create new drafts with custom names
+- Future: Manage personal player rankings
 
-### Viewers
-- Access the draft board via a separate viewer URL
-- See live updates of drafted players
-- Position counts
-- Rankings in their personalized order
-- Cannot make changes to the draft state
+### Draft Admin
+- Controls draft through admin URL with unique token
+- Draft/undraft players via mobile-optimized interface
+- Long-press gestures with haptic feedback on mobile
+- Share admin/viewer links through built-in share menu
 
-## Data Management
+### Draft Viewers
+- Access drafts via viewer URL (no admin token)
+- Real-time view of draft progress
+- Position filtering and statistics
+- Mobile navigation through bottom tab bar
 
-- Player database: Central database stores all player information, teams, positions, and default rankings
-- Personal rankings: Individual ranking customizations stored in browser local storage
-- Draft state: Centrally managed and synchronized across all users in real-time
-- Admin access: Controlled through a unique admin token in the URL, separate from the viewer URL
+## Current Implementation
+
+### Authentication System
+- Supabase Auth UI integration on landing page
+- Persistent sessions with automatic dashboard redirects
+- User dashboard with draft creation functionality
+- Sign out capability
+
+### Draft Management
+- UUID-based draft creation with admin tokens
+- Real-time synchronization via Supabase subscriptions
+- Polling fallback for connection reliability
+- Three view modes: Available, Drafted, Statistics
+
+### Mobile-First Design
+- Bottom tab navigation for one-handed use
+- Touch-optimized player selection
+- Share functionality for draft links
+- Responsive grid layouts
+
+### Data Architecture
+- Supabase PostgreSQL database
+- Real-time subscriptions for live updates
+- TypeScript interfaces for type safety
+- Position-based filtering and statistics
 
 ## Technology Stack
-- Next.js with App Router
-- TypeScript for type safety
-- Tailwind CSS for styling
-- Shadcn UI for accessible, customizable components
-- Supabase for database and real-time subscriptions
-- @dnd-kit/core for drag-and-drop functionality
-- Sonner for toast notifications
+- **Framework:** Next.js 14 with App Router
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS with CSS variables for theming
+- **UI Components:** shadcn/ui with Radix UI primitives
+- **Backend:** Supabase (database, auth, real-time)
+- **Icons:** Lucide React
+- **Notifications:** Sonner toast library
+- **Theme:** next-themes for dark mode support
 
 ## Security Model
 
-- When creating a draft, the system generates two URLs:
-  1. Admin URL: Contains a unique admin token (e.g., `drafttracker.com/draft/ABC123/admin/XYZ789`)
-  2. Viewer URL: Public link without admin powers (e.g., `drafttracker.com/draft/ABC123`)
-- The admin keeps their special URL private and shares only the viewer URL with participants
-- No accounts or passwords required - admin status is determined solely by having the correct URL
-- Admin token is stored with the draft data in the database for verification
+### Authentication-Based Access
+- User accounts required for draft creation
+- Dashboard access protected by authentication
+- Automatic session management
 
-It's essentially a digital version of paper draft boards with real-time synchronization, role-based access control via URL, and personalized ranking customization that persists locally for each user.
+### URL-Based Draft Control
+- Admin URLs contain unique tokens for draft control
+- Viewer URLs provide read-only access
+- Server-side admin token validation
+- No additional permissions system needed
+
+The application serves as a modern, mobile-optimized replacement for traditional draft boards with real-time collaboration and persistent user accounts.

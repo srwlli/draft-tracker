@@ -84,7 +84,14 @@ function DraftLayoutContent({ children }: { children: React.ReactNode }) {
               className={`py-1.5 px-2 rounded-md text-sm font-medium transition-colors ${
                 activeView === 'drafted' ? 'bg-background shadow-sm' : 'hover:bg-background/50'
               }`}
-              onClick={() => setActiveView('drafted')}
+              onClick={() => {
+                setActiveView('drafted');
+                // Scroll to top when switching to drafted tab
+                const scrollableContent = document.querySelector('.overflow-auto');
+                if (scrollableContent) {
+                  scrollableContent.scrollTop = 0;
+                }
+              }}
             >
               Drafted
             </button>
