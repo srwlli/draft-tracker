@@ -3,12 +3,14 @@
 import { useTheme } from 'next-themes';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Monitor, Moon, Sun } from 'lucide-react';
+import { Monitor, Moon, Sun, ArrowLeft } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function SettingsPage() {
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
+  const router = useRouter();
 
   useEffect(() => {
     setMounted(true);
@@ -23,9 +25,19 @@ export default function SettingsPage() {
   ] as const;
 
   return (
-    <div className="min-h-screen bg-background p-4">
+    <div className="bg-background p-4 pb-20 min-h-screen">
       <div className="container mx-auto max-w-2xl">
-        <h1 className="text-3xl font-bold mb-8">Settings</h1>
+        <div className="flex items-center gap-4 mb-8">
+          <Button 
+            variant="outline" 
+            size="icon"
+            onClick={() => router.back()}
+            className="h-9 w-9"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+          <h1 className="text-3xl font-bold">Settings</h1>
+        </div>
         
         <Card>
           <CardHeader>

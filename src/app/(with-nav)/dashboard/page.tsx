@@ -9,7 +9,6 @@ import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import { v4 as uuidv4 } from 'uuid';
 import { Plus, BarChart3, Users, UserPlus } from 'lucide-react';
-import { DashboardTabBar } from '@/components/dashboard-tab-bar';
 
 export default function Dashboard() {
   const [draftName, setDraftName] = useState('');
@@ -43,9 +42,8 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <main className="flex-1 bg-gradient-to-br from-background to-muted p-4 pb-20">
-        <div className="container mx-auto max-w-6xl">
+    <div className="bg-gradient-to-br from-background to-muted p-4 pb-20 min-h-screen">
+      <div className="container mx-auto max-w-6xl">
           {/* Header */}
           <div className="flex items-center justify-between mb-8 pt-4">
             <div>
@@ -165,11 +163,8 @@ export default function Dashboard() {
               </CardFooter>
             </Card>
 
-          </div>
         </div>
-      </main>
-
-      <DashboardTabBar />
+      </div>
     </div>
   );
 }

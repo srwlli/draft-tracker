@@ -9,7 +9,7 @@ export default function ComingSoonPage() {
   const router = useRouter();
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
+    <div className="flex items-center justify-center p-4 min-h-screen">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle>Coming Soon</CardTitle>
