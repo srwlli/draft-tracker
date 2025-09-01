@@ -9,6 +9,7 @@ import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import { v4 as uuidv4 } from 'uuid';
 import { Plus, BarChart3, Users, UserPlus } from 'lucide-react';
+import { toast } from 'sonner';
 
 export default function Dashboard() {
   const [draftName, setDraftName] = useState('');
@@ -24,13 +25,18 @@ export default function Dashboard() {
   const createDraft = async () => {
     if (!user) return;
     
+    if (!draftName.trim()) {
+      toast.error('Please enter a draft name');
+      return;
+    }
+    
     setIsLoading(true);
     try {
       const adminToken = uuidv4();
       const { data, error } = await supabase
         .from('drafts')
         .insert([{ 
-          name: draftName || 'Fantasy Draft', 
+          name: draftName.trim(), 
           admin_token: adminToken,
           user_id: user.id
         }])
@@ -78,7 +84,7 @@ export default function Dashboard() {
               <CardContent>
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <label htmlFor="draftName" className="text-sm font-medium">Draft Name</label>
+                    <label htmlFor="draftName" className="text-sm font-medium">Draft Name *</label>
                     <Input
                       id="draftName"
                       placeholder="My Fantasy Draft 2025"

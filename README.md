@@ -10,6 +10,7 @@ A real-time fantasy football draft tracking application built for mobile-first u
 
 - **Real-time Updates**: Live synchronization across all connected users
 - **Mobile Optimized**: Touch-and-hold drafting with confirmation dialogs
+- **Secure Authentication**: Next.js middleware with server-side validation
 - **Dual Access Modes**: 
   - Admin view with drafting controls
   - Viewer-only mode for participants
@@ -70,6 +71,7 @@ npm run dev
 ```
 src/
 ├── app/                    # Next.js App Router pages
+│   ├── (auth)/            # Protected routes with authentication
 │   ├── draft/[draftId]/   # Draft viewer page
 │   └── draft/[draftId]/admin/[adminToken]/  # Admin controls
 ├── components/            # React components
@@ -84,6 +86,7 @@ src/
 │   └── utils.ts          # Helper functions
 └── types/                # TypeScript definitions
     └── index.ts          # Application types
+middleware.ts               # Route protection and auth validation
 ```
 
 ## 📱 Usage
