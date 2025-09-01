@@ -15,6 +15,7 @@ interface DraftLayoutContextType {
   setIsAdmin: (isAdmin: boolean) => void;
   headerVisible: boolean;
   contentRef: React.RefObject<HTMLDivElement | null>;
+  sentinelRef: React.RefObject<HTMLDivElement | null>;
 }
 
 const DraftLayoutContext = createContext<DraftLayoutContextType | undefined>(undefined);
@@ -27,6 +28,7 @@ export function DraftLayoutProvider({ children }: { children: ReactNode }) {
   const [isAdmin, setIsAdmin] = useState(false);
   const [headerVisible, setHeaderVisible] = useState(true);
   const contentRef = useRef<HTMLDivElement>(null);
+  const sentinelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setIsClient(true);
@@ -47,25 +49,10 @@ export function DraftLayoutProvider({ children }: { children: ReactNode }) {
       }
     );
 
-    // Create sentinel element at top of content
-    const sentinel = document.createElement('div');
-    sentinel.style.height = '1px';
-    sentinel.style.position = 'absolute';
-    sentinel.style.top = '0';
-    sentinel.style.width = '100%';
-    sentinel.setAttribute('data-header-sentinel', '');
-
-    const container = contentRef.current;
-    if (container) {
-      container.prepend(sentinel);
+    const sentinel = sentinelRef.current;
+    if (sentinel) {
       observer.observe(sentinel);
-      
-      return () => {
-        observer.disconnect();
-        if (sentinel.parentNode) {
-          sentinel.parentNode.removeChild(sentinel);
-        }
-      };
+      return () => observer.disconnect();
     }
   }, [isClient]);
 
@@ -85,7 +72,8 @@ export function DraftLayoutProvider({ children }: { children: ReactNode }) {
       isAdmin,
       setIsAdmin,
       headerVisible,
-      contentRef
+      contentRef,
+      sentinelRef
     }}>
       {children}
     </DraftLayoutContext.Provider>

@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 import { DraftLayoutProvider, useDraftLayout } from '@/contexts/DraftLayoutContext';
 
 function DraftLayoutContent({ children }: { children: React.ReactNode }) {
-  const { selectedPosition, setSelectedPosition, activeView, setActiveView, isClient, draft, isAdmin, headerVisible, contentRef } = useDraftLayout();
+  const { selectedPosition, setSelectedPosition, activeView, setActiveView, isClient, draft, isAdmin, headerVisible, contentRef, sentinelRef } = useDraftLayout();
 
   const copyToClipboard = async (text: string, successMessage: string) => {
     try {
@@ -150,6 +150,8 @@ function DraftLayoutContent({ children }: { children: React.ReactNode }) {
 
         {/* Scrollable Content Area */}
         <div ref={contentRef} className="flex-1 overflow-auto">
+          {/* Intersection Observer Sentinel */}
+          <div ref={sentinelRef} className="h-px" data-header-sentinel />
           {children}
           
           {/* Footer */}
