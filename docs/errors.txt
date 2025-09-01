@@ -1,282 +1,88 @@
- ✓ Starting...
- ✓ Ready in 1330ms
- ○ Compiling / ...
- ✓ Compiled / in 2.8s
- GET / 200 in 3290ms
- ✓ Compiled /favicon.ico in 192ms
- GET /favicon.ico?favicon.0b3bf435.ico 200 in 522ms
- GET / 200 in 162ms
- GET / 200 in 148ms
- GET / 200 in 166ms
- ✓ Compiled in 161ms
- ✓ Compiled in 209ms
- GET / 200 in 415ms
- ⚠ Cross origin request detected from 192.168.1.200 to /_next/* resource. In a future major version of Next.js, you will need to explicitly configure "allowedDevOrigins" in next.config to allow this.
-Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
- GET / 200 in 200ms
- GET / 200 in 156ms
- GET / 200 in 191ms
- GET / 200 in 200ms
- GET / 200 in 193ms
- GET / 200 in 136ms
- ✓ Compiled /dashboard in 306ms
- ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\willh\Desktop\draft-tracker\.next\static\development\_buildManifest.js.tmp.sa8cs69zuyd'] {
-  errno: -4058,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: 'C:\\Users\\willh\\Desktop\\draft-tracker\\.next\\static\\development\\_buildManifest.js.tmp.sa8cs69zuyd'    
-}
- ○ Compiling /_error ...
- ✓ Compiled /_error in 1056ms
- ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\willh\Desktop\draft-tracker\.next\static\development\_buildManifest.js.tmp.uj0032ywy5'] {
-  errno: -4058,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: 'C:\\Users\\willh\\Desktop\\draft-tracker\\.next\\static\\development\\_buildManifest.js.tmp.uj0032ywy5'     
-}
-[Error: ENOENT: no such file or directory, open 'C:\Users\willh\Desktop\draft-tracker\.next\static\development\_buildManifest.js.tmp.sa8cs69zuyd'] {
-  errno: -4058,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: 'C:\\Users\\willh\\Desktop\\draft-tracker\\.next\\static\\development\\_buildManifest.js.tmp.sa8cs69zuyd'    
-}
- ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\willh\Desktop\draft-tracker\.next\static\development\_buildManifest.js.tmp.0tiizskqpf49'] {
-  errno: -4058,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: 'C:\\Users\\willh\\Desktop\\draft-tracker\\.next\\static\\development\\_buildManifest.js.tmp.0tiizskqpf49'   
-}
-[Error: ENOENT: no such file or directory, open 'C:\Users\willh\Desktop\draft-tracker\.next\static\development\_buildManifest.js.tmp.coq13lc4sil'] {
-  errno: -4058,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: 'C:\\Users\\willh\\Desktop\\draft-tracker\\.next\\static\\development\\_buildManifest.js.tmp.coq13lc4sil'    
-}
- ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\willh\Desktop\draft-tracker\.next\static\development\_buildManifest.js.tmp.qgty57lfrgs'] {
-  errno: -4058,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: 'C:\\Users\\willh\\Desktop\\draft-tracker\\.next\\static\\development\\_buildManifest.js.tmp.qgty57lfrgs'    
-}
- ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\willh\Desktop\draft-tracker\.next\static\development\_buildManifest.js.tmp.0ix04vra28i9'] {
-  errno: -4058,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: 'C:\\Users\\willh\\Desktop\\draft-tracker\\.next\\static\\development\\_buildManifest.js.tmp.0ix04vra28i9'   
-}
-[Error: ENOENT: no such file or directory, open 'C:\Users\willh\Desktop\draft-tracker\.next\static\development\_buildManifest.js.tmp.qgty57lfrgs'] {
-  errno: -4058,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: 'C:\\Users\\willh\\Desktop\\draft-tracker\\.next\\static\\development\\_buildManifest.js.tmp.qgty57lfrgs'    
-}
- ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\willh\Desktop\draft-tracker\.next\static\development\_buildManifest.js.tmp.x0h59o11ec9'] {
-  errno: -4058,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: 'C:\\Users\\willh\\Desktop\\draft-tracker\\.next\\static\\development\\_buildManifest.js.tmp.x0h59o11ec9'    
-}
-[Error: ENOENT: no such file or directory, open 'C:\Users\willh\Desktop\draft-tracker\.next\static\development\_buildManifest.js.tmp.0vyinu347afo'] {
-  errno: -4058,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: 'C:\\Users\\willh\\Desktop\\draft-tracker\\.next\\static\\development\\_buildManifest.js.tmp.0vyinu347afo'   
-}
- ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\willh\Desktop\draft-tracker\.next\static\development\_buildManifest.js.tmp.acwldkodhw6'] {
-  errno: -4058,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: 'C:\\Users\\willh\\Desktop\\draft-tracker\\.next\\static\\development\\_buildManifest.js.tmp.acwldkodhw6'    
-}
- ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\willh\Desktop\draft-tracker\.next\static\development\_buildManifest.js.tmp.hbzyjoc2z4h'] {
-  errno: -4058,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: 'C:\\Users\\willh\\Desktop\\draft-tracker\\.next\\static\\development\\_buildManifest.js.tmp.hbzyjoc2z4h'    
-}
- ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\willh\Desktop\draft-tracker\.next\static\development\_buildManifest.js.tmp.mqsb5fb7zc'] {
-  errno: -4058,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: 'C:\\Users\\willh\\Desktop\\draft-tracker\\.next\\static\\development\\_buildManifest.js.tmp.mqsb5fb7zc'     
-}
-[Error: ENOENT: no such file or directory, open 'C:\Users\willh\Desktop\draft-tracker\.next\static\development\_buildManifest.js.tmp.hbzyjoc2z4h'] {
-  errno: -4058,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: 'C:\\Users\\willh\\Desktop\\draft-tracker\\.next\\static\\development\\_buildManifest.js.tmp.hbzyjoc2z4h'    
-}
- ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\willh\Desktop\draft-tracker\.next\static\development\_buildManifest.js.tmp.q85hioyt7rs'] {
-  errno: -4058,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: 'C:\\Users\\willh\\Desktop\\draft-tracker\\.next\\static\\development\\_buildManifest.js.tmp.q85hioyt7rs'    
-}
-[Error: ENOENT: no such file or directory, open 'C:\Users\willh\Desktop\draft-tracker\.next\static\development\_buildManifest.js.tmp.6fi8awjqa3w'] {
-  errno: -4058,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: 'C:\\Users\\willh\\Desktop\\draft-tracker\\.next\\static\\development\\_buildManifest.js.tmp.6fi8awjqa3w'    
-}
- ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\willh\Desktop\draft-tracker\.next\static\development\_buildManifest.js.tmp.j45bv7e1dmd'] {
-  errno: -4058,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: 'C:\\Users\\willh\\Desktop\\draft-tracker\\.next\\static\\development\\_buildManifest.js.tmp.j45bv7e1dmd'    
-}
- ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\willh\Desktop\draft-tracker\.next\static\development\_buildManifest.js.tmp.egh94xesayd'] {
-  errno: -4058,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: 'C:\\Users\\willh\\Desktop\\draft-tracker\\.next\\static\\development\\_buildManifest.js.tmp.egh94xesayd'    
-}
-[Error: ENOENT: no such file or directory, open 'C:\Users\willh\Desktop\draft-tracker\.next\static\development\_buildManifest.js.tmp.j45bv7e1dmd'] {
-  errno: -4058,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: 'C:\\Users\\willh\\Desktop\\draft-tracker\\.next\\static\\development\\_buildManifest.js.tmp.j45bv7e1dmd'    
-}
- ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\willh\Desktop\draft-tracker\.next\static\development\_buildManifest.js.tmp.6danafd7hb3'] {
-  errno: -4058,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: 'C:\\Users\\willh\\Desktop\\draft-tracker\\.next\\static\\development\\_buildManifest.js.tmp.6danafd7hb3'    
-}
-[Error: ENOENT: no such file or directory, open 'C:\Users\willh\Desktop\draft-tracker\.next\static\development\_buildManifest.js.tmp.x9q4n29pylj'] {
-  errno: -4058,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: 'C:\\Users\\willh\\Desktop\\draft-tracker\\.next\\static\\development\\_buildManifest.js.tmp.x9q4n29pylj'    
-}
- ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\willh\Desktop\draft-tracker\.next\static\development\_buildManifest.js.tmp.p4p9zzoant'] {
-  errno: -4058,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: 'C:\\Users\\willh\\Desktop\\draft-tracker\\.next\\static\\development\\_buildManifest.js.tmp.p4p9zzoant'     
-}
- ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\willh\Desktop\draft-tracker\.next\static\development\_buildManifest.js.tmp.ne0zdik7vx9'] {
-  errno: -4058,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: 'C:\\Users\\willh\\Desktop\\draft-tracker\\.next\\static\\development\\_buildManifest.js.tmp.ne0zdik7vx9'    
-}
- ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\willh\Desktop\draft-tracker\.next\static\development\_buildManifest.js.tmp.8mzo7g30u2l'] {
-  errno: -4058,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: 'C:\\Users\\willh\\Desktop\\draft-tracker\\.next\\static\\development\\_buildManifest.js.tmp.8mzo7g30u2l'    
-}
-[Error: ENOENT: no such file or directory, open 'C:\Users\willh\Desktop\draft-tracker\.next\static\development\_buildManifest.js.tmp.ne0zdik7vx9'] {
-  errno: -4058,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: 'C:\\Users\\willh\\Desktop\\draft-tracker\\.next\\static\\development\\_buildManifest.js.tmp.ne0zdik7vx9'    
-}
- ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\willh\Desktop\draft-tracker\.next\static\development\_buildManifest.js.tmp.iie2m8vexl'] {
-  errno: -4058,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: 'C:\\Users\\willh\\Desktop\\draft-tracker\\.next\\static\\development\\_buildManifest.js.tmp.iie2m8vexl'     
-}
-[Error: ENOENT: no such file or directory, open 'C:\Users\willh\Desktop\draft-tracker\.next\static\development\_buildManifest.js.tmp.a2e69kz66k'] {
-  errno: -4058,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: 'C:\\Users\\willh\\Desktop\\draft-tracker\\.next\\static\\development\\_buildManifest.js.tmp.a2e69kz66k'     
-}
- ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\willh\Desktop\draft-tracker\.next\static\development\_buildManifest.js.tmp.lz2dqim7jg'] {
-  errno: -4058,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: 'C:\\Users\\willh\\Desktop\\draft-tracker\\.next\\static\\development\\_buildManifest.js.tmp.lz2dqim7jg'     
-}
- ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\willh\Desktop\draft-tracker\.next\static\development\_buildManifest.js.tmp.9x4jtmebgis'] {
-  errno: -4058,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: 'C:\\Users\\willh\\Desktop\\draft-tracker\\.next\\static\\development\\_buildManifest.js.tmp.9x4jtmebgis'    
-}
-[Error: ENOENT: no such file or directory, open 'C:\Users\willh\Desktop\draft-tracker\.next\static\development\_buildManifest.js.tmp.lz2dqim7jg'] {
-  errno: -4058,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: 'C:\\Users\\willh\\Desktop\\draft-tracker\\.next\\static\\development\\_buildManifest.js.tmp.lz2dqim7jg'     
-}
- ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\willh\Desktop\draft-tracker\.next\static\development\_buildManifest.js.tmp.tykbzlzs6z'] {
-  errno: -4058,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: 'C:\\Users\\willh\\Desktop\\draft-tracker\\.next\\static\\development\\_buildManifest.js.tmp.tykbzlzs6z'     
-}
-[Error: ENOENT: no such file or directory, open 'C:\Users\willh\Desktop\draft-tracker\.next\static\development\_buildManifest.js.tmp.ci2kdnbi4d'] {
-  errno: -4058,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: 'C:\\Users\\willh\\Desktop\\draft-tracker\\.next\\static\\development\\_buildManifest.js.tmp.ci2kdnbi4d'     
-}
- ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\willh\Desktop\draft-tracker\.next\static\development\_buildManifest.js.tmp.f5vac9kgm79'] {
-  errno: -4058,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: 'C:\\Users\\willh\\Desktop\\draft-tracker\\.next\\static\\development\\_buildManifest.js.tmp.f5vac9kgm79'    
-}
- ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\willh\Desktop\draft-tracker\.next\static\development\_buildManifest.js.tmp.sa8o8jcdvn'] {
-  errno: -4058,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: 'C:\\Users\\willh\\Desktop\\draft-tracker\\.next\\static\\development\\_buildManifest.js.tmp.sa8o8jcdvn'     
-}
- ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\willh\Desktop\draft-tracker\.next\static\development\_buildManifest.js.tmp.etdb0s0h66b'] {
-  errno: -4058,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: 'C:\\Users\\willh\\Desktop\\draft-tracker\\.next\\static\\development\\_buildManifest.js.tmp.etdb0s0h66b'    
-}
-[Error: ENOENT: no such file or directory, open 'C:\Users\willh\Desktop\draft-tracker\.next\static\development\_buildManifest.js.tmp.sa8o8jcdvn'] {
-  errno: -4058,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: 'C:\\Users\\willh\\Desktop\\draft-tracker\\.next\\static\\development\\_buildManifest.js.tmp.sa8o8jcdvn'     
-}
- ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\willh\Desktop\draft-tracker\.next\static\development\_buildManifest.js.tmp.1gh8yypog8z'] {
-  errno: -4058,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: 'C:\\Users\\willh\\Desktop\\draft-tracker\\.next\\static\\development\\_buildManifest.js.tmp.1gh8yypog8z'    
-}
-[Error: ENOENT: no such file or directory, open 'C:\Users\willh\Desktop\draft-tracker\.next\static\development\_buildManifest.js.tmp.isy2uijul3a'] {
-  errno: -4058,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: 'C:\\Users\\willh\\Desktop\\draft-tracker\\.next\\static\\development\\_buildManifest.js.tmp.isy2uijul3a'    
-}
- ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\willh\Desktop\draft-tracker\.next\static\development\_buildManifest.js.tmp.4q3xai8eqty'] {
-  errno: -4058,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: 'C:\\Users\\willh\\Desktop\\draft-tracker\\.next\\static\\development\\_buildManifest.js.tmp.4q3xai8eqty'    
-}
- ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\willh\Desktop\draft-tracker\.next\static\development\_buildManifest.js.tmp.d1ikzdrdbqm'] {
-  errno: -4058,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: 'C:\\Users\\willh\\Desktop\\draft-tracker\\.next\\static\\development\\_buildManifest.js.tmp.d1ikzdrdbqm'    
-}
-[Error: ENOENT: no such file or directory, open 'C:\Users\willh\Desktop\draft-tracker\.next\static\development\_buildManifest.js.tmp.4q3xai8eqty'] {
-  errno: -4058,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: 'C:\\Users\\willh\\Desktop\\draft-tracker\\.next\\static\\development\\_buildManifest.js.tmp.4q3xai8eqty'    
-}
- ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\willh\Desktop\draft-tracker\.next\static\development\_buildManifest.js.tmp.9xbek9wo7x'] {
-  errno: -4058,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: 'C:\\Users\\willh\\Desktop\\draft-tracker\\.next\\static\\development\\_buildManifest.js.tmp.9xbek9wo7x'     
-}
-[Error: ENOENT: no such file or directory, open 'C:\Users\willh\Desktop\draft-tracker\.next\static\development\_buildManifest.js.tmp.g7uzub05pec'] {
-  errno: -4058,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: 'C:\\Users\\willh\\Desktop\\draft-tracker\\.next\\static\\development\\_buildManifest.js.tmp.g7uzub05pec'    
-}
+A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+See more info here: https://nextjs.org/docs/messages/react-hydration-error
+
+
+  ...
+    <HotReload assetPrefix="" globalError={[...]}>
+      <AppDevOverlayErrorBoundary globalError={[...]}>
+        <ReplaySsrOnlyErrors>
+        <DevRootHTTPAccessFallbackBoundary>
+          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
+            <HTTPAccessFallbackErrorBoundary pathname="/" notFound={<NotAllowedRootHTTPFallbackError>} ...>
+              <RedirectBoundary>
+                <RedirectErrorBoundary router={{...}}>
+                  <Head>
+                  <__next_root_layout_boundary__>
+                    <SegmentViewNode type="layout" pagePath="layout.tsx">
+                      <SegmentTrieNode>
+                      <link>
+                      <script>
+                      <script>
+                      <script>
+                      <script>
+                      <RootLayout>
+                        <html
+                          lang="en"
+-                         className="light"
+-                         style={{color-scheme:"light"}}
+                        >
+                  ...
+src\app\layout.tsx (29:5) @ RootLayout
+
+
+  27 | }>) {
+  28 |   return (
+> 29 |     <html lang="en">
+     |     ^
+  30 |       <head>
+  31 |         <meta name="format-detection" content="telephone=no, date=no, email=no, address=no" />
+  32 |       </head>
+Call Stack
+18
+
+Hide 16 ignore-listed frame(s)
+<unknown>
+https://react.dev/link/hydration-mismatch
+createConsoleError
+node_modules/next/src/next-devtools/shared/console-error.ts (16:35)
+handleConsoleError
+node_modules/next/src/next-devtools/userspace/app/errors/use-error-handler.ts (35:31)
+console.error
+node_modules/next/src/next-devtools/userspace/app/errors/intercept-console-error.ts (33:27)
+<unknown>
+node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js (4706:19)
+runWithFiberInDEV
+node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js (871:30)
+emitPendingHydrationWarnings
+node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js (4705:9)
+completeWork
+node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js (11540:18)
+runWithFiberInDEV
+node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js (874:13)
+completeUnitOfWork
+node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js (15862:19)
+performUnitOfWork
+node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js (15743:11)
+workLoopConcurrentByScheduler
+node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js (15720:9)
+renderRootConcurrent
+node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js (15695:15)
+performWorkOnRoot
+node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js (14989:13)
+performWorkOnRootViaSchedulerTask
+node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js (16815:7)
+MessagePort.performWorkUntilDeadline
+node_modules/next/dist/compiled/scheduler/cjs/scheduler.development.js (45:48)
+html
+<anonymous>
+RootLayout
+src\app\layout.tsx (29:5)

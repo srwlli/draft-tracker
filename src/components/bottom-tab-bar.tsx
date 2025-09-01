@@ -64,7 +64,7 @@ export function BottomTabBar({ isAdmin }: BottomTabBarProps) {
   };
 
   const handleSettings = () => {
-    // Future functionality
+    window.location.href = '/settings';
   };
 
   return (
@@ -129,7 +129,7 @@ export function BottomTabBar({ isAdmin }: BottomTabBarProps) {
             
             <button
               onClick={handleSettings}
-              className="flex flex-col items-center justify-center space-y-1 py-2 text-xs font-medium transition-colors hover:bg-secondary/50 opacity-50 cursor-not-allowed"
+              className="flex flex-col items-center justify-center space-y-1 py-2 text-xs font-medium transition-colors hover:bg-secondary/50"
             >
               <Settings size={20} />
               <span>Settings</span>
