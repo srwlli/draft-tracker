@@ -145,15 +145,17 @@ export default function LandingPage() {
                     variables: {
                       default: {
                         colors: {
-                          brand: '#333333',
-                          brandAccent: '#1a1a1a',
-                          brandButtonText: 'white',
-                          defaultButtonBackground: '#f3f4f6',
-                          defaultButtonBackgroundHover: '#e5e7eb',
-                          inputBackground: 'transparent',
-                          inputBorder: '#d1d5db',
-                          inputBorderHover: '#9ca3af',
-                          inputBorderFocus: '#333333',
+                          brand: 'hsl(var(--primary))',
+                          brandAccent: 'hsl(var(--primary))',
+                          brandButtonText: 'hsl(var(--primary-foreground))',
+                          defaultButtonBackground: 'hsl(var(--background))',
+                          defaultButtonBackgroundHover: 'hsl(var(--accent))',
+                          inputBackground: 'hsl(var(--background))',
+                          inputBorder: 'hsl(var(--border))',
+                          inputBorderHover: 'hsl(var(--border))',
+                          inputBorderFocus: 'hsl(var(--primary))',
+                          inputText: 'hsl(var(--foreground))',
+                          inputPlaceholder: 'hsl(var(--muted-foreground))',
                         },
                       },
                     },
@@ -172,11 +174,11 @@ export default function LandingPage() {
                     },
                     className: {
                       container: 'w-full',
-                      button: 'w-full !bg-gray-900 !text-white hover:!bg-gray-800',
-                      input: 'w-full',
-                      anchor: 'text-gray-600 hover:text-gray-800 underline',
-                      message: 'text-red-600 text-sm',
-                      divider: 'text-gray-400',
+                      button: 'w-full !bg-primary !text-primary-foreground hover:!bg-primary/90 !shadow-xs',
+                      input: 'w-full !text-foreground',
+                      anchor: 'text-muted-foreground hover:text-foreground underline',
+                      message: 'text-destructive text-sm',
+                      divider: 'text-muted-foreground',
                     },
                   }}
                   providers={[]}
