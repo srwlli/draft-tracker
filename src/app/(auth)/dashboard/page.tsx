@@ -84,16 +84,6 @@ export default function Dashboard() {
               loading={isLoading}
             />
 
-            {/* My Drafts Card */}
-            <ActionCard
-              icon={<Users className="w-5 h-5 text-primary" />}
-              title="My Drafts"
-              description="View and manage your drafts"
-              content={<EmptyState message="No drafts yet" />}
-              buttonText="View Drafts"
-              disabled
-            />
-
             {/* My Rankings Card */}
             <ActionCard
               icon={<BarChart3 className="w-5 h-5 text-primary" />}
@@ -104,17 +94,6 @@ export default function Dashboard() {
               onButtonClick={() => router.push('/ranks')}
             />
 
-            {/* Join Draft Card */}
-            <ActionCard
-              size="md"
-              className="lg:col-span-1"
-              icon={<UserPlus className="w-5 h-5 text-primary" />}
-              title="Join Draft"
-              description="Join an existing draft"
-              content={<EmptyState message="Enter draft link" />}
-              buttonText="Join Draft"
-              disabled
-            />
 
         </div>
       </div>
