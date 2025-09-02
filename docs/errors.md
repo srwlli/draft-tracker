@@ -1,18 +1,17 @@
-Console AuthApiError
+Build Error
 
 
-Invalid Refresh Token: Refresh Token Not Found
+Parsing ecmascript source code failed
 
-Call Stack
-5
+./src/app/(auth)/profile/page.tsx (127:75)
 
-handleError
-file:///C:/Users/willh/Desktop/draft-tracker/.next/static/chunks/node_modules_01739362._.js (8940:11)
-async _handleRequest
-file:///C:/Users/willh/Desktop/draft-tracker/.next/static/chunks/node_modules_01739362._.js (8990:9)
-async _request
-file:///C:/Users/willh/Desktop/draft-tracker/.next/static/chunks/node_modules_01739362._.js (8970:18)
-async
-file:///C:/Users/willh/Desktop/draft-tracker/.next/static/chunks/node_modules_01739362._.js (11369:24)
-async
-file:///C:/Users/willh/Desktop/draft-tracker/.next/static/chunks/node_modules_01739362._.js (8717:36)
+Parsing ecmascript source code failed
+  125 |               <div>
+  126 |                 <h3 className="text-sm font-medium mb-2">Position Priority</h3>
+> 127 |                 <p className="text-sm text-muted-foreground">RB > WR > QB > TE</p>
+      |                                                                           ^
+  128 |               </div>
+  129 |               <div>
+  130 |                 <h3 className="text-sm font-medium mb-2">Risk Tolerance</h3>
+
+Unexpected token. Did you mean `{'>'}` or `&gt;`?

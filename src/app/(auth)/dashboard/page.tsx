@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import { v4 as uuidv4 } from 'uuid';
-import { Plus, BarChart3, Users, UserPlus, User } from 'lucide-react';
+import { Plus, BarChart3, Users, UserPlus, User, Clock, Newspaper, Code, CreditCard } from 'lucide-react';
 import { toast } from 'sonner';
 import { ActionCard } from '@/components/action-card';
 import { DraftForm } from '@/components/draft-form';
@@ -112,6 +112,36 @@ export default function Dashboard() {
               content={<EmptyState message="Profile features coming soon" />}
               buttonText="View Profile"
               onButtonClick={() => router.push('/profile')}
+            />
+
+            {/* News Card */}
+            <ActionCard
+              icon={<Newspaper className="w-5 h-5 text-primary" />}
+              title="News"
+              description="Latest fantasy football news"
+              content={<EmptyState message="Breaking news and expert analysis" />}
+              buttonText="Read News"
+              onButtonClick={() => router.push('/news')}
+            />
+
+            {/* Technology Card */}
+            <ActionCard
+              icon={<Code className="w-5 h-5 text-primary" />}
+              title="Technology"
+              description="Our tech stack and architecture"
+              content={<EmptyState message="Modern web technologies powering Draft Tracker" />}
+              buttonText="View Tech Stack"
+              onButtonClick={() => router.push('/tech')}
+            />
+
+            {/* Subscriptions Card */}
+            <ActionCard
+              icon={<CreditCard className="w-5 h-5 text-primary" />}
+              title="Subscriptions"
+              description="Manage your premium features"
+              content={<EmptyState message="Upgrade for advanced analytics and league sync" />}
+              buttonText="View Plans"
+              onButtonClick={() => router.push('/subscriptions')}
             />
 
         </div>
