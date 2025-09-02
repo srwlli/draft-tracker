@@ -8,6 +8,7 @@
 - **Dashboard Navigation** - Added bottom navigation bar to dashboard matching draft page style
 
 ### Features
+- **Draft Name Validation** (`52ca3c7`) - Required draft name input with validation and user feedback using toast notifications
 - **Middleware Authentication** (`77a5508`) - Implemented Next.js middleware for server-side admin route authentication with proper security validation
 
 ### Refactoring  
@@ -48,10 +49,10 @@
 - **Patch:** Bug fixes and small improvements (clipboard, scroll behavior)
 
 ## Recent Focus Areas
-1. **Security Architecture** - Next.js middleware authentication with server-side validation
-2. **Navigation System** - Route groups implementation and unified navigation components  
-3. **Code Organization** - Modern Next.js patterns replacing route groups with middleware
-4. **Component Architecture** - BaseTabBar abstraction and consistent UI patterns
+1. **User Experience** - Input validation with proper feedback and error handling
+2. **Security Architecture** - Next.js middleware authentication with server-side validation
+3. **Navigation System** - Route groups implementation and unified navigation components  
+4. **Code Organization** - Modern Next.js patterns replacing route groups with middleware
 
 ---
 *Last updated: 2025-09-01*
