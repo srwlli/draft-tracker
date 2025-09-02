@@ -2,6 +2,9 @@
 
 ## [2025-09-02] - Component Architecture & UI Improvements
 
+### Features
+- **My Leagues Page** (`24c39e8`) - Added My Leagues page with ESPN/Yahoo/NFL integration placeholders and dashboard navigation
+
 ### Refactoring
 - **ActionCard Component** (`7beafd4`) - Created reusable ActionCard component with CSS Grid layout and size variants for consistent card patterns across application
 - **Dashboard Cleanup** (`b44b5a1`) - Removed My Drafts and Join Draft cards from dashboard for cleaner interface

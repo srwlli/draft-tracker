@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import { v4 as uuidv4 } from 'uuid';
-import { Plus, BarChart3, Users, UserPlus } from 'lucide-react';
+import { Plus, BarChart3, Users, UserPlus, User } from 'lucide-react';
 import { toast } from 'sonner';
 import { ActionCard } from '@/components/action-card';
 import { DraftForm } from '@/components/draft-form';
@@ -104,6 +104,15 @@ export default function Dashboard() {
               onButtonClick={() => router.push('/leagues')}
             />
 
+            {/* Profile Card */}
+            <ActionCard
+              icon={<User className="w-5 h-5 text-primary" />}
+              title="Profile"
+              description="Manage your account settings"
+              content={<EmptyState message="Profile features coming soon" />}
+              buttonText="View Profile"
+              onButtonClick={() => router.push('/profile')}
+            />
 
         </div>
       </div>

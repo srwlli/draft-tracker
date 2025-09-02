@@ -29,6 +29,7 @@ export function DashboardTabBar() {
     router.push('/soon');
   };
 
+
   const handleSettings = () => {
     router.push('/settings');
   };
@@ -53,7 +54,7 @@ export function DashboardTabBar() {
       onClick: handleLeagues
     },
     {
-      id: 'soon3',
+      id: 'soon',
       icon: <div className="w-5 h-5 rounded bg-muted" />,
       label: 'Soon',
       onClick: handleSoon

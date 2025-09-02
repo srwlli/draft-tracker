@@ -1,33 +1,27 @@
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { useRouter } from 'next/navigation';
-import { ArrowLeft } from 'lucide-react';
+import { AuthPageLayout } from '@/components/auth-page-layout';
 
 export default function ComingSoonPage() {
-  const router = useRouter();
 
   return (
-    <div className="flex items-center justify-center p-4 min-h-screen">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <CardTitle>Coming Soon</CardTitle>
+    <AuthPageLayout title="Coming Soon">
+      <Card>
+        <CardHeader>
+          <CardTitle>New Features in Development</CardTitle>
           <CardDescription>
-            New features are in development
+            Exciting updates are coming to Draft Tracker
           </CardDescription>
         </CardHeader>
-        <CardContent className="text-center">
-          <Button 
-            variant="outline" 
-            onClick={() => router.back()}
-            className="w-full"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Go Back
-          </Button>
+        <CardContent>
+          <div className="space-y-4">
+            <p className="text-sm text-muted-foreground">
+              We're working on new features to enhance your drafting experience. Check back soon for updates!
+            </p>
+          </div>
         </CardContent>
       </Card>
-    </div>
+    </AuthPageLayout>
   );
 }
