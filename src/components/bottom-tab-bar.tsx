@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Home, Share, Settings } from 'lucide-react';
+import { Home, Share, Settings, ListOrdered } from 'lucide-react';
 import { toast } from 'sonner';
 import { copyToClipboard } from '@/lib/clipboard';
 import { useAuth } from '@/contexts/AuthContext';
@@ -62,6 +62,10 @@ export function BottomTabBar({ isAdmin }: BottomTabBarProps) {
     }
   };
 
+  const handleRanks = () => {
+    router.push('/ranks');
+  };
+
   const handleSoon = () => {
     router.push('/soon');
   };
@@ -85,10 +89,10 @@ export function BottomTabBar({ isAdmin }: BottomTabBarProps) {
       isActive: activeTab === 'share'
     },
     {
-      id: 'soon1',
-      icon: <div className="w-5 h-5 rounded bg-muted" />,
-      label: 'Soon',
-      onClick: handleSoon
+      id: 'ranks',
+      icon: <ListOrdered size={20} />,
+      label: 'My Ranks',
+      onClick: handleRanks
     },
     {
       id: 'soon2',

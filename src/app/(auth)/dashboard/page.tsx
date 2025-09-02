@@ -123,7 +123,7 @@ export default function Dashboard() {
                 </div>
               </CardContent>
               <CardFooter>
-                <Button variant="outline" className="w-full" disabled>
+                <Button className="w-full" disabled>
                   View Drafts
                 </Button>
               </CardFooter>
@@ -142,12 +142,12 @@ export default function Dashboard() {
               </CardHeader>
               <CardContent>
                 <div className="text-center py-4 text-muted-foreground">
-                  <p className="text-sm">Coming soon</p>
+                  <p className="text-sm">Advanced ranking features in development</p>
                 </div>
               </CardContent>
               <CardFooter>
-                <Button variant="outline" className="w-full" disabled>
-                  Edit Rankings
+                <Button className="w-full" onClick={() => router.push('/ranks')}>
+                  View Rankings
                 </Button>
               </CardFooter>
             </Card>
@@ -169,7 +169,7 @@ export default function Dashboard() {
                 </div>
               </CardContent>
               <CardFooter>
-                <Button variant="outline" className="w-full" disabled>
+                <Button className="w-full" disabled>
                   Join Draft
                 </Button>
               </CardFooter>
