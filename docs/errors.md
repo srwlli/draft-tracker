@@ -1,104 +1,45 @@
- ✓ Starting...
- ✓ Ready in 1323ms
- ○ Compiling / ...
- ✓ Compiled / in 2.7s
- GET / 200 in 3177ms
- ✓ Compiled /dashboard in 319ms
- GET /dashboard 200 in 416ms
- GET /dashboard 200 in 108ms
- ✓ Compiled /_not-found/page in 244ms
- GET /draft/93d2b7a5-6b85-4840-85d0-daeff65cb942/(admin)/0709c120-2222-46d0-8aeb-34b6fde7e819 404 in 341ms
- GET /draft/93d2b7a5-6b85-4840-85d0-daeff65cb942/(admin)/0709c120-2222-46d0-8aeb-34b6fde7e819 404 in 116ms
- GET /draft/93d2b7a5-6b85-4840-85d0-daeff65cb942/(admin)/0709c120-2222-46d0-8aeb-34b6fde7e819 404 in 98ms
- GET /draft/93d2b7a5-6b85-4840-85d0-daeff65cb942/(admin)/0709c120-2222-46d0-8aeb-34b6fde7e819 404 in 93ms
- GET /draft/93d2b7a5-6b85-4840-85d0-daeff65cb942/(admin)/0709c120-2222-46d0-8aeb-34b6fde7e819 404 in 129ms
- ✓ Compiled in 13ms
- ⨯ ./middleware.ts:2:1
-Module not found: Can't resolve '@supabase/ssr'
-  1 | import { NextRequest, NextResponse } from 'next/server';
-> 2 | import { createServerClient } from '@supabase/ssr';
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  3 |
-  4 | export async function middleware(request: NextRequest) {
-  5 |   const { pathname } = request.nextUrl;
+Runtime ReferenceError
 
 
+Button is not defined
 
-https://nextjs.org/docs/messages/module-not-found
-
-
- ⨯ ./middleware.ts:2:1
-Module not found: Can't resolve '@supabase/ssr'
-  1 | import { NextRequest, NextResponse } from 'next/server';
-> 2 | import { createServerClient } from '@supabase/ssr';
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  3 |
-  4 | export async function middleware(request: NextRequest) {
-  5 |   const { pathname } = request.nextUrl;
+src/app/(auth)/dashboard/page.tsx (66:14) @ Dashboard
 
 
+  64 |               <p className="text-muted-foreground">Welcome back{user?.email ? `, ${user.email}` : ''}</p>
+  65 |             </div>
+> 66 |             <Button variant="outline" onClick={signOut}>
+     |              ^
+  67 |               Sign Out
+  68 |             </Button>
+  69 |           </div>
+Call Stack
+13
 
-https://nextjs.org/docs/messages/module-not-found
-
-
- ✓ Compiled middleware in 162ms
-PS C:\Users\willh\Desktop\draft-tracker> 
-                                         ^C
-PS C:\Users\willh\Desktop\draft-tracker> ^C
-PS C:\Users\willh\Desktop\draft-tracker> npm run dev
-
-> draft-tracker@0.1.0 dev
-> next dev --turbopack --hostname 0.0.0.0
-
-   ▲ Next.js 15.5.2 (Turbopack)
-   - Local:        http://localhost:3000
-   - Network:      http://0.0.0.0:3000
-   - Environments: .env.local
-
- ✓ Starting...
- ⨯ ./middleware.ts:2:1
-Module not found: Can't resolve '@supabase/ssr'
-  1 | import { NextRequest, NextResponse } from 'next/server';
-> 2 | import { createServerClient } from '@supabase/ssr';
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  3 |
-  4 | export async function middleware(request: NextRequest) {
-  5 |   const { pathname } = request.nextUrl;
-
-
-
-https://nextjs.org/docs/messages/module-not-found
-
-
- ⨯ ./middleware.ts:2:1
-Module not found: Can't resolve '@supabase/ssr'
-  1 | import { NextRequest, NextResponse } from 'next/server';
-> 2 | import { createServerClient } from '@supabase/ssr';
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  3 |
-  4 | export async function middleware(request: NextRequest) {
-  5 |   const { pathname } = request.nextUrl;
-
-
-
-https://nextjs.org/docs/messages/module-not-found
-
-
- ✓ Compiled middleware in 114ms
- ✓ Ready in 1446ms
-
- Build Error
-
-Module not found: Can't resolve '@supabase/ssr'
-
-./middleware.ts (2:1)
-
-Module not found: Can't resolve '@supabase/ssr'
-  1 | import { NextRequest, NextResponse } from 'next/server';
-> 2 | import { createServerClient } from '@supabase/ssr';
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  3 |
-  4 | export async function middleware(request: NextRequest) {
-  5 |   const { pathname } = request.nextUrl;
-
-https://nextjs.org/docs/messages/module-not-found
+Hide 12 ignore-listed frame(s)
+Dashboard
+src/app/(auth)/dashboard/page.tsx (66:14)
+Object.react_stack_bottom_frame
+node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js (23583:20)
+renderWithHooks
+node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js (6792:22)
+updateFunctionComponent
+node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js (9246:19)
+beginWork
+node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js (10857:18)
+runWithFiberInDEV
+node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js (871:30)
+performUnitOfWork
+node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js (15726:22)
+workLoopSync
+node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js (15546:41)
+renderRootSync
+node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js (15526:11)
+performWorkOnRoot
+node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js (15033:44)
+performWorkOnRootViaSchedulerTask
+node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js (16815:7)
+MessagePort.performWorkUntilDeadline
+node_modules/next/dist/compiled/scheduler/cjs/scheduler.development.js (45:48)
+ClientPageRoot
+node_modules/next/src/client/components/client-page.tsx (60:12)

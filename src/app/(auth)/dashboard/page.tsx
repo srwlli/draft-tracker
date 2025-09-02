@@ -1,15 +1,17 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import { v4 as uuidv4 } from 'uuid';
 import { Plus, BarChart3, Users, UserPlus } from 'lucide-react';
 import { toast } from 'sonner';
+import { ActionCard } from '@/components/action-card';
+import { DraftForm } from '@/components/draft-form';
+import { EmptyState } from '@/components/empty-state';
 
 export default function Dashboard() {
   const [draftName, setDraftName] = useState('');
@@ -68,112 +70,51 @@ export default function Dashboard() {
           </div>
 
           {/* Dashboard Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
             
             {/* Create Draft Card */}
-            <Card className="md:col-span-2">
-              <CardHeader>
-                <div className="flex items-center space-x-2">
-                  <Plus className="w-5 h-5 text-primary" />
-                  <CardTitle>Create New Draft</CardTitle>
-                </div>
-                <CardDescription>
-                  Start a new fantasy football draft
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <label htmlFor="draftName" className="text-sm font-medium">Draft Name *</label>
-                    <Input
-                      id="draftName"
-                      placeholder="My Fantasy Draft 2025"
-                      value={draftName}
-                      onChange={(e) => setDraftName(e.target.value)}
-                      suppressHydrationWarning
-                    />
-                  </div>
-                </div>
-              </CardContent>
-              <CardFooter>
-                <Button 
-                  className="w-full" 
-                  onClick={createDraft}
-                  disabled={isLoading}
-                >
-                  {isLoading ? 'Creating...' : 'Create Draft'}
-                </Button>
-              </CardFooter>
-            </Card>
+            <ActionCard
+              size="md"
+              icon={<Plus className="w-5 h-5 text-primary" />}
+              title="Create New Draft"
+              description="Start a new fantasy football draft"
+              content={<DraftForm draftName={draftName} onDraftNameChange={setDraftName} />}
+              buttonText="Create Draft"
+              onButtonClick={createDraft}
+              loading={isLoading}
+            />
 
             {/* My Drafts Card */}
-            <Card>
-              <CardHeader>
-                <div className="flex items-center space-x-2">
-                  <Users className="w-5 h-5 text-primary" />
-                  <CardTitle>My Drafts</CardTitle>
-                </div>
-                <CardDescription>
-                  View and manage your drafts
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-4 text-muted-foreground">
-                  <p className="text-sm">No drafts yet</p>
-                </div>
-              </CardContent>
-              <CardFooter>
-                <Button className="w-full" disabled>
-                  View Drafts
-                </Button>
-              </CardFooter>
-            </Card>
+            <ActionCard
+              icon={<Users className="w-5 h-5 text-primary" />}
+              title="My Drafts"
+              description="View and manage your drafts"
+              content={<EmptyState message="No drafts yet" />}
+              buttonText="View Drafts"
+              disabled
+            />
 
             {/* My Rankings Card */}
-            <Card>
-              <CardHeader>
-                <div className="flex items-center space-x-2">
-                  <BarChart3 className="w-5 h-5 text-primary" />
-                  <CardTitle>My Rankings</CardTitle>
-                </div>
-                <CardDescription>
-                  Customize player rankings
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-4 text-muted-foreground">
-                  <p className="text-sm">Advanced ranking features in development</p>
-                </div>
-              </CardContent>
-              <CardFooter>
-                <Button className="w-full" onClick={() => router.push('/ranks')}>
-                  View Rankings
-                </Button>
-              </CardFooter>
-            </Card>
+            <ActionCard
+              icon={<BarChart3 className="w-5 h-5 text-primary" />}
+              title="My Rankings"
+              description="Customize player rankings"
+              content={<EmptyState message="Advanced ranking features in development" />}
+              buttonText="View Rankings"
+              onButtonClick={() => router.push('/ranks')}
+            />
 
             {/* Join Draft Card */}
-            <Card className="md:col-span-2 lg:col-span-1">
-              <CardHeader>
-                <div className="flex items-center space-x-2">
-                  <UserPlus className="w-5 h-5 text-primary" />
-                  <CardTitle>Join Draft</CardTitle>
-                </div>
-                <CardDescription>
-                  Join an existing draft
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-4 text-muted-foreground">
-                  <p className="text-sm">Enter draft link</p>
-                </div>
-              </CardContent>
-              <CardFooter>
-                <Button className="w-full" disabled>
-                  Join Draft
-                </Button>
-              </CardFooter>
-            </Card>
+            <ActionCard
+              size="md"
+              className="lg:col-span-1"
+              icon={<UserPlus className="w-5 h-5 text-primary" />}
+              title="Join Draft"
+              description="Join an existing draft"
+              content={<EmptyState message="Enter draft link" />}
+              buttonText="Join Draft"
+              disabled
+            />
 
         </div>
       </div>
