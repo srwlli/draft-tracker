@@ -1,17 +1,69 @@
-Build Error
-
-
-Parsing ecmascript source code failed
-
-./src/app/(auth)/profile/page.tsx (127:75)
-
-Parsing ecmascript source code failed
-  125 |               <div>
-  126 |                 <h3 className="text-sm font-medium mb-2">Position Priority</h3>
-> 127 |                 <p className="text-sm text-muted-foreground">RB > WR > QB > TE</p>
-      |                                                                           ^
-  128 |               </div>
-  129 |               <div>
-  130 |                 <h3 className="text-sm font-medium mb-2">Risk Tolerance</h3>
-
-Unexpected token. Did you mean `{'>'}` or `&gt;`?
+PS C:\Users\willh\Desktop\draft-tracker> git add .
+warning: in the working copy of '.claude/settings.local.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of '.gitignore', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'README.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'components.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'docs/admin-tab-working-plan.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'docs/agent-results/coderef-component-scan-results.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'docs/agent-results/coderef-foundation-scan-results.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'docs/agent-results/coderef-testing-scan-results.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'docs/changelog.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'docs/testing-implementation-working-plan.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'eslint.config.mjs', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'middleware.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'next.config.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'package-lock.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'package.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'postcss.config.mjs', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/app/(auth)/admin/page.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/app/(auth)/dashboard/page.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/app/(auth)/layout.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/app/(auth)/leagues/page.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/app/(auth)/news/page.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/app/(auth)/profile/page.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/app/(auth)/ranks/page.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/app/(auth)/settings/page.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/app/(auth)/soon/page.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/app/(auth)/subscriptions/page.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/app/(auth)/tech/page.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/app/draft/[draftId]/admin/[adminToken]/page.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/app/draft/[draftId]/layout.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/app/draft/[draftId]/page.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/app/globals.css', LF will be replaced by CRLF the next time Git touches it    
+warning: in the working copy of 'src/app/layout.tsx', LF will be replaced by CRLF the next time Git touches it     
+warning: in the working copy of 'src/app/page.tsx', LF will be replaced by CRLF the next time Git touches it       
+warning: in the working copy of 'src/components/action-card.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/components/auth-page-layout.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/components/base-tab-bar.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/components/bottom-tab-bar.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/components/dashboard-tab-bar.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/components/draft-form.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/components/draft-stats.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/components/drafted-players-table.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/components/empty-state.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/components/player-table.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/components/text-card.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/components/ui/alert-dialog.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/components/ui/avatar.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/components/ui/badge.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/components/ui/button.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/components/ui/card.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/components/ui/checkbox.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/components/ui/dialog.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/components/ui/input.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/components/ui/select.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/components/ui/separator.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/components/ui/table.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/components/ui/tabs.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/contexts/AuthContext.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/contexts/DraftLayoutContext.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/hooks/usePollingFallback.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/hooks/useSupabaseRealtime.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/lib/clipboard.ts', LF will be replaced by CRLF the next time Git touches it   
+warning: in the working copy of 'src/lib/supabase.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/lib/utils.ts', LF will be replaced by CRLF the next time Git touches it       
+warning: in the working copy of 'src/types/index.ts', LF will be replaced by CRLF the next time Git touches it     
+warning: in the working copy of 'tsconfig.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'docs/agent-instructions/coderef-api-scan-and-refactor-working-plan.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'docs/agent-results/coderef-api-scan-results.md', LF will be replaced by CRLF the next time Git touches it
+PS C:\Users\willh\Desktop\draft-tracker> 
