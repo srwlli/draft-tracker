@@ -1,5 +1,14 @@
 # Changelog - Fantasy Draft Tracker
 
+## [2025-09-02] - Component Architecture & UI Improvements
+
+### Refactoring
+- **ActionCard Component** (`7beafd4`) - Created reusable ActionCard component with CSS Grid layout and size variants for consistent card patterns across application
+- **Dashboard Cleanup** (`b44b5a1`) - Removed My Drafts and Join Draft cards from dashboard for cleaner interface
+
+### UI Improvements
+- **Auth Form Styling** (`7beafd4`) - Fixed Supabase Auth UI styling to match design system with proper dark mode visibility and button colors
+
 ## [2025-09-01] - Navigation & Infrastructure Updates
 
 ### Features
@@ -49,10 +58,10 @@
 - **Patch:** Bug fixes and small improvements (clipboard, scroll behavior)
 
 ## Recent Focus Areas
-1. **User Experience** - Input validation with proper feedback and error handling
-2. **Security Architecture** - Next.js middleware authentication with server-side validation
-3. **Navigation System** - Route groups implementation and unified navigation components  
-4. **Code Organization** - Modern Next.js patterns replacing route groups with middleware
+1. **Component Architecture** - Reusable ActionCard system with CSS Grid for consistent UI patterns
+2. **Design System Integration** - Third-party component styling alignment with application theme
+3. **User Interface** - Dashboard cleanup and improved visual hierarchy
+4. **Code Organization** - DRY principle implementation with component extraction and reusability
 
 ---
-*Last updated: 2025-09-01*
+*Last updated: 2025-09-02*
