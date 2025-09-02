@@ -23,6 +23,7 @@ A real-time fantasy football draft tracking application built for mobile-first u
 
 - **Framework**: Next.js 15.5.2 with App Router
 - **Language**: TypeScript 5
+- **Runtime**: React 19.1.0
 - **Database**: Supabase with PostgreSQL
 - **Real-time**: Supabase subscriptions + polling fallback
 - **UI**: Shadcn UI with Tailwind CSS 4
@@ -49,8 +50,8 @@ npm install
 
 3. Set up environment variables:
 ```bash
-# Copy and configure environment variables
-cp .env.example .env.local
+# Create environment variables file
+cp .env.local.example .env.local  # if available, or create manually
 ```
 
 Add your Supabase credentials to `.env.local`:
@@ -72,18 +73,28 @@ npm run dev
 src/
 ├── app/                    # Next.js App Router pages
 │   ├── (auth)/            # Protected routes with authentication
+│   │   ├── dashboard/     # User dashboard
+│   │   ├── ranks/         # Player rankings page
+│   │   ├── settings/      # Settings page
+│   │   └── soon/          # Coming soon features
 │   ├── draft/[draftId]/   # Draft viewer page
 │   └── draft/[draftId]/admin/[adminToken]/  # Admin controls
 ├── components/            # React components
 │   ├── ui/               # Shadcn UI components
 │   ├── player-table.tsx  # Main draft interface
-│   └── draft-stats.tsx   # Statistics display
+│   ├── draft-stats.tsx   # Statistics display
+│   ├── draft-form.tsx    # Draft creation form
+│   └── various navigation and layout components
+├── contexts/             # React contexts
+│   ├── AuthContext.tsx   # Authentication context
+│   └── DraftLayoutContext.tsx  # Draft layout state
 ├── hooks/                # Custom React hooks
 │   ├── useSupabaseRealtime.ts  # Real-time subscriptions
 │   └── usePollingFallback.ts   # Polling backup
 ├── lib/                  # Utility libraries
 │   ├── supabase.ts       # Database client
-│   └── utils.ts          # Helper functions
+│   ├── utils.ts          # Helper functions
+│   └── clipboard.ts      # Clipboard utilities
 └── types/                # TypeScript definitions
     └── index.ts          # Application types
 middleware.ts               # Route protection and auth validation
@@ -111,13 +122,13 @@ middleware.ts               # Route protection and auth validation
 
 ```bash
 # Development
-npm run dev          # Start development server
-npm run build        # Build for production
+npm run dev          # Start development server with Turbopack
+npm run build        # Build for production with Turbopack
 npm run start        # Start production server
 npm run lint         # Run ESLint
 
 # Component management
-npx shadcn-ui@latest add [component]  # Add UI components
+npx shadcn@latest add [component]  # Add UI components
 ```
 
 ## 🌟 Planned Enhancements

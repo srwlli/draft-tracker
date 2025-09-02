@@ -94,6 +94,16 @@ export default function Dashboard() {
               onButtonClick={() => router.push('/ranks')}
             />
 
+            {/* My Leagues Card */}
+            <ActionCard
+              icon={<Users className="w-5 h-5 text-primary" />}
+              title="My Leagues"
+              description="Connect with ESPN, Yahoo, NFL"
+              content={<EmptyState message="Link with your favorite fantasy app" />}
+              buttonText="View Leagues"
+              onButtonClick={() => router.push('/leagues')}
+            />
+
 
         </div>
       </div>
