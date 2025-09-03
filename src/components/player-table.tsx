@@ -113,7 +113,7 @@ export function PlayerTable({
                 {player.name}
               </TableCell>
               <TableCell>
-                {player.team}
+                {player.teams?.abbreviation || 'N/A'}
               </TableCell>
               <TableCell>
                 <Badge variant="secondary">
@@ -148,7 +148,7 @@ export function PlayerTable({
           <AlertDialogHeader>
             <AlertDialogTitle>Draft Player?</AlertDialogTitle>
             <AlertDialogDescription>
-              Do you want to draft {confirmPlayer?.name} ({confirmPlayer?.position} - {confirmPlayer?.team})?
+              Do you want to draft {confirmPlayer?.name} ({confirmPlayer?.position} - {confirmPlayer?.teams?.abbreviation})?
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

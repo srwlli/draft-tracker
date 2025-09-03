@@ -68,7 +68,7 @@ export function DraftedPlayersTable({ players, isAdmin, onUndraft, selectedPosit
                   {player.name}
                 </TableCell>
                 <TableCell>
-                  {player.team}
+                  {player.teams?.abbreviation || 'N/A'}
                 </TableCell>
                 <TableCell>
                   <Badge variant="secondary">
@@ -96,7 +96,7 @@ export function DraftedPlayersTable({ players, isAdmin, onUndraft, selectedPosit
           <AlertDialogHeader>
             <AlertDialogTitle>Undo Draft Pick?</AlertDialogTitle>
             <AlertDialogDescription>
-              Do you want to undo the draft of {confirmUndraft?.name} ({confirmUndraft?.position} - {confirmUndraft?.team})? This will make them available to draft again.
+              Do you want to undo the draft of {confirmUndraft?.name} ({confirmUndraft?.position} - {confirmUndraft?.teams?.abbreviation})? This will make them available to draft again.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

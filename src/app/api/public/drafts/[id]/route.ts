@@ -10,10 +10,22 @@ export async function GET(
   const supabase = await createServerSupabaseAdminClient()
   
   try {
-    // Parallel queries for performance (from scan recommendation)
+    // Parallel queries for performance with team JOINs
     const [draftResult, playersResult, picksResult] = await Promise.all([
       supabase.from('drafts').select('*').eq('id', id).single(),
-      supabase.from('players').select('*').order('position').order('default_rank'),
+      supabase
+        .from('players')
+        .select(`
+          *,
+          teams!players_team_id_fkey (
+            id,
+            team_name,
+            city,
+            abbreviation
+          )
+        `)
+        .order('position')
+        .order('default_rank'),
       supabase.from('draft_picks').select('*').eq('draft_id', id)
     ])
     

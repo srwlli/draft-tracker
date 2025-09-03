@@ -5,9 +5,18 @@ export type Position = 'QB' | 'RB' | 'WR' | 'TE' | 'DEF' | 'K';
 export interface Player {
   id: number;
   name: string;
-  team: string;
+  team_id: number;
   position: Position;
   default_rank: number;
+}
+
+// Team interface for the new teams table
+export interface Team {
+  id: number;
+  team_name: string;
+  city: string;
+  abbreviation: string;
+  created_at: string;
 }
 
 // Draft session interface
@@ -38,6 +47,7 @@ export interface PersonalRanking {
 export interface PlayerWithStatus extends Player {
   is_drafted: boolean;
   custom_rank?: number;
+  teams?: Team; // Supabase JOIN result (note: plural 'teams')
 }
 
 // Database response types for Supabase queries
