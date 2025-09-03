@@ -21,13 +21,30 @@ interface PlayerTableProps {
   isAdmin: boolean;
   onDraft: (playerId: number) => void;
   onUndraft: (playerId: number) => void;
+  draftingPlayers?: Set<number>;
+  confirmPlayer?: any;
+  setConfirmPlayer?: (player: any) => void;
 }
 
-export function PlayerTable({ players, isAdmin, onDraft, onUndraft }: PlayerTableProps) {
+export function PlayerTable({ 
+  players, 
+  isAdmin, 
+  onDraft, 
+  onUndraft, 
+  draftingPlayers = new Set(),
+  confirmPlayer: externalConfirmPlayer,
+  setConfirmPlayer: setExternalConfirmPlayer
+}: PlayerTableProps) {
   // Filter to show only available players
   const availablePlayers = players.filter(p => !p.is_drafted);
   const [pressedPlayer, setPressedPlayer] = useState<number | null>(null);
-  const [confirmPlayer, setConfirmPlayer] = useState<PlayerWithStatus | null>(null);
+  
+  // Use external confirm player state if provided, otherwise use local state
+  const [localConfirmPlayer, setLocalConfirmPlayer] = useState<PlayerWithStatus | null>(null);
+  const confirmPlayer = externalConfirmPlayer || localConfirmPlayer;
+  const setConfirmPlayer = setExternalConfirmPlayer || setLocalConfirmPlayer;
+  
+  const isDrafting = confirmPlayer ? draftingPlayers.has(confirmPlayer.id) : false;
   const longPressTimer = useRef<NodeJS.Timeout | null>(null);
 
   const handleTouchStart = (player: PlayerWithStatus) => {
@@ -53,9 +70,10 @@ export function PlayerTable({ players, isAdmin, onDraft, onUndraft }: PlayerTabl
   };
 
   const handleConfirmDraft = () => {
-    if (confirmPlayer) {
+    if (confirmPlayer && !isDrafting) {
       onDraft(confirmPlayer.id);
-      setConfirmPlayer(null);
+      // Don't close dialog immediately - let the loading state show
+      // Dialog will close when API call completes
     }
   };
 
@@ -107,9 +125,10 @@ export function PlayerTable({ players, isAdmin, onDraft, onUndraft }: PlayerTabl
                   <Button
                     variant="default"
                     size="sm"
-                    onClick={() => onDraft(player.id)}
+                    onClick={() => setConfirmPlayer(player)}
+                    disabled={draftingPlayers.has(player.id)}
                   >
-                    Draft
+                    {draftingPlayers.has(player.id) ? 'Drafting...' : 'Draft'}
                   </Button>
                 </TableCell>
               )}
@@ -124,7 +143,7 @@ export function PlayerTable({ players, isAdmin, onDraft, onUndraft }: PlayerTabl
         </div>
       )}
 
-      <AlertDialog open={!!confirmPlayer} onOpenChange={() => setConfirmPlayer(null)}>
+      <AlertDialog open={!!confirmPlayer} onOpenChange={() => !isDrafting && setConfirmPlayer(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Draft Player?</AlertDialogTitle>
@@ -133,8 +152,13 @@ export function PlayerTable({ players, isAdmin, onDraft, onUndraft }: PlayerTabl
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleConfirmDraft}>Draft</AlertDialogAction>
+            <AlertDialogCancel disabled={isDrafting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleConfirmDraft}
+              disabled={isDrafting}
+            >
+              {isDrafting ? 'Drafting...' : 'Draft'}
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

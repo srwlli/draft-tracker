@@ -4,9 +4,8 @@ import { useState, useEffect } from 'react';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
-import { v4 as uuidv4 } from 'uuid';
+import { api } from '@/lib/api-client';
 import { Plus, BarChart3, Users, UserPlus, User, Clock, Newspaper, Code, CreditCard } from 'lucide-react';
 import { toast } from 'sonner';
 import { ActionCard } from '@/components/action-card';
@@ -25,7 +24,12 @@ export default function Dashboard() {
   }, []);
 
   const createDraft = async () => {
-    if (!user) return;
+    console.log('Creating draft - User state:', { user: user?.email, id: user?.id });
+    
+    if (!user) {
+      console.log('No user found, returning');
+      return;
+    }
     
     if (!draftName.trim()) {
       toast.error('Please enter a draft name');
@@ -34,22 +38,13 @@ export default function Dashboard() {
     
     setIsLoading(true);
     try {
-      const adminToken = uuidv4();
-      const { data, error } = await supabase
-        .from('drafts')
-        .insert([{ 
-          name: draftName.trim(), 
-          admin_token: adminToken,
-          user_id: user.id
-        }])
-        .select();
-
-      if (error) throw error;
-      
-      const draftId = data[0].id;
-      router.push(`/draft/${draftId}/admin/${adminToken}`);
+      console.log('Calling API to create draft...');
+      const draft = await api.drafts.create(draftName.trim());
+      console.log('Draft created successfully:', draft);
+      router.push(`/draft/${draft.id}/admin/${draft.admin_token}`);
     } catch (error) {
       console.error('Error creating draft:', error);
+      toast.error('Failed to create draft');
     } finally {
       setIsLoading(false);
     }

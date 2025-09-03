@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useParams } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
+import { api } from '@/lib/api-client';
 import { PlayerTable } from '@/components/player-table';
 import { DraftedPlayersTable } from '@/components/drafted-players-table';
 import { DraftStats } from '@/components/draft-stats';
@@ -24,32 +24,13 @@ export default function DraftViewerPage() {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        // Get draft info
-        const { data: draftData } = await supabase
-          .from('drafts')
-          .select('*')
-          .eq('id', draftId)
-          .single();
+        const { draft, players: playersData, picks: draftPicksData } = await api.public.getDraftData(draftId as string);
         
-        setDraft(draftData);
-
-        // Get players
-        const { data: playersData } = await supabase
-          .from('players')
-          .select('*')
-          .order('position')
-          .order('default_rank');
-        
-        // Get draft picks
-        const { data: draftPicksData } = await supabase
-          .from('draft_picks')
-          .select('*')
-          .eq('draft_id', draftId);
-        
-        setPlayers(playersData || []);
-        setDraftPicks(draftPicksData || []);
+        setDraft(draft);
+        setPlayers(playersData);
+        setDraftPicks(draftPicksData);
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('Error fetching draft data:', error);
       } finally {
         setIsLoading(false);
       }
@@ -58,41 +39,58 @@ export default function DraftViewerPage() {
     fetchData();
   }, [draftId, setDraft]);
 
+  // Memoize the real-time callback to prevent subscription cycling
+  const handleRealtimeUpdate = useCallback((payload: any) => {
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Draft picks update:', payload.eventType, payload);
+    }
+    
+    if (payload.eventType === 'INSERT' && payload.new) {
+      setDraftPicks((current) => [...current, payload.new as unknown as DraftPick]);
+    } else if (payload.eventType === 'DELETE' && payload.old) {
+      setDraftPicks((current) => 
+        current.filter((pick) => pick.id !== (payload.old as unknown as DraftPick).id)
+      );
+    } else if (payload.eventType === 'UPDATE' && payload.new) {
+      setDraftPicks((current) => 
+        current.map((pick) => 
+          pick.id === (payload.new as unknown as DraftPick).id ? payload.new as unknown as DraftPick : pick
+        )
+      );
+    }
+  }, []); // Empty dependency array since we only use state setters
+
+  // Handle connection state changes
+  const handleConnectionChange = useCallback((connected: boolean) => {
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Real-time connection state changed:', connected);
+    }
+    setRealtimeConnected(connected);
+  }, []);
+
   // Subscribe to real-time updates
   useSupabaseRealtime(
     'draft_picks',
-    (payload) => {
-      console.log('Draft picks update:', payload.eventType, payload);
-      setRealtimeConnected(true);
-      
-      if (payload.eventType === 'INSERT' && payload.new) {
-        setDraftPicks((current) => [...current, payload.new as unknown as DraftPick]);
-      } else if (payload.eventType === 'DELETE' && payload.old) {
-        setDraftPicks((current) => 
-          current.filter((pick) => pick.id !== (payload.old as unknown as DraftPick).id)
-        );
-      } else if (payload.eventType === 'UPDATE' && payload.new) {
-        setDraftPicks((current) => 
-          current.map((pick) => 
-            pick.id === (payload.new as unknown as DraftPick).id ? payload.new as unknown as DraftPick : pick
-          )
-        );
-      }
-    },
-    { column: 'draft_id', value: draftId as string }
+    handleRealtimeUpdate,
+    { column: 'draft_id', value: draftId as string },
+    handleConnectionChange
   );
+
+  // Memoize polling fallback callback to prevent cycling
+  const handlePollingUpdate = useCallback((data: Record<string, unknown>[]) => {
+    // Removed realtimeConnected check - the 'enabled' prop handles this
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Using polling fallback, updating draft picks');
+    }
+    setDraftPicks(data as unknown as DraftPick[]);
+  }, []); // Empty deps - stable callback, no restarts on state change
 
   // Polling fallback when realtime isn't working
   usePollingFallback({
     table: 'draft_picks',
     interval: 5000,
     filter: { column: 'draft_id', value: draftId as string },
-    onUpdate: (data) => {
-      if (!realtimeConnected) {
-        console.log('Using polling fallback, updating draft picks');
-        setDraftPicks(data as unknown as DraftPick[]);
-      }
-    },
+    onUpdate: handlePollingUpdate,
     enabled: !realtimeConnected
   });
 

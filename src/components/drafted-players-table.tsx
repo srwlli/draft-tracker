@@ -1,9 +1,20 @@
 'use client';
 
+import { useState } from 'react';
 import { PlayerWithStatus, Position } from '@/types';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 interface DraftedPlayersTableProps {
   players: PlayerWithStatus[];
@@ -13,10 +24,19 @@ interface DraftedPlayersTableProps {
 }
 
 export function DraftedPlayersTable({ players, isAdmin, onUndraft, selectedPosition = 'ALL' }: DraftedPlayersTableProps) {
+  const [confirmUndraft, setConfirmUndraft] = useState<PlayerWithStatus | null>(null);
+  
   // Filter drafted players by selected position
   const draftedPlayers = players
     .filter(p => p.is_drafted)
     .filter(p => selectedPosition === 'ALL' || p.position === selectedPosition);
+
+  const handleConfirmUndraft = () => {
+    if (confirmUndraft) {
+      onUndraft(confirmUndraft.id);
+      setConfirmUndraft(null);
+    }
+  };
 
   if (draftedPlayers.length === 0) {
     return (
@@ -60,7 +80,7 @@ export function DraftedPlayersTable({ players, isAdmin, onUndraft, selectedPosit
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => onUndraft(player.id)}
+                      onClick={() => setConfirmUndraft(player)}
                     >
                       Undo
                     </Button>
@@ -70,6 +90,21 @@ export function DraftedPlayersTable({ players, isAdmin, onUndraft, selectedPosit
             ))}
           </TableBody>
         </Table>
+
+      <AlertDialog open={!!confirmUndraft} onOpenChange={() => setConfirmUndraft(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Undo Draft Pick?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Do you want to undo the draft of {confirmUndraft?.name} ({confirmUndraft?.position} - {confirmUndraft?.team})? This will make them available to draft again.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmUndraft}>Undo Draft</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

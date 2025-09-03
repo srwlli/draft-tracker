@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
+import { api } from '@/lib/api-client';
 import { PlayerTable } from '@/components/player-table';
 import { DraftedPlayersTable } from '@/components/drafted-players-table';
 import { DraftStats } from '@/components/draft-stats';
@@ -21,130 +21,174 @@ export default function DraftAdminPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isValidAdmin, setIsValidAdmin] = useState(false);
   const [realtimeConnected, setRealtimeConnected] = useState(false);
+  const [draftingPlayers, setDraftingPlayers] = useState(new Set<number>());
+  const [confirmPlayer, setConfirmPlayer] = useState<Player | null>(null);
   const router = useRouter();
+
+  // Track recently created picks to prevent duplicates from real-time
+  const recentlyCreatedPicks = useRef(new Set<string>());
 
   // Load initial data and validate admin token
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        // Get draft info and validate admin token
-        const { data: draftData } = await supabase
-          .from('drafts')
-          .select('*')
-          .eq('id', draftId)
-          .single();
+        const { draft, players: playersData, picks: draftPicksData } = await api.public.getDraftData(draftId as string);
         
-        if (draftData?.admin_token !== adminToken) {
-          router.push(`/draft/${draftId}`);
-          return;
-        }
-        
-        setDraft(draftData);
-        setLayoutDraft(draftData);
+        // Admin token validation is now handled by middleware
+        // If we reach here, admin access is already validated
+        setDraft({ ...draft, admin_token: adminToken as string } as Draft);
+        setLayoutDraft({ ...draft, admin_token: adminToken as string } as Draft);
         setIsValidAdmin(true);
         setIsAdmin(true);
-
-        // Get players
-        const { data: playersData } = await supabase
-          .from('players')
-          .select('*')
-          .order('position')
-          .order('default_rank');
-        
-        // Get draft picks
-        const { data: draftPicksData } = await supabase
-          .from('draft_picks')
-          .select('*')
-          .eq('draft_id', draftId);
-        
-        setPlayers(playersData || []);
-        setDraftPicks(draftPicksData || []);
+        setPlayers(playersData);
+        setDraftPicks(draftPicksData);
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('Error fetching draft data:', error);
+        router.push(`/draft/${draftId}`);
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchData();
-  }, [draftId, adminToken, router, setDraft, setIsAdmin]);
+  }, [draftId, adminToken, router, setLayoutDraft, setIsAdmin]);
+
+  // Memoize the real-time callback to prevent subscription cycling
+  const handleRealtimeUpdate = useCallback((payload: any) => {
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Draft picks update (admin):', payload.eventType, payload);
+    }
+    
+    if (payload.eventType === 'INSERT' && payload.new) {
+      const newPick = payload.new as unknown as DraftPick;
+      
+      // Skip if this is a pick we just created (prevent duplicates)
+      if (recentlyCreatedPicks.current.has(newPick.id)) {
+        if (process.env.NODE_ENV === 'development') {
+          console.log('Ignoring real-time update for recently created pick:', newPick.id);
+        }
+        return;
+      }
+      
+      setDraftPicks((current) => [...current, newPick]);
+    } else if (payload.eventType === 'DELETE' && payload.old) {
+      const deletedPick = payload.old as unknown as DraftPick;
+      
+      // Always remove from recently created tracking when deleted
+      recentlyCreatedPicks.current.delete(deletedPick.id);
+      
+      // Only update state if we don't already have this deletion locally
+      setDraftPicks((current) => {
+        const exists = current.some(pick => pick.id === deletedPick.id);
+        if (exists) {
+          return current.filter((pick) => pick.id !== deletedPick.id);
+        }
+        return current;
+      });
+    } else if (payload.eventType === 'UPDATE' && payload.new) {
+      setDraftPicks((current) => 
+        current.map((pick) => 
+          pick.id === (payload.new as unknown as DraftPick).id ? payload.new as unknown as DraftPick : pick
+        )
+      );
+    }
+  }, []); // Empty dependency array since we only use state setters
+
+  // Handle connection state changes
+  const handleConnectionChange = useCallback((connected: boolean) => {
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Real-time connection state changed:', connected);
+    }
+    setRealtimeConnected(connected);
+  }, []);
 
   // Subscribe to real-time updates
   useSupabaseRealtime(
     'draft_picks',
-    (payload) => {
-      console.log('Draft picks update (admin):', payload.eventType, payload);
-      setRealtimeConnected(true);
-      
-      if (payload.eventType === 'INSERT' && payload.new) {
-        setDraftPicks((current) => [...current, payload.new as unknown as DraftPick]);
-      } else if (payload.eventType === 'DELETE' && payload.old) {
-        setDraftPicks((current) => 
-          current.filter((pick) => pick.id !== (payload.old as unknown as DraftPick).id)
-        );
-      } else if (payload.eventType === 'UPDATE' && payload.new) {
-        setDraftPicks((current) => 
-          current.map((pick) => 
-            pick.id === (payload.new as unknown as DraftPick).id ? payload.new as unknown as DraftPick : pick
-          )
-        );
-      }
-    },
-    { column: 'draft_id', value: draftId as string }
+    handleRealtimeUpdate,
+    { column: 'draft_id', value: draftId as string },
+    handleConnectionChange
   );
+
+  // Memoize polling fallback callback to prevent cycling  
+  const handlePollingUpdate = useCallback((data: Record<string, unknown>[]) => {
+    // Removed realtimeConnected check - the 'enabled' prop handles this
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Using polling fallback (admin), updating draft picks');
+    }
+    setDraftPicks(data as unknown as DraftPick[]);
+  }, []); // Empty deps - stable callback, no restarts on state change
 
   // Polling fallback when realtime isn't working
   usePollingFallback({
     table: 'draft_picks',
     interval: 5000,
     filter: { column: 'draft_id', value: draftId as string },
-    onUpdate: (data) => {
-      if (!realtimeConnected) {
-        console.log('Using polling fallback (admin), updating draft picks');
-        setDraftPicks(data as unknown as DraftPick[]);
-      }
-    },
+    onUpdate: handlePollingUpdate,
     enabled: !realtimeConnected
   });
 
   // Handle drafting a player
   const handleDraftPlayer = async (playerId: number) => {
+    // Prevent double-clicks by checking if already drafting this player
+    if (draftingPlayers.has(playerId)) {
+      return;
+    }
+    
+    // Mark player as being drafted
+    setDraftingPlayers(current => new Set([...current, playerId]));
+    
     try {
-      const pickNumber = draftPicks.length + 1;
+      const newPick = await api.admin.draftPlayer(draftId as string, playerId, adminToken as string);
       
-      const { error } = await supabase
-        .from('draft_picks')
-        .insert([{
-          draft_id: draftId,
-          player_id: playerId,
-          pick_number: pickNumber
-        }]);
+      // Track this pick to prevent duplicate from real-time
+      recentlyCreatedPicks.current.add(newPick.id);
       
-      if (error) throw error;
+      // Clean up tracking after 5 seconds (sufficient time for real-time propagation)
+      setTimeout(() => {
+        recentlyCreatedPicks.current.delete(newPick.id);
+      }, 5000);
       
+      // Immediately update local state for instant admin feedback
+      setDraftPicks(current => [...current, newPick]);
+      setConfirmPlayer(null); // Close dialog on success
       toast.success('Player drafted successfully');
     } catch (error) {
       console.error('Error drafting player:', error);
-      toast.error('Failed to draft player');
+      toast.error(error instanceof Error ? error.message : 'Failed to draft player');
+    } finally {
+      // Clear loading state
+      setDraftingPlayers(current => {
+        const newSet = new Set(current);
+        newSet.delete(playerId);
+        return newSet;
+      });
     }
   };
 
   // Handle undrafting a player
   const handleUndraftPlayer = async (playerId: number) => {
     try {
-      const { error } = await supabase
-        .from('draft_picks')
-        .delete()
-        .eq('draft_id', draftId)
-        .eq('player_id', playerId);
+      // Find the pick ID for this player
+      const pick = draftPicks.find(pick => pick.player_id === playerId);
+      if (!pick) {
+        toast.error('Draft pick not found');
+        return;
+      }
       
-      if (error) throw error;
+      await api.admin.undraftPlayer(draftId as string, pick.id, adminToken as string);
+      
+      // Immediately update local state for instant feedback
+      setDraftPicks(current => current.filter(p => p.id !== pick.id));
+      
+      // Clear from recently created tracking to allow re-drafting
+      recentlyCreatedPicks.current.delete(pick.id);
       
       toast.success('Draft pick removed');
     } catch (error) {
       console.error('Error undrafting player:', error);
-      toast.error('Failed to remove draft pick');
+      toast.error(error instanceof Error ? error.message : 'Failed to remove draft pick');
     }
   };
 
@@ -203,6 +247,9 @@ export default function DraftAdminPage() {
           isAdmin={true}
           onDraft={handleDraftPlayer}
           onUndraft={handleUndraftPlayer}
+          draftingPlayers={draftingPlayers}
+          confirmPlayer={confirmPlayer}
+          setConfirmPlayer={setConfirmPlayer}
         />
       )}
       

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { supabase } from '@/lib/supabase';
 
 interface PollingConfig {
@@ -16,23 +16,30 @@ export function usePollingFallback({
   onUpdate,
   enabled = true
 }: PollingConfig) {
+  // Stabilize the filter object to prevent unnecessary effect re-runs
+  const stableFilter = useMemo(() => filter, [filter?.column, filter?.value]);
+
   useEffect(() => {
     if (!enabled) return;
 
-    console.log(`Starting polling fallback for ${table} every ${interval}ms`);
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`Starting polling fallback for ${table} every ${interval}ms`);
+    }
     
     const pollData = async () => {
       try {
         let query = supabase.from(table).select('*');
         
-        if (filter) {
-          query = query.eq(filter.column, filter.value);
+        if (stableFilter) {
+          query = query.eq(stableFilter.column, stableFilter.value);
         }
         
         const { data, error } = await query;
         
         if (error) {
-          console.error('Polling error:', error);
+          if (process.env.NODE_ENV === 'development') {
+            console.error('Polling error:', error);
+          }
           return;
         }
         
@@ -40,7 +47,9 @@ export function usePollingFallback({
           onUpdate(data);
         }
       } catch (error) {
-        console.error('Polling fetch error:', error);
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Polling fetch error:', error);
+        }
       }
     };
 
@@ -49,8 +58,10 @@ export function usePollingFallback({
     const intervalId = setInterval(pollData, interval);
 
     return () => {
-      console.log(`Stopping polling fallback for ${table}`);
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`Stopping polling fallback for ${table}`);
+      }
       clearInterval(intervalId);
     };
-  }, [table, interval, filter, onUpdate, enabled]);
+  }, [table, interval, stableFilter, onUpdate, enabled]);
 }
