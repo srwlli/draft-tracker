@@ -8,25 +8,27 @@ A real-time fantasy football draft tracking application built for mobile-first u
 
 ## ✨ Features
 
-- **Real-time Updates**: Live synchronization across all connected users
-- **Mobile Optimized**: Touch-and-hold drafting with confirmation dialogs
+- **Real-time Updates**: Live synchronization across all connected users with polling fallback
+- **Mobile Optimized**: Touch-and-hold drafting with confirmation dialogs and loading states
 - **Secure Authentication**: Next.js middleware with server-side validation
 - **Dual Access Modes**: 
-  - Admin view with drafting controls
+  - Admin view with drafting controls and undo functionality
   - Viewer-only mode for participants
 - **Position Filtering**: Filter players by QB, RB, WR, TE, DEF, K
 - **Draft Statistics**: Live stats grid showing picks by position
 - **Professional Branding**: BBFL-themed interface
 - **No Login Required**: URL-based access with secure admin tokens
+- **Performance Optimized**: Race condition prevention and instant UI feedback
 
 ## 🛠️ Technology Stack
 
 - **Framework**: Next.js 15.5.2 with App Router
 - **Language**: TypeScript 5
-- **Runtime**: React 19.1.0
+- **Runtime**: React 19.1.0  
 - **Database**: Supabase with PostgreSQL
 - **Real-time**: Supabase subscriptions + polling fallback
 - **UI**: Shadcn UI with Tailwind CSS 4
+- **State Management**: React Context with optimized real-time sync
 - **Deployment**: Vercel
 
 ## 🚀 Quick Start
@@ -109,7 +111,9 @@ middleware.ts               # Route protection and auth validation
 
 ### Admin Functions
 - Touch and hold players to draft (mobile)
-- Click draft button (desktop)
+- Click draft button with confirmation dialog (desktop)
+- Undo draft picks with confirmation
+- Loading states prevent double-clicks
 - Copy shareable links
 - View real-time statistics
 
