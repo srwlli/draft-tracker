@@ -1,4 +1,4 @@
-import { Draft, DraftPick, Player } from '@/types';
+import { Draft, DraftPick, Player, UserRanking } from '@/types';
 
 // Extended types for API responses
 interface PlayerWithStatus extends Player {
@@ -32,10 +32,10 @@ class DraftTrackerAPI {
     const data = await response.json()
     
     if (!response.ok) {
-      throw new Error(data.error?.message || 'API request failed')
+      throw new Error(data.error || data.message || 'API request failed')
     }
     
-    return data.data
+    return data
   }
   
   // Public endpoints
@@ -58,6 +58,26 @@ class DraftTrackerAPI {
     delete: (draftId: string) =>
       this.request<{deleted: boolean}>(`/api/drafts/${draftId}`, {
         method: 'DELETE',
+      }),
+  }
+  
+  // User rankings endpoints
+  rankings = {
+    get: (position?: string) => {
+      const url = position ? `/api/user-rankings?position=${position}` : '/api/user-rankings';
+      return this.request<UserRanking[]>(url);
+    },
+    
+    save: (player_id: number, custom_rank: number, position: string) =>
+      this.request<UserRanking>('/api/user-rankings', {
+        method: 'POST',
+        body: JSON.stringify({ player_id, custom_rank, position }),
+      }),
+    
+    saveMultiple: (rankings: Array<{player_id: number, custom_rank: number, position: string}>) =>
+      this.request<UserRanking[]>('/api/user-rankings', {
+        method: 'PUT',
+        body: JSON.stringify({ rankings }),
       }),
   }
   

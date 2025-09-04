@@ -43,6 +43,17 @@ export interface PersonalRanking {
   custom_rank: number;
 }
 
+// Database structure for user-specific player rankings
+export interface UserRanking {
+  id: string;
+  user_id: string;
+  player_id: number;
+  custom_rank: number;
+  position: Position;
+  created_at: string;
+  updated_at: string;
+}
+
 // Extended player interface for UI display
 export interface PlayerWithStatus extends Player {
   is_drafted: boolean;

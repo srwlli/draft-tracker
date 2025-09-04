@@ -1,222 +1,353 @@
 'use client';
 
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { AuthPageLayout } from '@/components/auth-page-layout';
-import { TextCard } from '@/components/text-card';
 import { Button } from '@/components/ui/button';
-import { BarChart3, TrendingUp, Users, Crown, Target, Calendar, RefreshCw, Download } from 'lucide-react';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { GripVertical, Wifi, WifiOff } from 'lucide-react';
+import { PlayerWithStatus, Position, UserRanking } from '@/types';
+import { supabase } from '@/lib/supabase';
+import { api } from '@/lib/api-client';
+import { useSupabaseRealtime } from '@/hooks/useSupabaseRealtime';
+
+interface SortableRowProps {
+  player: PlayerWithStatus;
+  rank: number;
+}
+
+function SortableRow({ player, rank }: SortableRowProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: player.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <TableRow 
+      ref={setNodeRef} 
+      style={{
+        ...style,
+        touchAction: 'none',
+        userSelect: 'none',
+        WebkitUserSelect: 'none',
+        WebkitTouchCallout: 'none',
+      }}
+      className={`${isDragging ? 'bg-muted/50' : 'hover:bg-muted/30'}`}
+      {...attributes}
+      {...listeners}
+    >
+      <TableCell className="font-medium">{rank}</TableCell>
+      <TableCell>
+        <div className="flex items-center gap-2">
+          <GripVertical className="h-4 w-4 text-muted-foreground" />
+          <span className="select-none">{player.name}</span>
+        </div>
+      </TableCell>
+      <TableCell>
+        <span className="select-none">{player.teams?.abbreviation || 'N/A'}</span>
+      </TableCell>
+      <TableCell>
+        <Badge variant="secondary">{player.position}</Badge>
+      </TableCell>
+    </TableRow>
+  );
+}
 
 export default function MyRanksPage() {
+  const [selectedPosition, setSelectedPosition] = useState<Position>('QB');
+  const [players, setPlayers] = useState<PlayerWithStatus[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [user, setUser] = useState<any>(null);
+  const [optimisticRankings, setOptimisticRankings] = useState<Map<number, number>>(new Map());
+
+  // Get current user
+  useEffect(() => {
+    const getCurrentUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+    };
+    getCurrentUser();
+  }, []);
+
+  // Use direct real-time pattern like live draft
+  const [userRankings, setUserRankings] = useState<UserRanking[]>([]);
+  const [isConnected, setIsConnected] = useState(false);
+
+  // Fetch rankings when position changes
+  const fetchRankings = useCallback(async () => {
+    if (!user?.id) return;
+    try {
+      const data = await api.rankings.get(selectedPosition !== 'ALL' ? selectedPosition : undefined);
+      setUserRankings(data || []);
+    } catch (error) {
+      console.error('Error fetching rankings:', error);
+    }
+  }, [user?.id, selectedPosition]);
+
+  useEffect(() => {
+    fetchRankings();
+  }, [fetchRankings]);
+
+  // Real-time subscription using same pattern as live draft
+  const handleRealtimeUpdate = useCallback((payload: any) => {
+    console.log('📡 Rankings real-time update:', payload.eventType, payload);
+    
+    if (payload.eventType === 'INSERT' && payload.new) {
+      setUserRankings((current) => [...current, payload.new as UserRanking]);
+    } else if (payload.eventType === 'DELETE' && payload.old) {
+      setUserRankings((current) => 
+        current.filter((ranking) => ranking.id !== payload.old.id)
+      );
+    } else if (payload.eventType === 'UPDATE' && payload.new) {
+      setUserRankings((current) => 
+        current.map((ranking) => 
+          ranking.id === payload.new.id ? payload.new as UserRanking : ranking
+        )
+      );
+    }
+  }, []);
+
+  const handleConnectionChange = useCallback((connected: boolean) => {
+    console.log('🔌 Real-time connection:', connected);
+    setIsConnected(connected);
+  }, []);
+
+  // Subscribe to real-time updates
+  useSupabaseRealtime(
+    'user_rankings',
+    handleRealtimeUpdate,
+    user?.id ? { column: 'user_id', value: user.id } : undefined,
+    handleConnectionChange
+  );
+
+  const fetchPlayers = async () => {
+    try {
+      console.log('Fetching players...');
+      
+      // Fetch players with their default ranks
+      const playersResponse = await supabase
+        .from('players')
+        .select(`
+          *,
+          teams!players_team_id_fkey (
+            id,
+            team_name,
+            city,
+            abbreviation
+          )
+        `)
+        .order('position')
+        .order('default_rank');
+
+      console.log('Players response:', playersResponse);
+
+      if (playersResponse.error) {
+        console.error('Players fetch error:', playersResponse.error);
+        throw playersResponse.error;
+      }
+
+      const playersWithStatus = playersResponse.data?.map(player => ({
+        ...player,
+        is_drafted: false,
+      })) || [];
+
+      setPlayers(playersWithStatus);
+      console.log('Players loaded:', playersWithStatus.length);
+    } catch (error) {
+      console.error('Error fetching players:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Industry standard: userRankings now includes defaults, minimal logic needed
+  const displayPlayers = useMemo(() => {
+    return players.map(player => {
+      const optimisticRank = optimisticRankings.get(player.id);
+      const userRanking = userRankings.find(r => r.player_id === player.id);
+      
+      return {
+        ...player,
+        custom_rank: optimisticRank ?? userRanking?.custom_rank ?? player.default_rank,
+      };
+    });
+  }, [players, userRankings, optimisticRankings]);
+
+  useEffect(() => {
+    fetchPlayers();
+  }, []);
+
+  // Industry standard: Clear optimistic when real-time data confirms changes
+  useEffect(() => {
+    if (optimisticRankings.size === 0) return;
+    
+    // Check if real-time data matches our optimistic updates
+    const hasMatchingData = Array.from(optimisticRankings.entries()).every(([playerId, optimisticRank]) => {
+      const realTimeRanking = userRankings.find(r => 
+        r.player_id === playerId && r.position === selectedPosition
+      );
+      return realTimeRanking && realTimeRanking.custom_rank === optimisticRank;
+    });
+    
+    if (hasMatchingData) {
+      console.log('✅ Real-time data confirmed optimistic updates, clearing optimistic state');
+      setOptimisticRankings(new Map());
+    }
+  }, [userRankings, optimisticRankings, selectedPosition]);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        delay: 100, // 100ms hold before drag starts
+        tolerance: 5,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const filteredPlayers = displayPlayers
+    .filter(player => player.position === selectedPosition)
+    .sort((a, b) => {
+      const rankA = a.custom_rank || a.default_rank;
+      const rankB = b.custom_rank || b.default_rank;
+      return rankA - rankB;
+    });
+
+  const handleDragEnd = async (event: any) => {
+    const { active, over } = event;
+
+    if (!over || active.id === over.id) return;
+
+    const oldIndex = filteredPlayers.findIndex(player => player.id === active.id);
+    const newIndex = filteredPlayers.findIndex(player => player.id === over.id);
+
+    const reorderedPlayers = arrayMove(filteredPlayers, oldIndex, newIndex);
+    
+    // Industry standard: Set optimistic rankings immediately
+    const newOptimisticRankings = new Map(
+      reorderedPlayers.map((player, index) => [player.id, index + 1])
+    );
+    setOptimisticRankings(newOptimisticRankings);
+
+    // Save rankings to database
+    try {
+      setSaving(true);
+      const rankingsToSave = reorderedPlayers.map((player, index) => ({
+        player_id: player.id,
+        custom_rank: index + 1,
+        position: selectedPosition,
+      }));
+
+      await api.rankings.saveMultiple(rankingsToSave);
+      // Don't clear optimistic here - let real-time sync handle it
+    } catch (error) {
+      console.error('Error saving rankings:', error);
+      // Industry standard: Revert optimistic update on error
+      setOptimisticRankings(new Map());
+      // Refetch to get server state
+      fetchRankings();
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading || (players.length > 0 && userRankings.length === 0)) {
+    return (
+      <AuthPageLayout title="My Ranks">
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-muted-foreground">Loading rankings...</div>
+        </div>
+      </AuthPageLayout>
+    );
+  }
+
   return (
     <AuthPageLayout title="My Ranks">
       <div className="space-y-6">
-
-        {/* Top Players Rankings */}
-        <TextCard
-          title="Top Players Rankings"
-          description="Current aggregate rankings across all positions"
-          icon={<Crown className="h-5 w-5" />}
-        >
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <h3 className="text-sm font-medium mb-2">Overall #1</h3>
-                <p className="text-sm text-muted-foreground">Christian McCaffrey (RB)</p>
+        <div className="flex items-center justify-between">
+          <div className="flex flex-wrap gap-2">
+            {(['QB', 'RB', 'WR', 'TE'] as Position[]).map((position) => (
+              <Button
+                key={position}
+                variant={selectedPosition === position ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setSelectedPosition(position)}
+              >
+                {position}
+              </Button>
+            ))}
+          </div>
+          <div className="flex items-center gap-2">
+            {saving && (
+              <div className="text-sm text-muted-foreground">
+                Saving...
               </div>
-              <div>
-                <h3 className="text-sm font-medium mb-2">Top QB</h3>
-                <p className="text-sm text-muted-foreground">Josh Allen</p>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium mb-2">Top WR</h3>
-                <p className="text-sm text-muted-foreground">Tyreek Hill</p>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium mb-2">Top TE</h3>
-                <p className="text-sm text-muted-foreground">Travis Kelce</p>
-              </div>
-            </div>
-            <div className="pt-4 border-t">
-              <h3 className="text-sm font-medium mb-2">Position Breakdown</h3>
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Top 50 Players</span>
-                  <span>RB: 18 | WR: 20 | QB: 8 | TE: 4</span>
-                </div>
-              </div>
+            )}
+            <div className="flex items-center gap-1 text-sm text-muted-foreground">
+              {isConnected ? (
+                <>
+                  <Wifi className="h-4 w-4" />
+                  <span>Live</span>
+                </>
+              ) : (
+                <>
+                  <WifiOff className="h-4 w-4" />
+                  <span>Offline</span>
+                </>
+              )}
             </div>
           </div>
-        </TextCard>
+        </div>
 
-        {/* Weekly Trends */}
-        <TextCard
-          title="Weekly Trends"
-          description="Player movement and trending updates"
-          icon={<TrendingUp className="h-5 w-5" />}
-        >
-          <div className="space-y-4">
-            <div>
-              <h3 className="text-sm font-medium mb-2">Trending Up</h3>
-              <div className="space-y-2">
-                <p className="text-sm text-muted-foreground">📈 Tua Tagovailoa (QB) +5 spots</p>
-                <p className="text-sm text-muted-foreground">📈 Breece Hall (RB) +3 spots</p>
-                <p className="text-sm text-muted-foreground">📈 DeVonta Smith (WR) +7 spots</p>
-              </div>
-            </div>
-            <div>
-              <h3 className="text-sm font-medium mb-2">Trending Down</h3>
-              <div className="space-y-2">
-                <p className="text-sm text-muted-foreground">📉 Russell Wilson (QB) -4 spots</p>
-                <p className="text-sm text-muted-foreground">📉 Dalvin Cook (RB) -6 spots</p>
-                <p className="text-sm text-muted-foreground">📉 Mike Evans (WR) -2 spots</p>
-              </div>
-            </div>
-            <div className="pt-4 border-t">
-              <p className="text-xs text-muted-foreground">Last updated: September 1, 2025</p>
-            </div>
-          </div>
-        </TextCard>
-
-        {/* Position Rankings */}
-        <TextCard
-          title="Position Rankings"
-          description="Detailed rankings by position"
-          icon={<Target className="h-5 w-5" />}
-        >
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-              <div className="p-3 rounded-lg bg-muted/50">
-                <h3 className="text-lg font-semibold">QB</h3>
-                <p className="text-sm text-muted-foreground">32 Ranked</p>
-              </div>
-              <div className="p-3 rounded-lg bg-muted/50">
-                <h3 className="text-lg font-semibold">RB</h3>
-                <p className="text-sm text-muted-foreground">64 Ranked</p>
-              </div>
-              <div className="p-3 rounded-lg bg-muted/50">
-                <h3 className="text-lg font-semibold">WR</h3>
-                <p className="text-sm text-muted-foreground">80 Ranked</p>
-              </div>
-              <div className="p-3 rounded-lg bg-muted/50">
-                <h3 className="text-lg font-semibold">TE</h3>
-                <p className="text-sm text-muted-foreground">24 Ranked</p>
-              </div>
-            </div>
-            <div className="space-y-2">
-              <h3 className="text-sm font-medium">Quick Access</h3>
-              <div className="flex flex-wrap gap-2">
-                <Button variant="outline" size="sm">View QB Rankings</Button>
-                <Button variant="outline" size="sm">View RB Rankings</Button>
-                <Button variant="outline" size="sm">View WR Rankings</Button>
-                <Button variant="outline" size="sm">View TE Rankings</Button>
-              </div>
-            </div>
-          </div>
-        </TextCard>
-
-        {/* Ranking Analytics */}
-        <TextCard
-          title="Ranking Analytics"
-          description="Insights and performance metrics"
-          icon={<BarChart3 className="h-5 w-5" />}
-        >
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
-              <div>
-                <h3 className="text-2xl font-bold text-primary">89%</h3>
-                <p className="text-sm text-muted-foreground">Accuracy Rate</p>
-              </div>
-              <div>
-                <h3 className="text-2xl font-bold text-primary">156</h3>
-                <p className="text-sm text-muted-foreground">Players Tracked</p>
-              </div>
-              <div>
-                <h3 className="text-2xl font-bold text-primary">12</h3>
-                <p className="text-sm text-muted-foreground">Leagues Synced</p>
-              </div>
-            </div>
-            <div className="pt-4 border-t">
-              <h3 className="text-sm font-medium mb-2">Recent Activity</h3>
-              <div className="space-y-2">
-                <p className="text-sm text-muted-foreground">• Updated RB rankings based on training camp reports</p>
-                <p className="text-sm text-muted-foreground">• Imported ESPN consensus rankings</p>
-                <p className="text-sm text-muted-foreground">• Adjusted rookie WR projections</p>
-              </div>
-            </div>
-          </div>
-        </TextCard>
-
-        {/* Ranking Tools */}
-        <TextCard
-          title="Ranking Tools"
-          description="Manage and customize your rankings"
-          icon={<RefreshCw className="h-5 w-5" />}
-        >
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-sm font-medium">Import Rankings</h3>
-                  <p className="text-sm text-muted-foreground">From ESPN, Yahoo, or FantasyPros</p>
-                </div>
-                <Button variant="outline" size="sm">
-                  <Download className="w-4 h-4 mr-2" />
-                  Import
-                </Button>
-              </div>
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-sm font-medium">Export Rankings</h3>
-                  <p className="text-sm text-muted-foreground">Save as CSV or share with league</p>
-                </div>
-                <Button variant="outline" size="sm">Export</Button>
-              </div>
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-sm font-medium">Auto-Update</h3>
-                  <p className="text-sm text-muted-foreground">Sync with latest consensus</p>
-                </div>
-                <Button variant="outline" size="sm">Configure</Button>
-              </div>
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-sm font-medium">Custom Scoring</h3>
-                  <p className="text-sm text-muted-foreground">Adjust for league settings</p>
-                </div>
-                <Button variant="outline" size="sm">Setup</Button>
-              </div>
-            </div>
-          </div>
-        </TextCard>
-
-        {/* Update Schedule */}
-        <TextCard
-          title="Update Schedule"
-          description="When rankings are refreshed"
-          icon={<Calendar className="h-5 w-5" />}
-        >
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <h3 className="text-sm font-medium mb-2">Next Update</h3>
-                <p className="text-sm text-muted-foreground">Tuesday, September 3rd at 8:00 AM</p>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium mb-2">Update Frequency</h3>
-                <p className="text-sm text-muted-foreground">Twice weekly (Tue/Fri)</p>
-              </div>
-            </div>
-            <div>
-              <h3 className="text-sm font-medium mb-2">Update Sources</h3>
-              <div className="space-y-2">
-                <p className="text-sm text-muted-foreground">• Injury reports and news</p>
-                <p className="text-sm text-muted-foreground">• Expert consensus rankings</p>
-                <p className="text-sm text-muted-foreground">• Performance metrics</p>
-                <p className="text-sm text-muted-foreground">• Depth chart changes</p>
-              </div>
-            </div>
-          </div>
-        </TextCard>
-
+        <div className="rounded-md border">
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[100px]">Rank</TableHead>
+                  <TableHead>Player</TableHead>
+                  <TableHead>Team</TableHead>
+                  <TableHead>Position</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <SortableContext
+                  items={filteredPlayers.map(p => p.id)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  {filteredPlayers.map((player, index) => (
+                    <SortableRow 
+                      key={player.id} 
+                      player={player} 
+                      rank={index + 1}
+                    />
+                  ))}
+                </SortableContext>
+              </TableBody>
+            </Table>
+          </DndContext>
+        </div>
       </div>
     </AuthPageLayout>
   );
