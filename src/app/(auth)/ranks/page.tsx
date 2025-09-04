@@ -88,20 +88,20 @@ export default function MyRanksPage() {
   const [userRankings, setUserRankings] = useState<UserRanking[]>([]);
   const [isConnected, setIsConnected] = useState(false);
 
-  // Fetch rankings when position changes
-  const fetchRankings = useCallback(async () => {
-    if (!user?.id) return;
-    try {
-      const data = await api.rankings.get(selectedPosition !== 'ALL' ? selectedPosition : undefined);
-      setUserRankings(data || []);
-    } catch (error) {
-      console.error('Error fetching rankings:', error);
-    }
-  }, [user?.id, selectedPosition]);
-
+  // Fetch rankings when position or user changes
   useEffect(() => {
+    const fetchRankings = async () => {
+      if (!user?.id) return;
+      try {
+        const data = await api.rankings.get(selectedPosition !== 'ALL' ? selectedPosition : undefined);
+        setUserRankings(data || []);
+      } catch (error) {
+        console.error('Error fetching rankings:', error);
+      }
+    };
+    
     fetchRankings();
-  }, [fetchRankings]);
+  }, [user?.id, selectedPosition]);
 
   // Real-time subscription using same pattern as live draft
   const handleRealtimeUpdate = useCallback((payload: any) => {
@@ -262,7 +262,12 @@ export default function MyRanksPage() {
       // Industry standard: Revert optimistic update on error
       setOptimisticRankings(new Map());
       // Refetch to get server state
-      fetchRankings();
+      try {
+        const data = await api.rankings.get(selectedPosition !== 'ALL' ? selectedPosition : undefined);
+        setUserRankings(data || []);
+      } catch (refetchError) {
+        console.error('Error refetching rankings:', refetchError);
+      }
     } finally {
       setSaving(false);
     }

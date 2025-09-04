@@ -6,11 +6,14 @@ import { api } from '@/lib/api-client';
 import { PlayerTable } from '@/components/player-table';
 import { DraftedPlayersTable } from '@/components/drafted-players-table';
 import { DraftStats } from '@/components/draft-stats';
+import { ActionCard } from '@/components/action-card';
+import { Link, Shield } from 'lucide-react';
 import { toast } from 'sonner';
 import { Player, DraftPick, Draft } from '@/types';
 import { useSupabaseRealtime } from '@/hooks/useSupabaseRealtime';
 import { usePollingFallback } from '@/hooks/usePollingFallback';
 import { useDraftLayout } from '@/contexts/DraftLayoutContext';
+import { copyToClipboard } from '@/lib/clipboard';
 
 export default function DraftAdminPage() {
   const { draftId, adminToken } = useParams();
@@ -24,6 +27,27 @@ export default function DraftAdminPage() {
   const [draftingPlayers, setDraftingPlayers] = useState(new Set<number>());
   const [confirmPlayer, setConfirmPlayer] = useState<Player | null>(null);
   const router = useRouter();
+
+  // Link sharing handlers
+  const handleCopyViewerLink = async () => {
+    const viewerUrl = `${window.location.origin}/draft/${draftId}`;
+    const success = await copyToClipboard(viewerUrl);
+    if (success) {
+      toast.success('Viewer link copied to clipboard');
+    } else {
+      toast.error('Failed to copy link');
+    }
+  };
+
+  const handleCopyAdminLink = async () => {
+    const adminUrl = window.location.href;
+    const success = await copyToClipboard(adminUrl);
+    if (success) {
+      toast.success('Admin link copied to clipboard');
+    } else {
+      toast.error('Failed to copy link');
+    }
+  };
 
   // Track recently created picks to prevent duplicates from real-time
   const recentlyCreatedPicks = useRef(new Set<string>());
@@ -44,7 +68,7 @@ export default function DraftAdminPage() {
         setPlayers(playersData);
         setDraftPicks(draftPicksData);
       } catch (error) {
-        console.error('Error fetching draft data:', error);
+        console.error('Error fetching draft data:', error instanceof Error ? error.message : error);
         router.push(`/draft/${draftId}`);
       } finally {
         setIsLoading(false);
@@ -267,6 +291,26 @@ export default function DraftAdminPage() {
           totalPicks={draftPicks.length}
           positionCounts={positionCounts}
         />
+      )}
+      
+      {activeView === 'share' && (
+        <div className="p-4 space-y-4">
+          <ActionCard
+            icon={<Link className="h-5 w-5" />}
+            title="Copy Viewer Link"
+            description="Share read-only access to this draft"
+            buttonText="Copy Link"
+            onButtonClick={handleCopyViewerLink}
+          />
+
+          <ActionCard
+            icon={<Shield className="h-5 w-5" />}
+            title="Copy Admin Link"
+            description="Share admin access to this draft"
+            buttonText="Copy Link"
+            onButtonClick={handleCopyAdminLink}
+          />
+        </div>
       )}
     </>
   );

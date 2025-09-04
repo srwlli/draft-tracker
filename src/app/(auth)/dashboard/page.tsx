@@ -38,9 +38,7 @@ export default function Dashboard() {
     
     setIsLoading(true);
     try {
-      console.log('Calling API to create draft...');
       const draft = await api.drafts.create(draftName.trim());
-      console.log('Draft created successfully:', draft);
       router.push(`/draft/${draft.id}/admin/${draft.admin_token}`);
     } catch (error) {
       console.error('Error creating draft:', error);

@@ -71,7 +71,7 @@ function DraftLayoutContent({ children }: { children: React.ReactNode }) {
 
         {/* View Tabs - Fixed */}
         <div className="flex-shrink-0 pb-2">
-          <div className="w-full grid grid-cols-3 bg-muted rounded-lg p-1">
+          <div className={`w-full grid ${isAdmin ? 'grid-cols-4' : 'grid-cols-3'} bg-muted rounded-lg p-1`}>
             <button 
               className={`py-1.5 px-2 rounded-md text-sm font-medium transition-colors ${
                 activeView === 'available' ? 'bg-background shadow-sm' : 'hover:bg-background/50'
@@ -103,6 +103,16 @@ function DraftLayoutContent({ children }: { children: React.ReactNode }) {
             >
               Stats
             </button>
+            {isAdmin && (
+              <button 
+                className={`py-1.5 px-2 rounded-md text-sm font-medium transition-colors ${
+                  activeView === 'share' ? 'bg-background shadow-sm' : 'hover:bg-background/50'
+                }`}
+                onClick={() => setActiveView('share')}
+              >
+                Share
+              </button>
+            )}
           </div>
         </div>
 

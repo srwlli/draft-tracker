@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { Home, Shield, Settings, ListOrdered } from 'lucide-react';
+import { Home, Settings, ListOrdered } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { BaseTabBar, TabItem } from '@/components/base-tab-bar';
 
@@ -25,10 +25,6 @@ export function BottomTabBar({ isAdmin }: BottomTabBarProps) {
     router.push('/ranks');
   };
 
-  const handleAdmin = () => {
-    router.push('/admin');
-  };
-
   const handleSoon = () => {
     router.push('/soon');
   };
@@ -43,13 +39,6 @@ export function BottomTabBar({ isAdmin }: BottomTabBarProps) {
       icon: <Home size={20} />,
       label: 'Home',
       onClick: handleHome
-    },
-    {
-      id: 'admin',
-      icon: <Shield size={20} />,
-      label: 'Admin',
-      onClick: handleAdmin,
-      isDisabled: !isAdmin
     },
     {
       id: 'ranks',

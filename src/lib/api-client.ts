@@ -29,13 +29,13 @@ class DraftTrackerAPI {
       ...options,
     })
     
-    const data = await response.json()
+    const result = await response.json()
     
     if (!response.ok) {
-      throw new Error(data.error || data.message || 'API request failed')
+      throw new Error(result.error?.message || result.error || result.message || 'API request failed')
     }
     
-    return data
+    return result.data || result
   }
   
   // Public endpoints

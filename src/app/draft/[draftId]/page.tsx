@@ -17,12 +17,19 @@ export default function DraftViewerPage() {
   const [players, setPlayers] = useState<Player[]>([]);
   const [draftPicks, setDraftPicks] = useState<DraftPick[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [realtimeConnected, setRealtimeConnected] = useState(false);
+
+  // Validate draftId exists
+  if (!draftId || draftId === 'undefined') {
+    return <div className="flex h-screen items-center justify-center">Invalid draft ID</div>;
+  }
 
   // Load initial data
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
+      setError(null);
       try {
         const { draft, players: playersData, picks: draftPicksData } = await api.public.getDraftData(draftId as string);
         
@@ -31,6 +38,7 @@ export default function DraftViewerPage() {
         setDraftPicks(draftPicksData);
       } catch (error) {
         console.error('Error fetching draft data:', error);
+        setError('Failed to load draft data');
       } finally {
         setIsLoading(false);
       }
@@ -135,6 +143,10 @@ export default function DraftViewerPage() {
 
   if (isLoading) {
     return <div className="flex h-screen items-center justify-center">Loading...</div>;
+  }
+
+  if (error) {
+    return <div className="flex h-screen items-center justify-center text-red-500">{error}</div>;
   }
 
   return (
