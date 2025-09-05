@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { useSortable } from '@dnd-kit/sortable';
@@ -328,8 +329,52 @@ export function PlayerRankings({
 
   if (loading || (players.length > 0 && userRankings.length === 0)) {
     return (
-      <div className="flex items-center justify-center min-h-[200px]">
-        <div className="text-muted-foreground">Loading rankings...</div>
+      <div className="space-y-6">
+        {/* Position selector skeleton */}
+        {showPositionSelector && (
+          <div className="flex items-center justify-between">
+            <div className="flex flex-wrap gap-2">
+              {positions.map((position) => (
+                <Skeleton key={position} className="h-8 w-12" />
+              ))}
+            </div>
+          </div>
+        )}
+        
+        {/* Table skeleton */}
+        <div className={fullWidth ? '' : 'rounded-md border'}>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[100px]">Rank</TableHead>
+                <TableHead>Player</TableHead>
+                <TableHead>Team</TableHead>
+                <TableHead>Position</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {Array.from({ length: 8 }).map((_, index) => (
+                <TableRow key={index}>
+                  <TableCell className="font-medium">
+                    <Skeleton className="h-4 w-6" />
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <Skeleton className="h-4 w-4" />
+                      <Skeleton className="h-4 w-32" />
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-8" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-5 w-8 rounded-full" />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       </div>
     );
   }

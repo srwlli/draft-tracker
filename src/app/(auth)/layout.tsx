@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { DashboardTabBar } from '@/components/dashboard-tab-bar';
+import { BottomTabBar } from '@/components/bottom-tab-bar';
 
 export default function AuthLayout({
   children,
@@ -36,7 +36,7 @@ export default function AuthLayout({
       <main className="flex-1">
         {children}
       </main>
-      <DashboardTabBar />
+      <BottomTabBar isAdmin={false} />
     </div>
   );
 }

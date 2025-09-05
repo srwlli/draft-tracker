@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { Home, Settings, ListOrdered, Trophy, Lock } from 'lucide-react';
+import { Home, Settings, ListOrdered, Users, Lock } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { BaseTabBar, TabItem } from '@/components/base-tab-bar';
 
@@ -52,7 +52,7 @@ export function BottomTabBar({ isAdmin }: BottomTabBarProps) {
     },
     {
       id: 'leagues',
-      icon: <Trophy size={20} />,
+      icon: <Users size={20} />,
       label: 'My Leagues',
       onClick: handleLeagues
     },

@@ -16,29 +16,29 @@ export default function LocksPage() {
           icon={<Lock className="h-5 w-5" />}
         >
           <div className="space-y-4">
-            <div className="text-center p-6 rounded-lg bg-blue-50/50">
-              <Lock className="h-12 w-12 mx-auto mb-4 text-blue-600" />
-              <h3 className="text-lg font-medium text-blue-800 mb-2">Lock In Your Picks</h3>
-              <p className="text-sm text-blue-600">
+            <div className="text-center p-6 rounded-lg bg-muted/20">
+              <Lock className="h-12 w-12 mx-auto mb-4" />
+              <h3 className="text-lg font-medium mb-2">Lock In Your Picks</h3>
+              <p className="text-sm text-muted-foreground">
                 Create lock lists for player props and share with your group or use as personal reference for prop betting
               </p>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="text-center p-4 rounded-lg bg-green-50/50">
-                <Target className="h-8 w-8 mx-auto mb-2 text-green-600" />
-                <h4 className="font-medium text-green-800">Pick Props</h4>
-                <p className="text-xs text-green-600 mt-1">Select player props and lock in your picks</p>
+              <div className="text-center p-4 rounded-lg bg-muted/20">
+                <Target className="h-8 w-8 mx-auto mb-2" />
+                <h4 className="font-medium">Pick Props</h4>
+                <p className="text-xs text-muted-foreground mt-1">Select player props and lock in your picks</p>
               </div>
-              <div className="text-center p-4 rounded-lg bg-purple-50/50">
-                <Users className="h-8 w-8 mx-auto mb-2 text-purple-600" />
-                <h4 className="font-medium text-purple-800">Group Locks</h4>
-                <p className="text-xs text-purple-600 mt-1">Create rooms and invite friends to submit locks</p>
+              <div className="text-center p-4 rounded-lg bg-muted/20">
+                <Users className="h-8 w-8 mx-auto mb-2" />
+                <h4 className="font-medium">Group Locks</h4>
+                <p className="text-xs text-muted-foreground mt-1">Create rooms and invite friends to submit locks</p>
               </div>
-              <div className="text-center p-4 rounded-lg bg-orange-50/50">
-                <Share className="h-8 w-8 mx-auto mb-2 text-orange-600" />
-                <h4 className="font-medium text-orange-800">Share & Track</h4>
-                <p className="text-xs text-orange-600 mt-1">Share your locks or use as betting reference</p>
+              <div className="text-center p-4 rounded-lg bg-muted/20">
+                <Share className="h-8 w-8 mx-auto mb-2" />
+                <h4 className="font-medium">Share & Track</h4>
+                <p className="text-xs text-muted-foreground mt-1">Share your locks or use as betting reference</p>
               </div>
             </div>
           </div>
@@ -56,20 +56,20 @@ export default function LocksPage() {
                 <h3 className="font-medium mb-3">Single User</h3>
                 <div className="space-y-3 text-sm text-muted-foreground">
                   <div className="flex items-start space-x-3">
-                    <div className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center">
-                      <span className="text-xs font-bold text-blue-600">1</span>
+                    <div className="flex-shrink-0 w-6 h-6 rounded-full bg-muted flex items-center justify-center">
+                      <span className="text-xs font-bold">1</span>
                     </div>
                     <p>Create your personal lock list</p>
                   </div>
                   <div className="flex items-start space-x-3">
-                    <div className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center">
-                      <span className="text-xs font-bold text-blue-600">2</span>
+                    <div className="flex-shrink-0 w-6 h-6 rounded-full bg-muted flex items-center justify-center">
+                      <span className="text-xs font-bold">2</span>
                     </div>
                     <p>Select players and props you're confident in</p>
                   </div>
                   <div className="flex items-start space-x-3">
-                    <div className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center">
-                      <span className="text-xs font-bold text-blue-600">3</span>
+                    <div className="flex-shrink-0 w-6 h-6 rounded-full bg-muted flex items-center justify-center">
+                      <span className="text-xs font-bold">3</span>
                     </div>
                     <p>Use as reference for prop betting</p>
                   </div>
@@ -80,20 +80,20 @@ export default function LocksPage() {
                 <h3 className="font-medium mb-3">Group Locks</h3>
                 <div className="space-y-3 text-sm text-muted-foreground">
                   <div className="flex items-start space-x-3">
-                    <div className="flex-shrink-0 w-6 h-6 rounded-full bg-green-100 flex items-center justify-center">
-                      <span className="text-xs font-bold text-green-600">1</span>
+                    <div className="flex-shrink-0 w-6 h-6 rounded-full bg-muted flex items-center justify-center">
+                      <span className="text-xs font-bold">1</span>
                     </div>
                     <p>Create a lock room and invite friends</p>
                   </div>
                   <div className="flex items-start space-x-3">
-                    <div className="flex-shrink-0 w-6 h-6 rounded-full bg-green-100 flex items-center justify-center">
-                      <span className="text-xs font-bold text-green-600">2</span>
+                    <div className="flex-shrink-0 w-6 h-6 rounded-full bg-muted flex items-center justify-center">
+                      <span className="text-xs font-bold">2</span>
                     </div>
                     <p>Everyone submits their lock picks</p>
                   </div>
                   <div className="flex items-start space-x-3">
-                    <div className="flex-shrink-0 w-6 h-6 rounded-full bg-green-100 flex items-center justify-center">
-                      <span className="text-xs font-bold text-green-600">3</span>
+                    <div className="flex-shrink-0 w-6 h-6 rounded-full bg-muted flex items-center justify-center">
+                      <span className="text-xs font-bold">3</span>
                     </div>
                     <p>Compare picks and track performance</p>
                   </div>
@@ -145,14 +145,14 @@ export default function LocksPage() {
           icon={<Trophy className="h-5 w-5" />}
         >
           <div className="space-y-4">
-            <div className="text-center p-6 rounded-lg bg-yellow-50/50 border border-yellow-200">
-              <Trophy className="h-12 w-12 mx-auto mb-4 text-yellow-600" />
-              <h3 className="text-lg font-medium text-yellow-800 mb-2">Feature In Development</h3>
-              <p className="text-sm text-yellow-600 mb-4">
+            <div className="text-center p-6 rounded-lg bg-muted/20 border">
+              <Trophy className="h-12 w-12 mx-auto mb-4" />
+              <h3 className="text-lg font-medium mb-2">Feature In Development</h3>
+              <p className="text-sm text-muted-foreground mb-4">
                 My Locks is currently being developed and will be available soon. This feature will use the same 
                 real-time technology as our draft system to provide seamless group collaboration.
               </p>
-              <div className="inline-flex items-center text-xs text-yellow-700 bg-yellow-100 px-3 py-1 rounded-full">
+              <div className="inline-flex items-center text-xs bg-muted px-3 py-1 rounded-full">
                 Expected Release: Coming Soon
               </div>
             </div>

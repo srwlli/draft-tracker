@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { api } from '@/lib/api-client';
+import { Skeleton } from '@/components/ui/skeleton';
 import { PlayerTable } from '@/components/player-table';
 import { DraftedPlayersTable } from '@/components/drafted-players-table';
 import { DraftStats } from '@/components/draft-stats';
@@ -260,7 +261,35 @@ export default function DraftAdminPage() {
   };
 
   if (isLoading) {
-    return <div className="flex h-screen items-center justify-center">Loading...</div>;
+    return (
+      <div className="space-y-4">
+        {/* Position tabs skeleton */}
+        <div className="flex space-x-2 p-4 border-b">
+          {['ALL', 'QB', 'RB', 'WR', 'TE', 'K', 'DEF'].map((pos) => (
+            <Skeleton key={pos} className="h-8 w-12" />
+          ))}
+        </div>
+        
+        {/* View tabs skeleton */}
+        <div className="flex space-x-2 px-4">
+          <Skeleton className="h-8 w-20" />
+          <Skeleton className="h-8 w-20" />
+          <Skeleton className="h-8 w-16" />
+          <Skeleton className="h-8 w-16" />
+        </div>
+        
+        {/* Main content skeleton - matches PlayerTable structure */}
+        <div className="px-4 pb-4">
+          <PlayerTable 
+            players={[]}
+            isAdmin={true}
+            onDraft={() => {}}
+            onUndraft={() => {}}
+            isLoading={true}
+          />
+        </div>
+      </div>
+    );
   }
 
   if (!isValidAdmin) {

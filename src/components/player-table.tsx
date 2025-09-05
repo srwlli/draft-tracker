@@ -5,6 +5,7 @@ import { PlayerWithStatus } from '@/types';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,6 +25,7 @@ interface PlayerTableProps {
   draftingPlayers?: Set<number>;
   confirmPlayer?: PlayerWithStatus | null;
   setConfirmPlayer?: (player: PlayerWithStatus | null) => void;
+  isLoading?: boolean;
 }
 
 export function PlayerTable({ 
@@ -33,7 +35,8 @@ export function PlayerTable({
   onUndraft, 
   draftingPlayers = new Set(),
   confirmPlayer: externalConfirmPlayer,
-  setConfirmPlayer: setExternalConfirmPlayer
+  setConfirmPlayer: setExternalConfirmPlayer,
+  isLoading = false
 }: PlayerTableProps) {
   // Filter to show only available players
   const availablePlayers = players.filter(p => !p.is_drafted);
@@ -76,6 +79,49 @@ export function PlayerTable({
       // Dialog will close when API call completes
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen">
+        <div className="rounded-md border">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[100px]">Rank</TableHead>
+                <TableHead>Player</TableHead>
+                <TableHead>Team</TableHead>
+                <TableHead>Position</TableHead>
+                {isAdmin && <TableHead className="text-right">Actions</TableHead>}
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {Array.from({ length: 12 }).map((_, index) => (
+                <TableRow key={index}>
+                  <TableCell className="font-medium">
+                    <Skeleton className="h-4 w-6" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-32" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-8" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-5 w-8 rounded-full" />
+                  </TableCell>
+                  {isAdmin && (
+                    <TableCell className="text-right">
+                      <Skeleton className="h-8 w-16 ml-auto" />
+                    </TableCell>
+                  )}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen">

@@ -1,62 +1,82 @@
 # Draft Tracker - Working Plan
 
-## Current Task: Replace "Saving..." with Green Light Icon
+## Current Task: Consolidate Redundant Navigation Components
 
 ### **Issue to Address**
-- **DEF tab wraps to second row** on mobile due to "Saving..." text taking too much space
-- **Need smaller saving indicator** to prevent position tabs from stacking
+- **Duplicate navigation components** - `BottomTabBar` and `DashboardTabBar` have identical functionality
+- **Code duplication** - Same navigation logic maintained in two places
+- **Maintenance overhead** - Updates need to be made to both components
+
+### **Redundancy Analysis**
+
+#### **Current Usage:**
+
+**`BottomTabBar`:**
+- Used in: `/src/app/draft/[draftId]/layout.tsx` (line 126)
+- Takes `isAdmin` prop to conditionally show different behavior
+- Used for: Draft pages (viewer and admin)
+
+**`DashboardTabBar`:** 
+- Used in: `/src/app/(auth)/layout.tsx` (line 39)
+- No props needed
+- Used for: All authenticated pages (dashboard, settings, ranks, leagues, etc.)
+
+#### **Key Differences:**
+1. **Props:** `BottomTabBar` accepts `isAdmin` prop, `DashboardTabBar` doesn't
+2. **Functionality:** Both now have identical navigation items and behavior
+3. **Usage Context:** Different layouts use them
 
 ### **Implementation Plan**
 
-#### **Step 1: Add Icon Import**
-**File:** `src/components/player-rankings.tsx`
-
-**Action:**
-- Add `Circle` to existing imports from `lucide-react`
+#### **Step 1: Update Auth Layout**
+**File:** `/src/app/(auth)/layout.tsx`
 
 **Current:**
 ```tsx
-import { GripVertical } from 'lucide-react';
+<DashboardTabBar />
 ```
 
 **New:**
 ```tsx
-import { GripVertical, Circle } from 'lucide-react';
+<BottomTabBar isAdmin={false} />
 ```
 
-#### **Step 2: Replace "Saving..." Text with Green Icon**
-**File:** `src/components/player-rankings.tsx`
+#### **Step 2: Add Import**
+**File:** `/src/app/(auth)/layout.tsx`
 
-**Current Structure:**
+**Current:**
 ```tsx
-<div className="w-20 text-right">
-  {saving && (
-    <span className="text-sm text-muted-foreground">
-      Saving...
-    </span>
-  )}
-</div>
+import { DashboardTabBar } from '@/components/dashboard-tab-bar';
 ```
 
-**New Structure:**
+**New:**
 ```tsx
-<div className="w-6 flex justify-end">
-  {saving && (
-    <Circle className="h-4 w-4 text-green-500 fill-current animate-pulse" />
-  )}
-</div>
+import { BottomTabBar } from '@/components/bottom-tab-bar';
 ```
 
-### **Key Changes**
-1. **Smaller container** - `w-20` → `w-6` saves significant horizontal space
-2. **Icon instead of text** - Much more compact visual feedback
-3. **Green pulsing dot** - Clear saving state with modern UX pattern
-4. **Flexbox alignment** - `flex justify-end` for proper icon positioning
+#### **Step 3: Remove Redundant Component**
+**File:** `/src/components/dashboard-tab-bar.tsx`
 
-### **Benefits**
-- ✅ **Prevents mobile tab wrapping** - DEF tab stays on same row
-- ✅ **Space efficient** - Saves ~3.5rem width (`w-20` vs `w-6`)
-- ✅ **Clear visual feedback** - Green pulsing dot indicates saving
-- ✅ **Modern UX pattern** - Icon-based status indicators
+**Action:** Delete the entire file as it's no longer needed
 
-### **Time Estimate:** 5 minutes
+### **Safe Removal Assessment**
+
+**✅ We CAN safely remove `DashboardTabBar`:**
+
+**Benefits:**
+- Eliminates code duplication
+- Single source of truth for navigation
+- Easier maintenance (only one component to update)
+
+**No Problems Expected:**
+- Both components use the same `BaseTabBar` foundation
+- Both have identical tab items and navigation logic
+- The `isAdmin` prop in `BottomTabBar` appears unused currently (no conditional rendering)
+
+### **Expected Results**
+- ✅ **Single navigation component** - Only `BottomTabBar` across entire app
+- ✅ **Consistent behavior** - Same navigation on all pages
+- ✅ **Reduced maintenance** - Updates only needed in one place
+- ✅ **Cleaner codebase** - Less redundant code
+
+### **Time Estimate:** 10 minutes
