@@ -8,7 +8,7 @@ import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, us
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { GripVertical } from 'lucide-react';
+import { GripVertical, Circle } from 'lucide-react';
 import { PlayerWithStatus, Position, UserRanking } from '@/types';
 import { User } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
@@ -351,11 +351,9 @@ export function PlayerRankings({
             ))}
           </div>
         )}
-        <div className="w-20 text-right">
+        <div className="w-6 flex justify-end">
           {saving && (
-            <span className="text-sm text-muted-foreground">
-              Saving...
-            </span>
+            <Circle className="h-4 w-4 text-green-500 fill-current animate-pulse" />
           )}
         </div>
       </div>

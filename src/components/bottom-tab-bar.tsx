@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { Home, Settings, ListOrdered } from 'lucide-react';
+import { Home, Settings, ListOrdered, Trophy } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { BaseTabBar, TabItem } from '@/components/base-tab-bar';
 
@@ -23,6 +23,10 @@ export function BottomTabBar({ isAdmin }: BottomTabBarProps) {
 
   const handleRanks = () => {
     router.push('/ranks');
+  };
+
+  const handleLeagues = () => {
+    router.push('/leagues');
   };
 
   const handleSoon = () => {
@@ -47,7 +51,13 @@ export function BottomTabBar({ isAdmin }: BottomTabBarProps) {
       onClick: handleRanks
     },
     {
-      id: 'soon2',
+      id: 'leagues',
+      icon: <Trophy size={20} />,
+      label: 'My Leagues',
+      onClick: handleLeagues
+    },
+    {
+      id: 'soon',
       icon: <div className="w-5 h-5 rounded bg-muted" />,
       label: 'Soon',
       onClick: handleSoon
