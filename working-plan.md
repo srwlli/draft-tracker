@@ -1,108 +1,62 @@
 # Draft Tracker - Working Plan
 
-## Current Task: Move Draft Creation to Leagues Page
+## Current Task: Replace "Saving..." with Green Light Icon
 
-### **Analysis Summary**
-**Difficulty: Easy to Moderate** ⭐⭐⭐
-
-### **Current Draft Architecture**
-- ✅ **API Layer**: `/api/drafts` POST endpoint for creating drafts
-- ✅ **Draft Creation Logic**: In `dashboard/page.tsx` with `createDraft()` function  
-- ✅ **UI Components**: `DraftForm` and `ActionCard` components
-- ✅ **Draft Flow**: Create → Redirect to admin page `/draft/[id]/admin/[token]`
+### **Issue to Address**
+- **DEF tab wraps to second row** on mobile due to "Saving..." text taking too much space
+- **Need smaller saving indicator** to prevent position tabs from stacking
 
 ### **Implementation Plan**
 
-#### Phase 1: Extract and Move Components
-1. **Copy Draft Creation Logic** 
-   - Move `createDraft()` function from `src/app/(auth)/dashboard/page.tsx` to leagues page
-   - Copy required state management (`draftName`, `isLoading`, etc.)
+#### **Step 1: Add Icon Import**
+**File:** `src/components/player-rankings.tsx`
 
-2. **Import Required Components**
-   ```typescript
-   import { DraftForm } from '@/components/draft-form';
-   import { ActionCard } from '@/components/action-card';
-   import { api } from '@/lib/api-client';
-   import { toast } from 'sonner';
-   ```
+**Action:**
+- Add `Circle` to existing imports from `lucide-react`
 
-#### Phase 2: UI Integration
-3. **Replace Mock Content**
-   - Remove the existing "Create New League" TextCard section (lines 13-45 in leagues page)
-   - Replace with functional draft creation using ActionCard component
-
-4. **Style Integration**
-   - Ensure new components match leagues page design
-   - Maintain TextCard styling consistency for other sections
-
-#### Phase 3: Navigation Updates
-5. **Update Dashboard**
-   - Remove or modify draft creation from dashboard
-   - Update navigation references
-
-### **File Changes Required**
-
+**Current:**
+```tsx
+import { GripVertical } from 'lucide-react';
 ```
-📁 src/app/(auth)/leagues/page.tsx
-  - Add draft creation imports
-  - Add createDraft function 
-  - Replace mock "Create New League" section
-  - Add state management
 
-📁 src/app/(auth)/dashboard/page.tsx (optional)
-  - Remove/update draft creation section
-  - Update navigation flows
+**New:**
+```tsx
+import { GripVertical, Circle } from 'lucide-react';
 ```
+
+#### **Step 2: Replace "Saving..." Text with Green Icon**
+**File:** `src/components/player-rankings.tsx`
+
+**Current Structure:**
+```tsx
+<div className="w-20 text-right">
+  {saving && (
+    <span className="text-sm text-muted-foreground">
+      Saving...
+    </span>
+  )}
+</div>
+```
+
+**New Structure:**
+```tsx
+<div className="w-6 flex justify-end">
+  {saving && (
+    <Circle className="h-4 w-4 text-green-500 fill-current animate-pulse" />
+  )}
+</div>
+```
+
+### **Key Changes**
+1. **Smaller container** - `w-20` → `w-6` saves significant horizontal space
+2. **Icon instead of text** - Much more compact visual feedback
+3. **Green pulsing dot** - Clear saving state with modern UX pattern
+4. **Flexbox alignment** - `flex justify-end` for proper icon positioning
 
 ### **Benefits**
-- ✅ More logical organization (leagues = drafts)
-- ✅ Consolidates fantasy management in one place  
-- ✅ Removes redundancy between dashboard and leagues
-- ✅ Better user experience flow
+- ✅ **Prevents mobile tab wrapping** - DEF tab stays on same row
+- ✅ **Space efficient** - Saves ~3.5rem width (`w-20` vs `w-6`)
+- ✅ **Clear visual feedback** - Green pulsing dot indicates saving
+- ✅ **Modern UX pattern** - Icon-based status indicators
 
-### **Time Estimate**
-**~30 minutes implementation**
-
----
-
-## Recently Completed Tasks
-
-### ✅ Fixed Live Functions and Draft Creation Issues
-- **Environment Variables**: Added missing Supabase credentials to Vercel deployment
-- **Database Schema**: Verified `user_rankings` table structure and constraints
-- **RLS Policies**: Confirmed Row Level Security configuration
-- **Realtime Sync**: Fixed bidirectional mobile ↔ laptop synchronization
-- **API Routes**: Resolved 500 errors in `/api/drafts` and `/api/user-rankings`
-
-### ✅ Supabase CLI Integration
-- **Installation**: Added Supabase CLI as dev dependency
-- **Authentication**: Set up access token authentication
-- **Project Linking**: Attempted project linking (network issues in WSL2)
-
----
-
-## Known Issues
-
-### ⚠️ Supabase CLI Connection Issues
-- **Problem**: WSL2 network timeout connecting to Supabase pooler
-- **Status**: Non-blocking - environment variables work fine for API operations
-- **Workaround**: Use Supabase dashboard for database management
-
----
-
-## Next Priority Tasks
-
-1. **Complete Draft Creation Move** (Current)
-2. **League Management Features** 
-   - Connect real league data to leagues page
-   - Remove remaining mock content
-3. **User Rankings Enhancement**
-   - Improve ranking interface
-   - Add bulk ranking operations
-4. **Mobile Optimization**
-   - Enhance mobile draft experience
-   - Improve responsive design
-
----
-
-*Last Updated: 2025-09-05*
+### **Time Estimate:** 5 minutes

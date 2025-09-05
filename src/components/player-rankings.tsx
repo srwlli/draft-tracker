@@ -8,7 +8,7 @@ import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, us
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { GripVertical, Wifi, WifiOff } from 'lucide-react';
+import { GripVertical } from 'lucide-react';
 import { PlayerWithStatus, Position, UserRanking } from '@/types';
 import { User } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
@@ -79,11 +79,6 @@ interface PlayerRankingsProps {
    */
   initialPosition?: Position;
   /**
-   * Whether to show the live connection status
-   * @default true
-   */
-  showLiveStatus?: boolean;
-  /**
    * Whether to show the position selector
    * @default true
    */
@@ -107,7 +102,6 @@ interface PlayerRankingsProps {
 export function PlayerRankings({
   positions = ['QB', 'RB', 'WR', 'TE'],
   initialPosition = 'QB',
-  showLiveStatus = true,
   showPositionSelector = true,
   onRankingChange,
   compact = false,
@@ -349,7 +343,7 @@ export function PlayerRankings({
               <Button
                 key={position}
                 variant={selectedPosition === position ? 'default' : 'outline'}
-                size={compact ? 'xs' : 'sm'}
+                size="sm"
                 onClick={() => setSelectedPosition(position)}
               >
                 {position}
@@ -357,26 +351,11 @@ export function PlayerRankings({
             ))}
           </div>
         )}
-        <div className="flex items-center gap-2">
+        <div className="w-20 text-right">
           {saving && (
-            <div className="text-sm text-muted-foreground">
+            <span className="text-sm text-muted-foreground">
               Saving...
-            </div>
-          )}
-          {showLiveStatus && (
-            <div className="flex items-center gap-1 text-sm text-muted-foreground">
-              {isConnected ? (
-                <>
-                  <Wifi className="h-4 w-4" />
-                  <span>Live</span>
-                </>
-              ) : (
-                <>
-                  <WifiOff className="h-4 w-4" />
-                  <span>Offline</span>
-                </>
-              )}
-            </div>
+            </span>
           )}
         </div>
       </div>
