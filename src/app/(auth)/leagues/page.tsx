@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import { api } from '@/lib/api-client';
 import { Draft } from '@/types';
 import { Calendar, Users, ExternalLink } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function MyLeaguesPage() {
   const [recentDrafts, setRecentDrafts] = useState<Draft[]>([]);
@@ -53,9 +54,33 @@ export default function MyLeaguesPage() {
 
         {/* Recent Drafts */}
         {loading ? (
-          <div className="text-center py-8 text-muted-foreground">
-            Loading recent drafts...
-          </div>
+          <ActionCard
+            icon={<Skeleton className="w-5 h-5 rounded" />}
+            title="Recent Drafts"
+            description="Your last 5 draft sessions"
+            content={
+              <div className="space-y-3">
+                {Array.from({ length: 3 }).map((_, index) => (
+                  <div 
+                    key={index}
+                    className="flex items-center justify-between p-3 rounded-lg border"
+                  >
+                    <div className="flex-1 space-y-2">
+                      <Skeleton className="h-4 w-32" />
+                      <div className="flex items-center gap-2">
+                        <Skeleton className="w-4 h-4" />
+                        <Skeleton className="h-3 w-20" />
+                      </div>
+                    </div>
+                    <Skeleton className="w-4 h-4" />
+                  </div>
+                ))}
+              </div>
+            }
+            buttonText=""
+            onButtonClick={() => {}}
+            className="[&>div:last-child]:hidden"
+          />
         ) : recentDrafts.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">
             No drafts found. Create your first draft above!

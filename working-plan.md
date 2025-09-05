@@ -1,127 +1,70 @@
-# Draft Tracker - Production Build Fix Plan
+# Production Build Fix Plan - Precise ESLint Error Resolution
 
-## Overview: Critical Production Build Failure
-**Current Status**: Build failing on Vercel due to ESLint errors and warnings
-**Target**: Clean production deployment with zero build errors
+## 🚨 **Critical Error (Build Blocker)**
+**File**: `src/app/(auth)/locks/page.tsx:68:52`
+**Error**: `react/no-unescaped-entities` - Apostrophe needs escaping
+**Fix**: Change `you're` to `you&apos;re`
 
----
+## ⚠️ **Unused Variable Warnings (Safe to Fix)**
 
-## Phase 1: Critical Error Fix ⚠️ **RISK: 2/10**
-**Must complete before proceeding - Build currently fails**
+### **1. Dashboard Page** - `src/app/(auth)/dashboard/page.tsx`
+- Remove unused import: `Input` (line 4)
+- Remove unused imports from lucide-react: `UserPlus`, `Clock` (line 9) 
+- Remove unused state: `isClient` variable and useEffect (lines 18, 22-24)
 
-### Issue
-- **File**: `src/app/(auth)/locks/page.tsx:68:52` 
-- **Error**: `react/no-unescaped-entities` - Apostrophe needs escaping
-- **Impact**: Prevents production build from completing
+### **2. Profile Page** - `src/app/(auth)/profile/page.tsx`  
+- Remove unused import: `Button` (line 3)
 
-### Action
-```jsx
-// Find and fix unescaped apostrophe around line 68
-// Change: can't 
-// To: can&apos;t or can&#39;t
-```
+### **3. API Routes**
+- `src/app/api/drafts/route.ts`: Remove unused `createServerSupabaseClient` import (line 2)
+- `src/app/api/user-rankings/route.ts`: Remove unused `UserRanking` import (line 3) and `error` variable (line 33)
 
-### Time Estimate: 2 minutes
-### Risk Level: 2/10 (Simple text fix, very low risk)
+### **4. Draft Pages**
+- `src/app/draft/[draftId]/admin/[adminToken]/page.tsx`: Remove unused `draft` variable (line 23)
+- `src/app/draft/[draftId]/layout.tsx`: Remove unused `draft` assignment (line 7)
 
----
+### **5. Components** 
+- `src/components/bottom-tab-bar.tsx`: Mark `isAdmin` param as used with underscore `_isAdmin` (line 12)
+- `src/components/player-rankings.tsx`: Remove unused `compact` parameter (line 108) and `isConnected` state (line 129)
+- `src/lib/api-auth.ts`: Mark unused `request` param with underscore `_request` (line 4)
 
-## Phase 2: Clean Unused Imports ⚠️ **RISK: 3/10**
-**Low risk - removing dead code**
+## 🔴 **CRITICAL: DO NOT TOUCH**
+**`src/components/player-table.tsx:35` - `onUndraft` warning**
+- **DO NOT REMOVE** - This is the undraft feature for admin error correction
+- This warning is acceptable - the prop is used by parent components
+- Leave this warning as-is to preserve functionality
 
-### Files to Clean:
-1. **`src/app/(auth)/dashboard/page.tsx`** - Remove unused: `Input`, `UserPlus`, `Clock`, `isClient`
-2. **`src/app/(auth)/profile/page.tsx`** - Remove unused: `Button`
-3. **`src/app/api/drafts/route.ts`** - Remove unused: `createServerSupabaseClient`
-4. **`src/app/api/user-rankings/route.ts`** - Remove unused: `UserRanking`, unused `error` variable
-5. **`src/components/bottom-tab-bar.tsx`** - Remove unused: `isAdmin` prop
-6. **`src/components/player-rankings.tsx`** - Remove unused: `compact`, `isConnected`
-7. **`src/components/player-table.tsx`** - Remove unused: `onUndraft` prop
-8. **`src/lib/api-auth.ts`** - Remove unused: `request` parameter
+## ⚠️ **React Hooks Dependencies (Medium Risk)**
+**Note**: These could affect runtime behavior, approach carefully:
 
-### Time Estimate: 15 minutes
-### Risk Level: 3/10 (Dead code removal - safe but needs verification)
+### **Files to Fix:**
+1. `src/hooks/usePollingFallback.ts:20` - Add `filter` to useMemo dependencies
+2. `src/hooks/useRealtimeRankings.ts:138` - Add `fetchRankings` to useEffect dependencies  
+3. `src/hooks/useSupabaseRealtime.ts:23` - Add `filter` to useMemo dependencies
 
----
+## 🎯 **Execution Strategy**
 
-## Phase 3: Fix React Hooks Dependencies ⚠️ **RISK: 6/10** 
-**Medium risk - affects runtime behavior**
+### **Phase 1: Fix Critical Error (REQUIRED)**
+- Fix apostrophe in locks page
+- Test build passes
 
-### Files to Fix:
-1. **`src/hooks/usePollingFallback.ts:20`** - Add `filter` to useMemo dependencies
-2. **`src/hooks/useRealtimeRankings.ts:138`** - Add `fetchRankings` to useEffect dependencies  
-3. **`src/hooks/useSupabaseRealtime.ts:23`** - Add `filter` to useMemo dependencies
+### **Phase 2: Clean Safe Unused Variables**
+- Remove unused imports and variables
+- Mark used-but-flagged params with underscores
+- **SKIP** the onUndraft warning entirely
 
-### Considerations:
-- **Risk**: Missing dependencies can cause stale closures and unexpected behavior
-- **Testing Required**: Real-time functionality, polling fallback, rankings updates
-- **Potential Issues**: May trigger more re-renders, could affect performance
+### **Phase 3: Fix React Hooks (Optional)**
+- Only if Phase 1-2 aren't sufficient
+- Test thoroughly for side effects
 
-### Time Estimate: 20 minutes
-### Risk Level: 6/10 (Hooks dependencies affect runtime - needs careful testing)
+## 📋 **Expected Results**
+- ✅ Build passes (critical error fixed)
+- ✅ Cleaner codebase (unused code removed)
+- ✅ Undraft functionality preserved
+- ⚠️ 1 acceptable warning remains (onUndraft)
 
----
-
-## Phase 4: Clean Unused Variables ⚠️ **RISK: 4/10**
-**Low-medium risk - removing unused assignments**
-
-### Files to Fix:
-1. **`src/app/draft/[draftId]/admin/[adminToken]/page.tsx:23`** - Remove unused `draft` variable
-2. **`src/app/draft/[draftId]/layout.tsx:7`** - Remove unused `draft` assignment
-
-### Considerations:
-- Variables might be used for debugging
-- Could indicate incomplete features
-- Review context before removing
-
-### Time Estimate: 10 minutes  
-### Risk Level: 4/10 (Could remove debugging aids, minimal functional risk)
-
----
-
-## Phase 5: Build Verification & Testing ⚠️ **RISK: 5/10**
-**Critical validation phase**
-
-### Local Testing:
-1. **Run build locally**: `npm run build`
-2. **Test all fixed functionality**:
-   - Locks page renders correctly
-   - Real-time rankings work
-   - Polling fallback functions
-   - Draft pages load properly
-3. **Verify no regressions**
-
-### Production Testing:
-1. **Deploy to Vercel**: `vercel --prod`
-2. **Smoke test critical paths**:
-   - My Ranks functionality
-   - Draft creation/joining
-   - Real-time updates
-   - Navigation between pages
-
-### Time Estimate: 15 minutes
-### Risk Level: 5/10 (Validation phase - may discover hidden issues)
-
----
-
-## Total Time Estimate: ~62 minutes
-## Overall Risk Assessment: 4/10
-
-### Risk Mitigation:
-- **Phase 1**: Must-fix, very safe
-- **Phase 2**: Safe dead code removal 
-- **Phase 3**: Highest risk - test thoroughly
-- **Phase 4**: Review context before removing
-- **Phase 5**: Comprehensive testing required
-
-### Success Criteria:
-- ✅ `npm run build` completes without errors
-- ✅ `vercel --prod` deploys successfully  
-- ✅ No functional regressions
-- ✅ All real-time features working
-- ✅ Navigation and core features intact
-
-### Rollback Plan:
-- Git commit after each phase
-- Can revert individual phases if issues arise
-- Keep original error log for reference
+## 🛡️ **Safety Notes**
+- The `onUndraft` prop IS used by parent components for admin draft correction
+- This is intentional functionality that must be preserved
+- ESLint doesn't detect usage across component boundaries
+- Better to have 1 warning than break admin functionality
