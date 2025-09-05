@@ -65,7 +65,7 @@ export default function LocksPage() {
                     <div className="flex-shrink-0 w-6 h-6 rounded-full bg-muted flex items-center justify-center">
                       <span className="text-xs font-bold">2</span>
                     </div>
-                    <p>Select players and props you're confident in</p>
+                    <p>Select players and props you&apos;re confident in</p>
                   </div>
                   <div className="flex items-start space-x-3">
                     <div className="flex-shrink-0 w-6 h-6 rounded-full bg-muted flex items-center justify-center">
