@@ -38,7 +38,7 @@ export default function TechPage() {
                 <h3 className="text-sm font-medium mb-2">Styling & UI</h3>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between p-2 rounded bg-muted/30">
-                    <span className="text-sm">Tailwind CSS 4</span>
+                    <span className="text-sm">Tailwind CSS</span>
                     <span className="text-xs text-muted-foreground">Utility-First CSS</span>
                   </div>
                   <div className="flex items-center justify-between p-2 rounded bg-muted/30">
@@ -55,11 +55,11 @@ export default function TechPage() {
             <div>
               <h3 className="text-sm font-medium mb-2">Architecture Features</h3>
               <div className="space-y-1 text-sm text-muted-foreground">
-                <p>• App Router with route groups for authentication</p>
-                <p>• Server-side rendering with Turbopack integration</p>
-                <p>• Mobile-first responsive design with touch interactions</p>
-                <p>• CSS variables theming with dark/light mode support</p>
-                <p>• Dynamic routes with [draftId] and [adminToken] parameters</p>
+                <p>• App Router with (auth) route groups for protected pages</p>
+                <p>• Server-side rendering with optimistic updates</p>
+                <p>• Mobile-first design with touch-and-hold drafting (500ms)</p>
+                <p>• Real-time synchronization with WebSocket + polling fallback</p>
+                <p>• Dynamic routes: /draft/[draftId]/admin/[adminToken]</p>
               </div>
             </div>
           </div>
@@ -103,10 +103,10 @@ export default function TechPage() {
             <div>
               <h3 className="text-sm font-medium mb-2">Real-time Architecture</h3>
               <div className="space-y-1 text-sm text-muted-foreground">
-                <p>• <strong>Primary:</strong> Supabase real-time subscriptions on draft_picks table</p>
-                <p>• <strong>Fallback:</strong> Polling mechanism when real-time fails</p>
-                <p>• <strong>Hook Pattern:</strong> useSupabaseRealtime + usePollingFallback</p>
-                <p>• <strong>Performance:</strong> Limited to 10 events/second to prevent overwhelming</p>
+                <p>• <strong>Primary:</strong> Supabase WebSocket subscriptions with filter-based updates</p>
+                <p>• <strong>Fallback:</strong> 5-second polling when real-time connection fails</p>
+                <p>• <strong>Optimization:</strong> 100ms throttling + deduplication prevents duplicates</p>
+                <p>• <strong>Hooks:</strong> useSupabaseRealtime + usePollingFallback pattern</p>
               </div>
             </div>
           </div>
@@ -150,10 +150,10 @@ export default function TechPage() {
             <div>
               <h3 className="text-sm font-medium mb-2">Security Implementation</h3>
               <div className="space-y-1 text-sm text-muted-foreground">
-                <p>• <strong>Server-side validation:</strong> Next.js middleware validates admin tokens</p>
-                <p>• <strong>UUID-based tokens:</strong> Cryptographically secure admin access</p>
-                <p>• <strong>Row Level Security:</strong> Database-level user isolation</p>
-                <p>• <strong>Route protection:</strong> (auth) route groups with middleware</p>
+                <p>• <strong>Admin tokens:</strong> UUID-based with draft ownership validation</p>
+                <p>• <strong>Middleware protection:</strong> Server-side route validation before rendering</p>
+                <p>• <strong>Security headers:</strong> CSP, XSS protection, frame denial</p>
+                <p>• <strong>Input validation:</strong> Zod schemas on all API endpoints</p>
               </div>
             </div>
           </div>
@@ -197,10 +197,10 @@ export default function TechPage() {
             <div>
               <h3 className="text-sm font-medium mb-2">Development Features</h3>
               <div className="space-y-1 text-sm text-muted-foreground">
-                <p>• <strong>Turbopack:</strong> Fast refresh and instant builds</p>
-                <p>• <strong>Path aliases:</strong> @/* for clean imports</p>
-                <p>• <strong>TypeScript strict mode:</strong> Enhanced type checking</p>
-                <p>• <strong>Component generation:</strong> Shadcn CLI for UI components</p>
+                <p>• <strong>Type-first development:</strong> TypeScript interfaces define API contracts</p>
+                <p>• <strong>Custom hooks:</strong> Reusable real-time and API patterns</p>
+                <p>• <strong>Component co-location:</strong> Centralized exports through barrel pattern</p>
+                <p>• <strong>API client:</strong> Centralized error handling with type safety</p>
               </div>
             </div>
           </div>
@@ -232,12 +232,12 @@ export default function TechPage() {
               </div>
             </div>
             <div>
-              <h3 className="text-sm font-medium mb-2">Mobile-First Optimizations</h3>
+              <h3 className="text-sm font-medium mb-2">Performance Optimizations</h3>
               <div className="space-y-1 text-sm text-muted-foreground">
-                <p>• <strong>Touch interactions:</strong> 500ms touch-and-hold with haptic feedback</p>
-                <p>• <strong>Real-time reliability:</strong> Dual approach with polling fallback</p>
-                <p>• <strong>Mobile UI:</strong> Touch-optimized PlayerTable with long-press</p>
-                <p>• <strong>Performance:</strong> Connection pooling and built-in Supabase caching</p>
+                <p>• <strong>Optimistic updates:</strong> Immediate UI feedback with server confirmation</p>
+                <p>• <strong>Memoized callbacks:</strong> Prevents subscription cycling in useEffect</p>
+                <p>• <strong>Race condition prevention:</strong> Disabled states during API calls</p>
+                <p>• <strong>Connection deduplication:</strong> Single WebSocket per client with pooling</p>
               </div>
             </div>
           </div>

@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { Home, Settings, ListOrdered, Users } from 'lucide-react';
+import { Home, Settings, ListOrdered, Trophy, Lock } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { BaseTabBar, TabItem } from '@/components/base-tab-bar';
 
@@ -25,10 +25,9 @@ export function DashboardTabBar() {
     router.push('/leagues');
   };
 
-  const handleSoon = () => {
-    router.push('/soon');
+  const handleLocks = () => {
+    router.push('/locks');
   };
-
 
   const handleSettings = () => {
     router.push('/settings');
@@ -49,15 +48,15 @@ export function DashboardTabBar() {
     },
     {
       id: 'leagues',
-      icon: <Users size={20} />,
+      icon: <Trophy size={20} />,
       label: 'My Leagues',
       onClick: handleLeagues
     },
     {
-      id: 'soon',
-      icon: <div className="w-5 h-5 rounded bg-muted" />,
-      label: 'Soon',
-      onClick: handleSoon
+      id: 'locks',
+      icon: <Lock size={20} />,
+      label: 'My Locks',
+      onClick: handleLocks
     },
     {
       id: 'settings',
