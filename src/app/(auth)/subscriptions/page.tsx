@@ -243,11 +243,11 @@ export default function SubscriptionsPage() {
           <div className="space-y-4">
             <div>
               <h3 className="text-sm font-medium mb-2">Can I cancel anytime?</h3>
-              <p className="text-sm text-muted-foreground">Yes, you can cancel your subscription at any time. You'll continue to have access to premium features until the end of your billing period.</p>
+              <p className="text-sm text-muted-foreground">Yes, you can cancel your subscription at any time. You&apos;ll continue to have access to premium features until the end of your billing period.</p>
             </div>
             <div>
               <h3 className="text-sm font-medium mb-2">What happens to my drafts if I downgrade?</h3>
-              <p className="text-sm text-muted-foreground">All your existing drafts and data remain accessible. You'll just lose access to premium features like advanced analytics and league integrations.</p>
+              <p className="text-sm text-muted-foreground">All your existing drafts and data remain accessible. You&apos;ll just lose access to premium features like advanced analytics and league integrations.</p>
             </div>
             <div>
               <h3 className="text-sm font-medium mb-2">Do you offer team discounts?</h3>

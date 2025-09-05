@@ -28,7 +28,7 @@ export async function POST(
     // Input validation with Zod
     const validation = draftPlayerSchema.safeParse(body)
     if (!validation.success) {
-      return apiResponse.error(validation.error.errors[0].message, 400)
+      return apiResponse.error(validation.error.issues[0].message, 400)
     }
     
     const { playerId } = validation.data

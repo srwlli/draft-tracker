@@ -9,7 +9,7 @@ import { DraftStats } from '@/components/draft-stats';
 import { ActionCard } from '@/components/action-card';
 import { Link, Shield } from 'lucide-react';
 import { toast } from 'sonner';
-import { Player, DraftPick, Draft } from '@/types';
+import { Player, PlayerWithStatus, DraftPick, Draft } from '@/types';
 import { useSupabaseRealtime } from '@/hooks/useSupabaseRealtime';
 import { usePollingFallback } from '@/hooks/usePollingFallback';
 import { useDraftLayout } from '@/contexts/DraftLayoutContext';
@@ -25,7 +25,7 @@ export default function DraftAdminPage() {
   const [isValidAdmin, setIsValidAdmin] = useState(false);
   const [realtimeConnected, setRealtimeConnected] = useState(false);
   const [draftingPlayers, setDraftingPlayers] = useState(new Set<number>());
-  const [confirmPlayer, setConfirmPlayer] = useState<Player | null>(null);
+  const [confirmPlayer, setConfirmPlayer] = useState<PlayerWithStatus | null>(null);
   const router = useRouter();
 
   // Link sharing handlers
@@ -79,7 +79,11 @@ export default function DraftAdminPage() {
   }, [draftId, adminToken, router, setLayoutDraft, setIsAdmin]);
 
   // Memoize the real-time callback to prevent subscription cycling
-  const handleRealtimeUpdate = useCallback((payload: any) => {
+  const handleRealtimeUpdate = useCallback((payload: {
+    eventType: 'INSERT' | 'UPDATE' | 'DELETE';
+    new?: Record<string, unknown>;
+    old?: Record<string, unknown>;
+  }) => {
     if (process.env.NODE_ENV === 'development') {
       console.log('Draft picks update (admin):', payload.eventType, payload);
     }

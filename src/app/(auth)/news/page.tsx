@@ -161,7 +161,7 @@ export default function NewsPage() {
             <div className="space-y-3">
               <div className="p-3 rounded-lg bg-green-50/50 border border-green-200">
                 <h3 className="text-sm font-medium text-green-800">💡 Insight of the Week</h3>
-                <p className="text-sm text-green-700 mt-1">Target WRs on teams with improved offensive lines - they're being undervalued in drafts</p>
+                <p className="text-sm text-green-700 mt-1">Target WRs on teams with improved offensive lines - they&apos;re being undervalued in drafts</p>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>

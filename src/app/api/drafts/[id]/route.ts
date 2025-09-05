@@ -10,7 +10,7 @@ export async function DELETE(
   const { id } = await params
   
   const { user, error } = await validateSession(request)
-  if (error) return apiError.unauthorized()
+  if (error || !user) return apiError.unauthorized()
   
   const supabase = await createServerSupabaseAdminClient()
   

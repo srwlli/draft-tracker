@@ -20,11 +20,6 @@ export default function DraftViewerPage() {
   const [error, setError] = useState<string | null>(null);
   const [realtimeConnected, setRealtimeConnected] = useState(false);
 
-  // Validate draftId exists
-  if (!draftId || draftId === 'undefined') {
-    return <div className="flex h-screen items-center justify-center">Invalid draft ID</div>;
-  }
-
   // Load initial data
   useEffect(() => {
     const fetchData = async () => {
@@ -48,7 +43,11 @@ export default function DraftViewerPage() {
   }, [draftId, setDraft]);
 
   // Memoize the real-time callback to prevent subscription cycling
-  const handleRealtimeUpdate = useCallback((payload: any) => {
+  const handleRealtimeUpdate = useCallback((payload: {
+    eventType: 'INSERT' | 'UPDATE' | 'DELETE';
+    new?: unknown;
+    old?: unknown;
+  }) => {
     if (process.env.NODE_ENV === 'development') {
       console.log('Draft picks update:', payload.eventType, payload);
     }
@@ -101,6 +100,11 @@ export default function DraftViewerPage() {
     onUpdate: handlePollingUpdate,
     enabled: !realtimeConnected
   });
+
+  // Validate draftId exists
+  if (!draftId || draftId === 'undefined') {
+    return <div className="flex h-screen items-center justify-center">Invalid draft ID</div>;
+  }
 
   // Filter players by position
   const filteredPlayers = players.filter(player => 

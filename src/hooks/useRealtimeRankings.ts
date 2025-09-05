@@ -37,7 +37,12 @@ export function useRealtimeRankings({ userId, position, initialRankings = [] }: 
           table: 'user_rankings',
           filter: `user_id=eq.${userId}`,
         },
-        (payload) => {
+        (payload: {
+          commit_timestamp: string;
+          eventType: 'INSERT' | 'UPDATE' | 'DELETE';
+          new?: Record<string, unknown>;
+          old?: Record<string, unknown>;
+        }) => {
           // Create a unique key for deduplication
           const updateKey = `${payload.commit_timestamp}-${payload.eventType}-${payload.new?.player_id || payload.old?.player_id}`;
           
@@ -70,7 +75,7 @@ export function useRealtimeRankings({ userId, position, initialRankings = [] }: 
                 case 'INSERT':
                   // Add new ranking if it doesn't exist
                   if (newRecord && !currentRankings.find(r => r.player_id === newRecord.player_id)) {
-                    return [...currentRankings, newRecord as UserRanking].sort((a, b) => a.custom_rank - b.custom_rank);
+                    return [...currentRankings, newRecord as unknown as UserRanking].sort((a, b) => a.custom_rank - b.custom_rank);
                   }
                   return currentRankings;
                   
@@ -79,7 +84,7 @@ export function useRealtimeRankings({ userId, position, initialRankings = [] }: 
                   if (newRecord) {
                     const updated = currentRankings.map(ranking =>
                       ranking.player_id === newRecord.player_id
-                        ? { ...ranking, ...newRecord } as UserRanking
+                        ? { ...ranking, ...newRecord } as unknown as UserRanking
                         : ranking
                     );
                     return updated.sort((a, b) => a.custom_rank - b.custom_rank);

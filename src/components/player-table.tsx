@@ -22,8 +22,8 @@ interface PlayerTableProps {
   onDraft: (playerId: number) => void;
   onUndraft: (playerId: number) => void;
   draftingPlayers?: Set<number>;
-  confirmPlayer?: any;
-  setConfirmPlayer?: (player: any) => void;
+  confirmPlayer?: PlayerWithStatus | null;
+  setConfirmPlayer?: (player: PlayerWithStatus | null) => void;
 }
 
 export function PlayerTable({ 

@@ -5,12 +5,13 @@ import { AuthPageLayout } from '@/components/auth-page-layout';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { GripVertical, Wifi, WifiOff } from 'lucide-react';
 import { PlayerWithStatus, Position, UserRanking } from '@/types';
+import { User } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
 import { api } from '@/lib/api-client';
 import { useSupabaseRealtime } from '@/hooks/useSupabaseRealtime';
@@ -72,7 +73,7 @@ export default function MyRanksPage() {
   const [players, setPlayers] = useState<PlayerWithStatus[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [optimisticRankings, setOptimisticRankings] = useState<Map<number, number>>(new Map());
 
   // Get current user
@@ -93,7 +94,7 @@ export default function MyRanksPage() {
     const fetchRankings = async () => {
       if (!user?.id) return;
       try {
-        const data = await api.rankings.get(selectedPosition !== 'ALL' ? selectedPosition : undefined);
+        const data = await api.rankings.get(selectedPosition);
         setUserRankings(data || []);
       } catch (error) {
         console.error('Error fetching rankings:', error);
@@ -104,19 +105,23 @@ export default function MyRanksPage() {
   }, [user?.id, selectedPosition]);
 
   // Real-time subscription using same pattern as live draft
-  const handleRealtimeUpdate = useCallback((payload: any) => {
+  const handleRealtimeUpdate = useCallback((payload: {
+    eventType: 'INSERT' | 'UPDATE' | 'DELETE';
+    new?: Record<string, unknown>;
+    old?: Record<string, unknown>;
+  }) => {
     console.log('📡 Rankings real-time update:', payload.eventType, payload);
     
     if (payload.eventType === 'INSERT' && payload.new) {
-      setUserRankings((current) => [...current, payload.new as UserRanking]);
+      setUserRankings((current) => [...current, payload.new as unknown as UserRanking]);
     } else if (payload.eventType === 'DELETE' && payload.old) {
       setUserRankings((current) => 
-        current.filter((ranking) => ranking.id !== payload.old.id)
+        current.filter((ranking) => ranking.id !== (payload.old as unknown as UserRanking).id)
       );
     } else if (payload.eventType === 'UPDATE' && payload.new) {
       setUserRankings((current) => 
         current.map((ranking) => 
-          ranking.id === payload.new.id ? payload.new as UserRanking : ranking
+          ranking.id === (payload.new as unknown as UserRanking).id ? payload.new as unknown as UserRanking : ranking
         )
       );
     }
@@ -230,7 +235,7 @@ export default function MyRanksPage() {
       return rankA - rankB;
     });
 
-  const handleDragEnd = async (event: any) => {
+  const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
 
     if (!over || active.id === over.id) return;
@@ -263,7 +268,7 @@ export default function MyRanksPage() {
       setOptimisticRankings(new Map());
       // Refetch to get server state
       try {
-        const data = await api.rankings.get(selectedPosition !== 'ALL' ? selectedPosition : undefined);
+        const data = await api.rankings.get(selectedPosition);
         setUserRankings(data || []);
       } catch (refetchError) {
         console.error('Error refetching rankings:', refetchError);

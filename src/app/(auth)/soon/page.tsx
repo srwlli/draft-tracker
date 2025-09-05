@@ -17,7 +17,7 @@ export default function ComingSoonPage() {
         <CardContent>
           <div className="space-y-4">
             <p className="text-sm text-muted-foreground">
-              We're working on new features to enhance your drafting experience. Check back soon for updates!
+              We&apos;re working on new features to enhance your drafting experience. Check back soon for updates!
             </p>
           </div>
         </CardContent>

@@ -12,7 +12,7 @@ const createDraftSchema = z.object({
 // Replaces: api-endpoint-get-user-drafts
 export async function GET(request: NextRequest) {
   const { user, error } = await validateSession(request)
-  if (error) {
+  if (error || !user) {
     console.log('GET /api/drafts - Auth failed:', error)
     return apiError.unauthorized()
   }
@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
 // Replaces: api-endpoint-post-create-draft
 export async function POST(request: NextRequest) {
   const { user, error } = await validateSession(request)
-  if (error) {
+  if (error || !user) {
     console.log('POST /api/drafts - Auth failed:', error)
     return apiError.unauthorized()
   }
@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
     // Input validation with Zod
     const validation = createDraftSchema.safeParse(body)
     if (!validation.success) {
-      return apiResponse.error(validation.error.errors[0].message, 400)
+      return apiResponse.error(validation.error.issues[0].message, 400)
     }
     
     const { name } = validation.data
