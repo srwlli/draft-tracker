@@ -106,11 +106,11 @@ function DraftLayoutContent({ children }: { children: React.ReactNode }) {
             {isAdmin && (
               <button 
                 className={`py-1.5 px-2 rounded-md text-sm font-medium transition-colors ${
-                  activeView === 'share' ? 'bg-background shadow-sm' : 'hover:bg-background/50'
+                  activeView === 'admin' ? 'bg-background shadow-sm' : 'hover:bg-background/50'
                 }`}
-                onClick={() => setActiveView('share')}
+                onClick={() => setActiveView('admin')}
               >
-                Share
+                Admin
               </button>
             )}
           </div>
@@ -119,11 +119,6 @@ function DraftLayoutContent({ children }: { children: React.ReactNode }) {
         {/* Scrollable Content Area */}
         <div className="flex-1 overflow-auto">
           {children}
-          
-          {/* Footer */}
-          <footer className="border-t py-3 text-center text-sm text-muted-foreground mt-8 mb-16">
-            BBFL Draft Tracker 2025
-          </footer>
         </div>
       </main>
 

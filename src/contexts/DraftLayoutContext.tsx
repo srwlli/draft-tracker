@@ -6,8 +6,8 @@ import { Position, Draft } from '@/types';
 interface DraftLayoutContextType {
   selectedPosition: Position | 'ALL';
   setSelectedPosition: (position: Position | 'ALL') => void;
-  activeView: 'available' | 'drafted' | 'stats' | 'share';
-  setActiveView: (view: 'available' | 'drafted' | 'stats' | 'share') => void;
+  activeView: 'available' | 'drafted' | 'stats' | 'admin';
+  setActiveView: (view: 'available' | 'drafted' | 'stats' | 'admin') => void;
   isClient: boolean;
   draft: Partial<Draft> | null;
   setDraft: (draft: Partial<Draft> | null) => void;
@@ -19,7 +19,7 @@ const DraftLayoutContext = createContext<DraftLayoutContextType | undefined>(und
 
 export function DraftLayoutProvider({ children }: { children: ReactNode }) {
   const [selectedPosition, setSelectedPosition] = useState<Position | 'ALL'>('QB');
-  const [activeView, setActiveView] = useState<'available' | 'drafted' | 'stats' | 'share'>('available');
+  const [activeView, setActiveView] = useState<'available' | 'drafted' | 'stats' | 'admin'>('available');
   const [isClient, setIsClient] = useState(false);
   const [draft, setDraft] = useState<Partial<Draft> | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);

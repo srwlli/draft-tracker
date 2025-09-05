@@ -297,23 +297,27 @@ export default function DraftAdminPage() {
         />
       )}
       
-      {activeView === 'share' && (
-        <div className="p-4 space-y-4">
-          <ActionCard
-            icon={<Link className="h-5 w-5" />}
-            title="Copy Viewer Link"
-            description="Share read-only access to this draft"
-            buttonText="Copy Link"
-            onButtonClick={handleCopyViewerLink}
-          />
+      {activeView === 'admin' && (
+        <div className="p-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <ActionCard
+              size="sm"
+              icon={<Link className="h-4 w-4" />}
+              title="Copy Viewer Link"
+              description="Share read-only access"
+              buttonText="Copy Link"
+              onButtonClick={handleCopyViewerLink}
+            />
 
-          <ActionCard
-            icon={<Shield className="h-5 w-5" />}
-            title="Copy Admin Link"
-            description="Share admin access to this draft"
-            buttonText="Copy Link"
-            onButtonClick={handleCopyAdminLink}
-          />
+            <ActionCard
+              size="sm"
+              icon={<Shield className="h-4 w-4" />}
+              title="Copy Admin Link"
+              description="Share admin access"
+              buttonText="Copy Link"
+              onButtonClick={handleCopyAdminLink}
+            />
+          </div>
         </div>
       )}
     </>
