@@ -1,6 +1,5 @@
 import { createServerSupabaseClient, createServerSupabaseAdminClient } from '@/lib/supabase-server';
 import { NextRequest, NextResponse } from 'next/server';
-import { UserRanking } from '@/types';
 
 export async function GET(request: NextRequest) {
   try {
@@ -30,7 +29,7 @@ export async function GET(request: NextRequest) {
     }
 
     return NextResponse.json(data);
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

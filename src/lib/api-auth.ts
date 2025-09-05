@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server'
 import { createServerSupabaseClient, createServerSupabaseAdminClient } from './supabase-server'
 
-export async function validateSession(request: NextRequest) {
+export async function validateSession(_request: NextRequest) {
   const supabase = await createServerSupabaseClient()
   
   try {

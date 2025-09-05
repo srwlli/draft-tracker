@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server'
-import { createServerSupabaseClient, createServerSupabaseAdminClient } from '@/lib/supabase-server'
+import { createServerSupabaseAdminClient } from '@/lib/supabase-server'
 import { apiResponse, apiError } from '@/lib/api-responses'
 import { validateSession } from '@/lib/api-auth'
 import { z } from 'zod'

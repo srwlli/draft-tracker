@@ -9,7 +9,7 @@ interface BottomTabBarProps {
   isAdmin: boolean;
 }
 
-export function BottomTabBar({ isAdmin }: BottomTabBarProps) {
+export function BottomTabBar({ isAdmin: _isAdmin }: BottomTabBarProps) {
   const { user } = useAuth();
   const router = useRouter();
 

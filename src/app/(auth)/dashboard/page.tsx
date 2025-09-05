@@ -1,12 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { api } from '@/lib/api-client';
-import { Plus, BarChart3, Users, UserPlus, User, Clock, Newspaper, Code, CreditCard } from 'lucide-react';
+import { Plus, BarChart3, Users, User, Newspaper, Code, CreditCard } from 'lucide-react';
 import { toast } from 'sonner';
 import { ActionCard } from '@/components/action-card';
 import { DraftForm } from '@/components/draft-form';
@@ -15,13 +14,9 @@ import { EmptyState } from '@/components/empty-state';
 export default function Dashboard() {
   const [draftName, setDraftName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [isClient, setIsClient] = useState(false);
   const { user, signOut } = useAuth();
   const router = useRouter();
 
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
 
   const createDraft = async () => {
     console.log('Creating draft - User state:', { user: user?.email, id: user?.id });

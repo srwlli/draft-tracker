@@ -1,6 +1,5 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
 import { AuthPageLayout } from '@/components/auth-page-layout';
 import { TextCard } from '@/components/text-card';
 import { useAuth } from '@/contexts/AuthContext';

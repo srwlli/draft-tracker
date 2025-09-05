@@ -105,7 +105,6 @@ export function PlayerRankings({
   initialPosition = 'QB',
   showPositionSelector = true,
   onRankingChange,
-  compact = false,
   fullWidth = false
 }: PlayerRankingsProps) {
   const [selectedPosition, setSelectedPosition] = useState<Position>(initialPosition);
