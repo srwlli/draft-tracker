@@ -1,82 +1,127 @@
-# Draft Tracker - Working Plan
+# Draft Tracker - Production Build Fix Plan
 
-## Current Task: Consolidate Redundant Navigation Components
+## Overview: Critical Production Build Failure
+**Current Status**: Build failing on Vercel due to ESLint errors and warnings
+**Target**: Clean production deployment with zero build errors
 
-### **Issue to Address**
-- **Duplicate navigation components** - `BottomTabBar` and `DashboardTabBar` have identical functionality
-- **Code duplication** - Same navigation logic maintained in two places
-- **Maintenance overhead** - Updates need to be made to both components
+---
 
-### **Redundancy Analysis**
+## Phase 1: Critical Error Fix ⚠️ **RISK: 2/10**
+**Must complete before proceeding - Build currently fails**
 
-#### **Current Usage:**
+### Issue
+- **File**: `src/app/(auth)/locks/page.tsx:68:52` 
+- **Error**: `react/no-unescaped-entities` - Apostrophe needs escaping
+- **Impact**: Prevents production build from completing
 
-**`BottomTabBar`:**
-- Used in: `/src/app/draft/[draftId]/layout.tsx` (line 126)
-- Takes `isAdmin` prop to conditionally show different behavior
-- Used for: Draft pages (viewer and admin)
-
-**`DashboardTabBar`:** 
-- Used in: `/src/app/(auth)/layout.tsx` (line 39)
-- No props needed
-- Used for: All authenticated pages (dashboard, settings, ranks, leagues, etc.)
-
-#### **Key Differences:**
-1. **Props:** `BottomTabBar` accepts `isAdmin` prop, `DashboardTabBar` doesn't
-2. **Functionality:** Both now have identical navigation items and behavior
-3. **Usage Context:** Different layouts use them
-
-### **Implementation Plan**
-
-#### **Step 1: Update Auth Layout**
-**File:** `/src/app/(auth)/layout.tsx`
-
-**Current:**
-```tsx
-<DashboardTabBar />
+### Action
+```jsx
+// Find and fix unescaped apostrophe around line 68
+// Change: can't 
+// To: can&apos;t or can&#39;t
 ```
 
-**New:**
-```tsx
-<BottomTabBar isAdmin={false} />
-```
+### Time Estimate: 2 minutes
+### Risk Level: 2/10 (Simple text fix, very low risk)
 
-#### **Step 2: Add Import**
-**File:** `/src/app/(auth)/layout.tsx`
+---
 
-**Current:**
-```tsx
-import { DashboardTabBar } from '@/components/dashboard-tab-bar';
-```
+## Phase 2: Clean Unused Imports ⚠️ **RISK: 3/10**
+**Low risk - removing dead code**
 
-**New:**
-```tsx
-import { BottomTabBar } from '@/components/bottom-tab-bar';
-```
+### Files to Clean:
+1. **`src/app/(auth)/dashboard/page.tsx`** - Remove unused: `Input`, `UserPlus`, `Clock`, `isClient`
+2. **`src/app/(auth)/profile/page.tsx`** - Remove unused: `Button`
+3. **`src/app/api/drafts/route.ts`** - Remove unused: `createServerSupabaseClient`
+4. **`src/app/api/user-rankings/route.ts`** - Remove unused: `UserRanking`, unused `error` variable
+5. **`src/components/bottom-tab-bar.tsx`** - Remove unused: `isAdmin` prop
+6. **`src/components/player-rankings.tsx`** - Remove unused: `compact`, `isConnected`
+7. **`src/components/player-table.tsx`** - Remove unused: `onUndraft` prop
+8. **`src/lib/api-auth.ts`** - Remove unused: `request` parameter
 
-#### **Step 3: Remove Redundant Component**
-**File:** `/src/components/dashboard-tab-bar.tsx`
+### Time Estimate: 15 minutes
+### Risk Level: 3/10 (Dead code removal - safe but needs verification)
 
-**Action:** Delete the entire file as it's no longer needed
+---
 
-### **Safe Removal Assessment**
+## Phase 3: Fix React Hooks Dependencies ⚠️ **RISK: 6/10** 
+**Medium risk - affects runtime behavior**
 
-**✅ We CAN safely remove `DashboardTabBar`:**
+### Files to Fix:
+1. **`src/hooks/usePollingFallback.ts:20`** - Add `filter` to useMemo dependencies
+2. **`src/hooks/useRealtimeRankings.ts:138`** - Add `fetchRankings` to useEffect dependencies  
+3. **`src/hooks/useSupabaseRealtime.ts:23`** - Add `filter` to useMemo dependencies
 
-**Benefits:**
-- Eliminates code duplication
-- Single source of truth for navigation
-- Easier maintenance (only one component to update)
+### Considerations:
+- **Risk**: Missing dependencies can cause stale closures and unexpected behavior
+- **Testing Required**: Real-time functionality, polling fallback, rankings updates
+- **Potential Issues**: May trigger more re-renders, could affect performance
 
-**No Problems Expected:**
-- Both components use the same `BaseTabBar` foundation
-- Both have identical tab items and navigation logic
-- The `isAdmin` prop in `BottomTabBar` appears unused currently (no conditional rendering)
+### Time Estimate: 20 minutes
+### Risk Level: 6/10 (Hooks dependencies affect runtime - needs careful testing)
 
-### **Expected Results**
-- ✅ **Single navigation component** - Only `BottomTabBar` across entire app
-- ✅ **Consistent behavior** - Same navigation on all pages
-- ✅ **Reduced maintenance** - Updates only needed in one place
-- ✅ **Cleaner codebase** - Less redundant code
+---
 
-### **Time Estimate:** 10 minutes
+## Phase 4: Clean Unused Variables ⚠️ **RISK: 4/10**
+**Low-medium risk - removing unused assignments**
+
+### Files to Fix:
+1. **`src/app/draft/[draftId]/admin/[adminToken]/page.tsx:23`** - Remove unused `draft` variable
+2. **`src/app/draft/[draftId]/layout.tsx:7`** - Remove unused `draft` assignment
+
+### Considerations:
+- Variables might be used for debugging
+- Could indicate incomplete features
+- Review context before removing
+
+### Time Estimate: 10 minutes  
+### Risk Level: 4/10 (Could remove debugging aids, minimal functional risk)
+
+---
+
+## Phase 5: Build Verification & Testing ⚠️ **RISK: 5/10**
+**Critical validation phase**
+
+### Local Testing:
+1. **Run build locally**: `npm run build`
+2. **Test all fixed functionality**:
+   - Locks page renders correctly
+   - Real-time rankings work
+   - Polling fallback functions
+   - Draft pages load properly
+3. **Verify no regressions**
+
+### Production Testing:
+1. **Deploy to Vercel**: `vercel --prod`
+2. **Smoke test critical paths**:
+   - My Ranks functionality
+   - Draft creation/joining
+   - Real-time updates
+   - Navigation between pages
+
+### Time Estimate: 15 minutes
+### Risk Level: 5/10 (Validation phase - may discover hidden issues)
+
+---
+
+## Total Time Estimate: ~62 minutes
+## Overall Risk Assessment: 4/10
+
+### Risk Mitigation:
+- **Phase 1**: Must-fix, very safe
+- **Phase 2**: Safe dead code removal 
+- **Phase 3**: Highest risk - test thoroughly
+- **Phase 4**: Review context before removing
+- **Phase 5**: Comprehensive testing required
+
+### Success Criteria:
+- ✅ `npm run build` completes without errors
+- ✅ `vercel --prod` deploys successfully  
+- ✅ No functional regressions
+- ✅ All real-time features working
+- ✅ Navigation and core features intact
+
+### Rollback Plan:
+- Git commit after each phase
+- Can revert individual phases if issues arise
+- Keep original error log for reference
