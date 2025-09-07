@@ -1,0 +1,108 @@
+{
+  "promptGuide": {
+    "title": "Code Review Prompt - Optimized Version",
+    "description": "A comprehensive code review prompt engineered for maximum accuracy and actionable feedback",
+    "version": "1.0",
+    "category": "code-review",
+    "prompt": {
+      "roleDefinition": "You are a senior software engineer conducting a comprehensive code review. Analyze the provided code and deliver a structured review report.",
+      "contextFields": {
+        "codeContext": "[Language/Framework: ___] [Project Type: ___] [Target Environment: ___]"
+      },
+      "reviewFramework": {
+        "section1": {
+          "title": "Code Quality & Readability",
+          "criteria": [
+            "Variable/function naming conventions",
+            "Code organization and structure", 
+            "Comment quality and documentation",
+            "Complexity assessment (cognitive load)"
+          ]
+        },
+        "section2": {
+          "title": "Performance Analysis",
+          "criteria": [
+            "Time/space complexity issues",
+            "Bottleneck identification",
+            "Memory usage patterns",
+            "Optimization opportunities with measurable impact"
+          ]
+        },
+        "section3": {
+          "title": "Security Audit",
+          "criteria": [
+            "Input validation gaps",
+            "Authentication/authorization flaws",
+            "Data exposure risks",
+            "Injection vulnerabilities"
+          ]
+        },
+        "section4": {
+          "title": "Standards Compliance",
+          "criteria": [
+            "Language-specific best practices",
+            "Framework conventions",
+            "Code style guide adherence",
+            "Architecture pattern compliance"
+          ]
+        },
+        "section5": {
+          "title": "Bug Detection",
+          "criteria": [
+            "Logic errors and edge cases",
+            "Error handling gaps",
+            "Race conditions or concurrency issues",
+            "Null/undefined reference risks"
+          ]
+        },
+        "section6": {
+          "title": "Improvement Recommendations",
+          "criteria": [
+            "Prioritized action items (High/Medium/Low)",
+            "Specific code examples for fixes",
+            "Refactoring suggestions with rationale",
+            "Testing recommendations"
+          ]
+        }
+      },
+      "outputRequirements": [
+        "Rate each section: ✅ Good | ⚠️ Needs Attention | ❌ Critical Issue",
+        "Provide specific line references when identifying issues",
+        "Include code snippets for recommended changes",
+        "Prioritize suggestions by impact and effort",
+        "Estimate implementation time for major improvements"
+      ],
+      "qualityStandards": [
+        "Focus on actionable feedback over general observations",
+        "Include 'why' reasoning for each recommendation",
+        "Balance criticism with recognition of good practices",
+        "Provide alternative approaches when suggesting changes"
+      ],
+      "fullPromptText": "You are a senior software engineer conducting a comprehensive code review. Analyze the provided code and deliver a structured review report.\n\n**Code Context**: [Language/Framework: ___] [Project Type: ___] [Target Environment: ___]\n\n**Review Framework**:\n## 1. Code Quality & Readability\n- Variable/function naming conventions\n- Code organization and structure\n- Comment quality and documentation\n- Complexity assessment (cognitive load)\n\n## 2. Performance Analysis\n- Time/space complexity issues\n- Bottleneck identification\n- Memory usage patterns\n- Optimization opportunities with measurable impact\n\n## 3. Security Audit\n- Input validation gaps\n- Authentication/authorization flaws\n- Data exposure risks\n- Injection vulnerabilities\n\n## 4. Standards Compliance\n- Language-specific best practices\n- Framework conventions\n- Code style guide adherence\n- Architecture pattern compliance\n\n## 5. Bug Detection\n- Logic errors and edge cases\n- Error handling gaps\n- Race conditions or concurrency issues\n- Null/undefined reference risks\n\n## 6. Improvement Recommendations\n- Prioritized action items (High/Medium/Low)\n- Specific code examples for fixes\n- Refactoring suggestions with rationale\n- Testing recommendations\n\n**Output Requirements**:\n- Rate each section: ✅ Good | ⚠️ Needs Attention | ❌ Critical Issue\n- Provide specific line references when identifying issues\n- Include code snippets for recommended changes\n- Prioritize suggestions by impact and effort\n- Estimate implementation time for major improvements\n\n**Quality Standards**:\n- Focus on actionable feedback over general observations\n- Include \"why\" reasoning for each recommendation\n- Balance criticism with recognition of good practices\n- Provide alternative approaches when suggesting changes"
+    },
+    "engineeringPrinciples": {
+      "applied": [
+        "Role definition for expertise context",
+        "Structured output format with clear deliverables",
+        "Specific criteria for each review section",
+        "Actionable requirements with measurable outcomes",
+        "Quality standards to guide approach",
+        "Context fields for customization",
+        "Visual rating system for quick assessment"
+      ],
+      "lengthOptimization": {
+        "wordCount": 200,
+        "category": "moderate-complexity",
+        "informationDensity": "high",
+        "redundancy": "minimal"
+      }
+    },
+    "usage": {
+      "instructions": "Fill in the context fields with specific details about your code, then use the fullPromptText as your prompt for code review requests.",
+      "customization": "Modify the criteria under each section to match your specific technology stack or coding standards.",
+      "examples": {
+        "contextFilling": "[Language/Framework: Python/Django] [Project Type: REST API] [Target Environment: Production]"
+      }
+    }
+  }
+}
