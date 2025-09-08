@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useEffect, useMemo, useCallback, useReducer } from 'react';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
@@ -68,6 +68,57 @@ function SortableRow({ player, rank }: SortableRowProps) {
   );
 }
 
+// State management interfaces and reducer
+interface PlayerRankingsState {
+  selectedPosition: Position;
+  players: PlayerWithStatus[];
+  loading: boolean;
+  saving: boolean;
+  user: User | null;
+  optimisticRankings: Map<number, number>;
+  userRankings: UserRanking[];
+  isConnected: boolean;
+}
+
+type PlayerRankingsAction =
+  | { type: 'SET_POSITION'; payload: Position }
+  | { type: 'SET_PLAYERS'; payload: PlayerWithStatus[] }
+  | { type: 'SET_LOADING'; payload: boolean }
+  | { type: 'SET_SAVING'; payload: boolean }
+  | { type: 'SET_USER'; payload: User | null }
+  | { type: 'SET_OPTIMISTIC_RANKINGS'; payload: Map<number, number> }
+  | { type: 'SET_USER_RANKINGS'; payload: UserRanking[] }
+  | { type: 'SET_CONNECTED'; payload: boolean }
+  | { type: 'RESET_OPTIMISTIC' };
+
+function playerRankingsReducer(
+  state: PlayerRankingsState,
+  action: PlayerRankingsAction
+): PlayerRankingsState {
+  switch (action.type) {
+    case 'SET_POSITION':
+      return { ...state, selectedPosition: action.payload };
+    case 'SET_PLAYERS':
+      return { ...state, players: action.payload };
+    case 'SET_LOADING':
+      return { ...state, loading: action.payload };
+    case 'SET_SAVING':
+      return { ...state, saving: action.payload };
+    case 'SET_USER':
+      return { ...state, user: action.payload };
+    case 'SET_OPTIMISTIC_RANKINGS':
+      return { ...state, optimisticRankings: action.payload };
+    case 'SET_USER_RANKINGS':
+      return { ...state, userRankings: action.payload };
+    case 'SET_CONNECTED':
+      return { ...state, isConnected: action.payload };
+    case 'RESET_OPTIMISTIC':
+      return { ...state, optimisticRankings: new Map() };
+    default:
+      return state;
+  }
+}
+
 interface PlayerRankingsProps {
   /**
    * Which positions to show in the position selector
@@ -107,33 +158,34 @@ export function PlayerRankings({
   onRankingChange,
   fullWidth = false
 }: PlayerRankingsProps) {
-  const [selectedPosition, setSelectedPosition] = useState<Position>(initialPosition);
-  const [players, setPlayers] = useState<PlayerWithStatus[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
-  const [optimisticRankings, setOptimisticRankings] = useState<Map<number, number>>(new Map());
+  // Consolidated state management with useReducer
+  const [state, dispatch] = useReducer(playerRankingsReducer, {
+    selectedPosition: initialPosition,
+    players: [],
+    loading: true,
+    saving: false,
+    user: null,
+    optimisticRankings: new Map(),
+    userRankings: [],
+    isConnected: false,
+  });
 
   // Get current user
   useEffect(() => {
     const getCurrentUser = async () => {
       const { data: { user } } = await supabase.auth.getUser();
-      setUser(user);
+      dispatch({ type: 'SET_USER', payload: user });
     };
     getCurrentUser();
   }, []);
 
-  // Use direct real-time pattern like live draft
-  const [userRankings, setUserRankings] = useState<UserRanking[]>([]);
-  const [isConnected, setIsConnected] = useState(false);
-
   // Fetch rankings when position or user changes
   useEffect(() => {
     const fetchRankings = async () => {
-      if (!user?.id) return;
+      if (!state.user?.id) return;
       try {
-        const data = await api.rankings.get(selectedPosition);
-        setUserRankings(data || []);
+        const data = await api.rankings.get(state.selectedPosition);
+        dispatch({ type: 'SET_USER_RANKINGS', payload: data || [] });
         onRankingChange?.(data || []);
       } catch (error) {
         console.error('Error fetching rankings:', error);
@@ -141,7 +193,7 @@ export function PlayerRankings({
     };
     
     fetchRankings();
-  }, [user?.id, selectedPosition, onRankingChange]);
+  }, [state.user?.id, state.selectedPosition, onRankingChange]);
 
   // Real-time subscription using same pattern as live draft
   const handleRealtimeUpdate = useCallback((payload: {
@@ -152,38 +204,36 @@ export function PlayerRankings({
     console.log('📡 Rankings real-time update:', payload.eventType, payload);
     
     if (payload.eventType === 'INSERT' && payload.new) {
-      setUserRankings((current) => {
-        const newRankings = [...current, payload.new as unknown as UserRanking];
-        onRankingChange?.(newRankings);
-        return newRankings;
-      });
+      const newRankings = [...state.userRankings, payload.new as unknown as UserRanking];
+      dispatch({ type: 'SET_USER_RANKINGS', payload: newRankings });
+      onRankingChange?.(newRankings);
     } else if (payload.eventType === 'DELETE' && payload.old) {
-      setUserRankings((current) => {
-        const newRankings = current.filter((ranking) => ranking.id !== (payload.old as unknown as UserRanking).id);
-        onRankingChange?.(newRankings);
-        return newRankings;
-      });
+      const newRankings = state.userRankings.filter(
+        (ranking) => ranking.id !== (payload.old as unknown as UserRanking).id
+      );
+      dispatch({ type: 'SET_USER_RANKINGS', payload: newRankings });
+      onRankingChange?.(newRankings);
     } else if (payload.eventType === 'UPDATE' && payload.new) {
-      setUserRankings((current) => {
-        const newRankings = current.map((ranking) => 
-          ranking.id === (payload.new as unknown as UserRanking).id ? payload.new as unknown as UserRanking : ranking
-        );
-        onRankingChange?.(newRankings);
-        return newRankings;
-      });
+      const newRankings = state.userRankings.map((ranking) => 
+        ranking.id === (payload.new as unknown as UserRanking).id 
+          ? payload.new as unknown as UserRanking 
+          : ranking
+      );
+      dispatch({ type: 'SET_USER_RANKINGS', payload: newRankings });
+      onRankingChange?.(newRankings);
     }
-  }, [onRankingChange]);
+  }, [state.userRankings, onRankingChange]);
 
   const handleConnectionChange = useCallback((connected: boolean) => {
     console.log('🔌 Real-time connection:', connected);
-    setIsConnected(connected);
+    dispatch({ type: 'SET_CONNECTED', payload: connected });
   }, []);
 
   // Subscribe to real-time updates
   useSupabaseRealtime(
     'user_rankings',
     handleRealtimeUpdate,
-    user?.id ? { column: 'user_id', value: user.id } : undefined,
+    state.user?.id ? { column: 'user_id', value: state.user.id } : undefined,
     handleConnectionChange
   );
 
@@ -218,27 +268,27 @@ export function PlayerRankings({
         is_drafted: false,
       })) || [];
 
-      setPlayers(playersWithStatus);
+      dispatch({ type: 'SET_PLAYERS', payload: playersWithStatus });
       console.log('Players loaded:', playersWithStatus.length);
     } catch (error) {
       console.error('Error fetching players:', error);
     } finally {
-      setLoading(false);
+      dispatch({ type: 'SET_LOADING', payload: false });
     }
   };
 
-  // Industry standard: userRankings now includes defaults, minimal logic needed
+  // Memoized display players computation
   const displayPlayers = useMemo(() => {
-    return players.map(player => {
-      const optimisticRank = optimisticRankings.get(player.id);
-      const userRanking = userRankings.find(r => r.player_id === player.id);
+    return state.players.map(player => {
+      const optimisticRank = state.optimisticRankings.get(player.id);
+      const userRanking = state.userRankings.find(r => r.player_id === player.id);
       
       return {
         ...player,
         custom_rank: optimisticRank ?? userRanking?.custom_rank ?? player.default_rank,
       };
     });
-  }, [players, userRankings, optimisticRankings]);
+  }, [state.players, state.userRankings, state.optimisticRankings]);
 
   useEffect(() => {
     fetchPlayers();
@@ -246,21 +296,21 @@ export function PlayerRankings({
 
   // Industry standard: Clear optimistic when real-time data confirms changes
   useEffect(() => {
-    if (optimisticRankings.size === 0) return;
+    if (state.optimisticRankings.size === 0) return;
     
     // Check if real-time data matches our optimistic updates
-    const hasMatchingData = Array.from(optimisticRankings.entries()).every(([playerId, optimisticRank]) => {
-      const realTimeRanking = userRankings.find(r => 
-        r.player_id === playerId && r.position === selectedPosition
+    const hasMatchingData = Array.from(state.optimisticRankings.entries()).every(([playerId, optimisticRank]) => {
+      const realTimeRanking = state.userRankings.find(r => 
+        r.player_id === playerId && r.position === state.selectedPosition
       );
       return realTimeRanking && realTimeRanking.custom_rank === optimisticRank;
     });
     
     if (hasMatchingData) {
       console.log('✅ Real-time data confirmed optimistic updates, clearing optimistic state');
-      setOptimisticRankings(new Map());
+      dispatch({ type: 'RESET_OPTIMISTIC' });
     }
-  }, [userRankings, optimisticRankings, selectedPosition]);
+  }, [state.userRankings, state.optimisticRankings, state.selectedPosition]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -274,13 +324,16 @@ export function PlayerRankings({
     })
   );
 
-  const filteredPlayers = displayPlayers
-    .filter(player => player.position === selectedPosition)
-    .sort((a, b) => {
-      const rankA = a.custom_rank || a.default_rank;
-      const rankB = b.custom_rank || b.default_rank;
-      return rankA - rankB;
-    });
+  // Memoized filtered and sorted players
+  const filteredPlayers = useMemo(() => {
+    return displayPlayers
+      .filter(player => player.position === state.selectedPosition)
+      .sort((a, b) => {
+        const rankA = a.custom_rank || a.default_rank;
+        const rankB = b.custom_rank || b.default_rank;
+        return rankA - rankB;
+      });
+  }, [displayPlayers, state.selectedPosition]);
 
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
@@ -296,15 +349,15 @@ export function PlayerRankings({
     const newOptimisticRankings = new Map(
       reorderedPlayers.map((player, index) => [player.id, index + 1])
     );
-    setOptimisticRankings(newOptimisticRankings);
+    dispatch({ type: 'SET_OPTIMISTIC_RANKINGS', payload: newOptimisticRankings });
 
     // Save rankings to database
     try {
-      setSaving(true);
+      dispatch({ type: 'SET_SAVING', payload: true });
       const rankingsToSave = reorderedPlayers.map((player, index) => ({
         player_id: player.id,
         custom_rank: index + 1,
-        position: selectedPosition,
+        position: state.selectedPosition,
       }));
 
       await api.rankings.saveMultiple(rankingsToSave);
@@ -312,21 +365,21 @@ export function PlayerRankings({
     } catch (error) {
       console.error('Error saving rankings:', error);
       // Industry standard: Revert optimistic update on error
-      setOptimisticRankings(new Map());
+      dispatch({ type: 'RESET_OPTIMISTIC' });
       // Refetch to get server state
       try {
-        const data = await api.rankings.get(selectedPosition);
-        setUserRankings(data || []);
+        const data = await api.rankings.get(state.selectedPosition);
+        dispatch({ type: 'SET_USER_RANKINGS', payload: data || [] });
         onRankingChange?.(data || []);
       } catch (refetchError) {
         console.error('Error refetching rankings:', refetchError);
       }
     } finally {
-      setSaving(false);
+      dispatch({ type: 'SET_SAVING', payload: false });
     }
   };
 
-  if (loading) {
+  if (state.loading) {
     return (
       <div className="space-y-6">
         {/* Position selector skeleton */}
@@ -386,9 +439,9 @@ export function PlayerRankings({
             {positions.map((position) => (
               <Button
                 key={position}
-                variant={selectedPosition === position ? 'default' : 'outline'}
+                variant={state.selectedPosition === position ? 'default' : 'outline'}
                 size="sm"
-                onClick={() => setSelectedPosition(position)}
+                onClick={() => dispatch({ type: 'SET_POSITION', payload: position })}
               >
                 {position}
               </Button>
@@ -396,7 +449,7 @@ export function PlayerRankings({
           </div>
         )}
         <div className="w-6 flex justify-end">
-          {saving && (
+          {state.saving && (
             <Circle className="h-4 w-4 text-green-500 fill-current animate-pulse" />
           )}
         </div>
