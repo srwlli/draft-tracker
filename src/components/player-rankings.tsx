@@ -326,7 +326,7 @@ export function PlayerRankings({
     }
   };
 
-  if (loading || (players.length > 0 && userRankings.length === 0)) {
+  if (loading) {
     return (
       <div className="space-y-6">
         {/* Position selector skeleton */}

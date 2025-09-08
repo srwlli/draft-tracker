@@ -97,3 +97,89 @@ Based on comprehensive code review analysis, the following critical issues need 
 - Performance issues affecting UX
 
 **After Fixes**: ✅ **PRODUCTION READY**
+
+---
+
+## 🧪 **MANUAL TESTING FLOW**
+
+### **Phase 1: Security Tests**
+
+#### **1. Console Logging Test**
+1. Open Chrome DevTools (F12) → Console tab
+2. Login to your app
+3. Navigate between pages
+4. ✅ **Pass**: No user emails visible in console
+5. ❌ **Fail**: If you see emails like "user@example.com" in logs
+
+#### **2. Rate Limiting Test**
+1. Open any page with API calls (like /ranks or /dashboard)
+2. Rapidly refresh the page 10-15 times (F5 spam)
+3. ✅ **Pass**: After ~10 refreshes, page shows "Too Many Requests" error
+4. ❌ **Fail**: Can refresh unlimited times without restriction
+
+#### **3. Admin Token Test**
+1. Go to draft admin page with correct token
+2. Try making a pick - should work
+3. Change one character in the URL token
+4. Try making a pick again
+5. ✅ **Pass**: Invalid token blocks the action
+6. ❌ **Fail**: Modified token still works
+
+### **Phase 2: Bug Fix Tests**
+
+#### **1. Infinite Loading Test**
+**Setup**: Best with a NEW test account or clear your rankings
+1. Create new account OR go to Supabase dashboard
+2. Delete all rows in `user_rankings` for your user
+3. Go to `/ranks` page
+4. ✅ **Pass**: Players load and display (no infinite skeleton)
+5. ❌ **Fail**: Skeleton loading animation never stops
+
+#### **2. Concurrent Picks Test** 
+**The "Multiple Browser Tab" Test**
+1. Open your draft in 3 different browser tabs
+2. Have admin token in URL for all tabs
+3. **Quickly** (within 1-2 seconds):
+   - Tab 1: Click to draft Player A
+   - Tab 2: Click to draft Player B  
+   - Tab 3: Click to draft Player C
+4. Check the pick numbers assigned
+5. ✅ **Pass**: Pick numbers are 1, 2, 3 (sequential, no duplicates)
+6. ❌ **Fail**: Two picks have same number (like 1, 1, 2)
+
+#### **3. Draft Deletion Test**
+1. Try to delete a draft you don't own:
+   - Copy someone else's draft ID
+   - Go to your dashboard
+   - Try API call or UI delete
+2. ✅ **Pass**: Get "Forbidden" error
+3. ❌ **Fail**: Can delete other users' drafts
+
+### **Quick Browser Console Tests**
+
+```javascript
+// Test Rate Limiting
+for(let i = 0; i < 120; i++) {
+  fetch('/api/drafts').then(r => {
+    if(r.status === 429) console.log(`🛑 Rate limited at request ${i+1}`);
+  });
+}
+
+// Test Loading State (on /ranks page)
+setTimeout(() => {
+  const skeletons = document.querySelectorAll('[class*="skeleton"]').length;
+  console.log(skeletons > 0 ? '⚠️ Still showing skeletons!' : '✅ Loading complete');
+}, 3000);
+```
+
+### **Testing Checklist**
+
+**Security (Phase 1):**
+- [ ] No emails in browser console
+- [ ] Page refresh spam triggers rate limit
+- [ ] Invalid admin tokens are rejected
+
+**Bugs (Phase 2):**
+- [ ] New users see players (not infinite loading)
+- [ ] Multiple simultaneous picks get unique numbers
+- [ ] Can't delete other users' drafts

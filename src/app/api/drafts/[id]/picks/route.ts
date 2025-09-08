@@ -47,25 +47,12 @@ export async function POST(
       return apiError.conflict('Player already drafted')
     }
     
-    // Get next pick number (from workflow pattern)
-    const { data: picks } = await supabase
-      .from('draft_picks')
-      .select('pick_number')
-      .eq('draft_id', id)
-      .order('pick_number', { ascending: false })
-      .limit(1)
-    
-    const nextPickNumber = (picks?.[0]?.pick_number || 0) + 1
-    
-    // Create draft pick
+    // Use atomic database function to prevent race conditions
     const { data: newPick, error: insertError } = await supabase
-      .from('draft_picks')
-      .insert({
-        draft_id: id,
-        player_id: playerId,
-        pick_number: nextPickNumber
+      .rpc('create_draft_pick_atomic', {
+        draft_id_param: id,
+        player_id_param: playerId
       })
-      .select()
       .single()
     
     if (insertError) {
