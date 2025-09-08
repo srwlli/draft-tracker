@@ -89,7 +89,10 @@ type PlayerRankingsAction =
   | { type: 'SET_OPTIMISTIC_RANKINGS'; payload: Map<number, number> }
   | { type: 'SET_USER_RANKINGS'; payload: UserRanking[] }
   | { type: 'SET_CONNECTED'; payload: boolean }
-  | { type: 'RESET_OPTIMISTIC' };
+  | { type: 'RESET_OPTIMISTIC' }
+  | { type: 'INSERT_RANKING'; payload: UserRanking }
+  | { type: 'DELETE_RANKING'; payload: string }
+  | { type: 'UPDATE_RANKING'; payload: UserRanking };
 
 function playerRankingsReducer(
   state: PlayerRankingsState,
@@ -114,6 +117,23 @@ function playerRankingsReducer(
       return { ...state, isConnected: action.payload };
     case 'RESET_OPTIMISTIC':
       return { ...state, optimisticRankings: new Map() };
+    case 'INSERT_RANKING':
+      return { 
+        ...state, 
+        userRankings: [...state.userRankings, action.payload]
+      };
+    case 'DELETE_RANKING':
+      return { 
+        ...state, 
+        userRankings: state.userRankings.filter(ranking => ranking.id !== action.payload)
+      };
+    case 'UPDATE_RANKING':
+      return { 
+        ...state, 
+        userRankings: state.userRankings.map(ranking => 
+          ranking.id === action.payload.id ? action.payload : ranking
+        )
+      };
     default:
       return state;
   }
@@ -195,6 +215,11 @@ export function PlayerRankings({
     fetchRankings();
   }, [state.user?.id, state.selectedPosition, onRankingChange]);
 
+  // Trigger onRankingChange when userRankings change from real-time updates
+  useEffect(() => {
+    onRankingChange?.(state.userRankings);
+  }, [state.userRankings, onRankingChange]);
+
   // Real-time subscription using same pattern as live draft
   const handleRealtimeUpdate = useCallback((payload: {
     eventType: 'INSERT' | 'UPDATE' | 'DELETE';
@@ -204,25 +229,23 @@ export function PlayerRankings({
     console.log('📡 Rankings real-time update:', payload.eventType, payload);
     
     if (payload.eventType === 'INSERT' && payload.new) {
-      const newRankings = [...state.userRankings, payload.new as unknown as UserRanking];
-      dispatch({ type: 'SET_USER_RANKINGS', payload: newRankings });
-      onRankingChange?.(newRankings);
+      // Use a ref to get current state to avoid stale closure
+      dispatch({ 
+        type: 'INSERT_RANKING', 
+        payload: payload.new as unknown as UserRanking 
+      });
     } else if (payload.eventType === 'DELETE' && payload.old) {
-      const newRankings = state.userRankings.filter(
-        (ranking) => ranking.id !== (payload.old as unknown as UserRanking).id
-      );
-      dispatch({ type: 'SET_USER_RANKINGS', payload: newRankings });
-      onRankingChange?.(newRankings);
+      dispatch({ 
+        type: 'DELETE_RANKING', 
+        payload: (payload.old as unknown as UserRanking).id 
+      });
     } else if (payload.eventType === 'UPDATE' && payload.new) {
-      const newRankings = state.userRankings.map((ranking) => 
-        ranking.id === (payload.new as unknown as UserRanking).id 
-          ? payload.new as unknown as UserRanking 
-          : ranking
-      );
-      dispatch({ type: 'SET_USER_RANKINGS', payload: newRankings });
-      onRankingChange?.(newRankings);
+      dispatch({ 
+        type: 'UPDATE_RANKING', 
+        payload: payload.new as unknown as UserRanking 
+      });
     }
-  }, [state.userRankings, onRankingChange]);
+  }, []);
 
   const handleConnectionChange = useCallback((connected: boolean) => {
     console.log('🔌 Real-time connection:', connected);
