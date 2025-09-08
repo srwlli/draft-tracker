@@ -1,4 +1,5 @@
 import { NextRequest } from 'next/server'
+import { timingSafeEqual } from 'crypto'
 import { createServerSupabaseClient, createServerSupabaseAdminClient } from './supabase-server'
 
 export async function validateSession(_request: NextRequest) {
@@ -7,7 +8,6 @@ export async function validateSession(_request: NextRequest) {
   try {
     const { data: { user }, error } = await supabase.auth.getUser()
     
-    console.log('Auth check:', { user: user?.email, error: error?.message })
     
     if (error || !user) {
       return { user: null, error: 'Unauthorized' }
@@ -29,5 +29,22 @@ export async function validateAdminToken(draftId: string, adminToken: string) {
     .eq('id', draftId)
     .single()
   
-  return draft?.admin_token === adminToken
+  if (!draft?.admin_token || !adminToken) {
+    return false
+  }
+  
+  try {
+    const expected = Buffer.from(draft.admin_token, 'utf8')
+    const actual = Buffer.from(adminToken, 'utf8')
+    
+    // Ensure both buffers are same length to prevent timing attacks
+    if (expected.length !== actual.length) {
+      return false
+    }
+    
+    return timingSafeEqual(expected, actual)
+  } catch (error) {
+    console.error('Token comparison error:', error)
+    return false
+  }
 }
