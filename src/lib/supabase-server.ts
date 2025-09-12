@@ -26,23 +26,21 @@ export async function createServerSupabaseClient() {
 
 // Service role client for admin operations
 export async function createServerSupabaseAdminClient() {
-  const cookieStore = await cookies()
-  
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!, // Service role for admin operations
     {
+      // Stateless admin client — do not read or write user cookies
       cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value
-        },
-        set(name: string, value: string, options: Partial<ResponseCookie>) {
-          cookieStore.set({ name, value, ...options })
-        },
-        remove(name: string, options: Partial<ResponseCookie>) {
-          cookieStore.set({ name, value: '', ...options })
-        },
+        get() { return undefined },
+        set() {},
+        remove() {},
       },
+      auth: {
+        persistSession: false,
+        autoRefreshToken: false,
+        detectSessionInUrl: false,
+      }
     }
   )
 }

@@ -50,10 +50,14 @@ export function CreateDraft({
   const router = useRouter();
 
   const createDraft = async () => {
-    console.log('Creating draft - User state:', { user: user?.email, id: user?.id });
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Creating draft - User state:', { user: user?.email, id: user?.id });
+    }
     
     if (!user) {
-      console.log('No user found, returning');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('No user found, returning');
+      }
       toast.error('Please log in to create a draft');
       return;
     }
@@ -70,8 +74,8 @@ export function CreateDraft({
       // Call optional callback first
       onDraftCreated?.(draft);
       
-      // Navigate to admin page
-      router.push(`/draft/${draft.id}/admin/${draft.admin_token}`);
+      // Navigate to admin page; server sets HttpOnly admin cookie
+      router.push(`/draft/${draft.id}/admin`);
       
       // Clear form
       setDraftName('');

@@ -83,17 +83,15 @@ class DraftTrackerAPI {
   
   // Admin endpoints
   admin = {
-    draftPlayer: (draftId: string, playerId: number, adminToken: string) =>
+    draftPlayer: (draftId: string, playerId: number) =>
       this.request<DraftPick>(`/api/drafts/${draftId}/picks`, {
         method: 'POST',
-        headers: { 'x-admin-token': adminToken },
         body: JSON.stringify({ playerId }),
       }),
       
-    undraftPlayer: (draftId: string, pickId: string, adminToken: string) =>
+    undraftPlayer: (draftId: string, pickId: string) =>
       this.request<{deleted: boolean}>(`/api/drafts/${draftId}/picks/${pickId}`, {
         method: 'DELETE',
-        headers: { 'x-admin-token': adminToken },
       }),
   }
 }

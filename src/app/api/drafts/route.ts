@@ -1,4 +1,4 @@
-import { NextRequest } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseAdminClient } from '@/lib/supabase-server'
 import { apiResponse, apiError } from '@/lib/api-responses'
 import { validateSession } from '@/lib/api-auth'
@@ -69,11 +69,16 @@ export async function POST(request: NextRequest) {
       console.error('Draft creation error:', dbError)
       return apiError.serverError()
     }
-    
-    return apiResponse.success({
-      ...draft,
-      admin_token: adminToken // Only return on creation
-    }, 201)
+    // Build response without exposing admin_token
+    const res = NextResponse.json({ data: draft }, { status: 201 })
+    // Set HttpOnly admin cookie for this draft
+    const cookieName = `dt_admin_${draft.id}`
+    const maxAge = 12 * 60 * 60 // 12 hours
+    res.headers.append(
+      'Set-Cookie',
+      `${cookieName}=${encodeURIComponent(adminToken)}; Path=/; Max-Age=${maxAge}; HttpOnly; SameSite=Strict; Secure`
+    )
+    return res
     
   } catch (error) {
     console.error('Draft creation error:', error)

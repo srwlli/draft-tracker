@@ -80,7 +80,7 @@ src/
 │   │   ├── settings/      # Settings page
 │   │   └── soon/          # Coming soon features
 │   ├── draft/[draftId]/   # Draft viewer page
-│   └── draft/[draftId]/admin/[adminToken]/  # Admin controls
+│   └── draft/[draftId]/admin/  # Admin controls (token in secure cookie)
 ├── components/            # React components
 │   ├── ui/               # Shadcn UI components
 │   ├── player-table.tsx  # Main draft interface
@@ -159,3 +159,16 @@ This project is licensed under the MIT License.
 ## 🏈 About BBFL
 
 Built for the BBFL (Big Boy Fantasy League) - where fantasy football meets real competition.
+
+## Notes on Rate Limiting (Development)
+
+- In development, a lightweight in-memory rate limiter is applied to `/api/*` routes inside `middleware.ts` to help catch accidental request floods.
+- This limiter is dev-only and includes basic cleanup and a small map size cap. It is not suitable for production or multi-instance deployments.
+- For production, use a distributed rate limiting solution (e.g., Upstash Redis or a provider-native edge limiter). This repository does not implement a production limiter by design.
+
+## Admin Security Model
+
+- Admin access uses a server-set HttpOnly cookie named `dt_admin_{draftId}` issued when creating a draft.
+- Admin API routes (`/api/drafts/{id}/picks*`) validate this cookie on the server using a timing-safe token check. The browser never needs to read the token.
+- During transition, the API also accepts an `x-admin-token` header; this will be removed once rollout is verified.
+- The service-role Supabase client is configured to be stateless (no cookie persistence or auth mutation) and should only be used for admin operations on the server.

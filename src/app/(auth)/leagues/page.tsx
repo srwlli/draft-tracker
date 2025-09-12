@@ -7,8 +7,10 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { api } from '@/lib/api-client';
 import { Draft } from '@/types';
-import { Calendar, Users, ExternalLink } from 'lucide-react';
+import { Calendar, Users, ExternalLink, Shield } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Button } from '@/components/ui/button';
+import { getAdminToken } from '@/lib/admin-token';
 
 export default function MyLeaguesPage() {
   const [recentDrafts, setRecentDrafts] = useState<Draft[]>([]);
@@ -31,9 +33,8 @@ export default function MyLeaguesPage() {
     fetchRecentDrafts();
   }, []);
 
-  const handleDraftClick = (draftId: string) => {
-    router.push(`/draft/${draftId}`);
-  };
+  const handleOpenViewer = (draftId: string) => router.push(`/draft/${draftId}`);
+  const handleOpenAdmin = (draftId: string) => router.push(`/draft/${draftId}/admin`);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -92,24 +93,33 @@ export default function MyLeaguesPage() {
             description="Your last 5 draft sessions"
             content={
               <div className="space-y-3">
-                {recentDrafts.map((draft) => (
-                  <div 
-                    key={draft.id}
-                    className="flex items-center justify-between p-3 rounded-lg border hover:bg-muted/50 transition-colors cursor-pointer"
-                    onClick={() => handleDraftClick(draft.id)}
-                  >
-                    <div className="flex-1">
-                      <div className="font-medium">
-                        {draft.name || `Draft ${draft.id.slice(0, 8)}`}
+                {recentDrafts.map((draft) => {
+                  const hasAdmin = !!getAdminToken(draft.id);
+                  return (
+                    <div 
+                      key={draft.id}
+                      className="flex items-center justify-between p-3 rounded-lg border hover:bg-muted/50 transition-colors"
+                    >
+                      <div className="flex-1 pr-4">
+                        <div className="font-medium">
+                          {draft.name || `Draft ${draft.id.slice(0, 8)}`}
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <Calendar className="w-4 h-4" />
+                          {formatDate(draft.created_at)}
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Calendar className="w-4 h-4" />
-                        {formatDate(draft.created_at)}
+                      <div className="flex items-center gap-2">
+                        <Button variant="outline" size="sm" onClick={() => handleOpenViewer(draft.id)}>
+                          <ExternalLink className="w-4 h-4 mr-1" /> Viewer
+                        </Button>
+                        <Button variant="default" size="sm" onClick={() => handleOpenAdmin(draft.id)} disabled={!hasAdmin} title={hasAdmin ? 'Open Admin' : 'Admin token not found on this device'}>
+                          <Shield className="w-4 h-4 mr-1" /> Admin
+                        </Button>
                       </div>
                     </div>
-                    <ExternalLink className="w-4 h-4 text-muted-foreground" />
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             }
             buttonText=""

@@ -1,5 +1,6 @@
 import { createServerSupabaseAdminClient } from '@/lib/supabase-server'
 import { apiResponse, apiError } from '@/lib/api-responses'
+import { z } from 'zod'
 
 // Replaces: api-operation-fetch-draft + api-operation-get-all-players + api-operation-get-draft-picks
 export async function GET(
@@ -7,6 +8,12 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params
+
+  const paramsSchema = z.object({ id: z.string().uuid('Invalid draft ID') })
+  const validation = paramsSchema.safeParse({ id })
+  if (!validation.success) {
+    return apiResponse.error(validation.error.issues[0].message, 400)
+  }
   const supabase = await createServerSupabaseAdminClient()
   
   try {
@@ -16,11 +23,13 @@ export async function GET(
       supabase
         .from('players')
         .select(`
-          *,
+          id,
+          name,
+          position,
+          default_rank,
           teams!players_team_id_fkey (
             id,
             team_name,
-            city,
             abbreviation
           )
         `)

@@ -16,7 +16,7 @@ export function useRealtimeRankings({ userId, position, initialRankings = [] }: 
   const [error, setError] = useState<string | null>(null);
   const channelRef = useRef<RealtimeChannel | null>(null);
   const lastUpdateRef = useRef<string>(''); // Track last update timestamp to prevent duplicates
-  const throttleRef = useRef<NodeJS.Timeout | null>(null); // Throttle updates
+  const throttleRef = useRef<ReturnType<typeof setTimeout> | null>(null); // Throttle updates
 
   useEffect(() => {
     if (!userId) return;
@@ -48,7 +48,9 @@ export function useRealtimeRankings({ userId, position, initialRankings = [] }: 
           
           // Skip if this is a duplicate update
           if (lastUpdateRef.current === updateKey) {
-            console.log('Skipping duplicate update:', updateKey);
+            if (process.env.NODE_ENV === 'development') {
+              console.log('Skipping duplicate update:', updateKey);
+            }
             return;
           }
           lastUpdateRef.current = updateKey;
@@ -60,7 +62,9 @@ export function useRealtimeRankings({ userId, position, initialRankings = [] }: 
           
           // Throttle updates to prevent excessive re-renders
           throttleRef.current = setTimeout(() => {
-            console.log('Processing realtime ranking update:', payload);
+            if (process.env.NODE_ENV === 'development') {
+              console.log('Processing realtime ranking update:', payload);
+            }
             
             const { eventType, new: newRecord, old: oldRecord } = payload;
             

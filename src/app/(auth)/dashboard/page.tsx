@@ -19,10 +19,14 @@ export default function Dashboard() {
 
 
   const createDraft = async () => {
-    console.log('Creating draft - User state:', { user: user?.email, id: user?.id });
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Creating draft - User state:', { user: user?.email, id: user?.id });
+    }
     
     if (!user) {
-      console.log('No user found, returning');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('No user found, returning');
+      }
       return;
     }
     
@@ -34,7 +38,7 @@ export default function Dashboard() {
     setIsLoading(true);
     try {
       const draft = await api.drafts.create(draftName.trim());
-      router.push(`/draft/${draft.id}/admin/${draft.admin_token}`);
+      router.push(`/draft/${draft.id}/admin`);
     } catch (error) {
       console.error('Error creating draft:', error);
       toast.error('Failed to create draft');

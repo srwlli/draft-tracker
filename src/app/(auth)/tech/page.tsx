@@ -59,7 +59,7 @@ export default function TechPage() {
                 <p>• Server-side rendering with optimistic updates</p>
                 <p>• Mobile-first design with touch-and-hold drafting (500ms)</p>
                 <p>• Real-time synchronization with WebSocket + polling fallback</p>
-                <p>• Dynamic routes: /draft/[draftId]/admin/[adminToken]</p>
+                <p>• Dynamic routes: /draft/[draftId]/admin (token in secure cookie)</p>
               </div>
             </div>
           </div>
@@ -151,7 +151,7 @@ export default function TechPage() {
               <h3 className="text-sm font-medium mb-2">Security Implementation</h3>
               <div className="space-y-1 text-sm text-muted-foreground">
                 <p>• <strong>Admin tokens:</strong> UUID-based with draft ownership validation</p>
-                <p>• <strong>Middleware protection:</strong> Server-side route validation before rendering</p>
+                <p>• <strong>Server-side checks:</strong> API-level validation with constant-time token checks</p>
                 <p>• <strong>Security headers:</strong> CSP, XSS protection, frame denial</p>
                 <p>• <strong>Input validation:</strong> Zod schemas on all API endpoints</p>
               </div>

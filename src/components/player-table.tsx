@@ -48,7 +48,7 @@ export function PlayerTable({
   const setConfirmPlayer = setExternalConfirmPlayer || setLocalConfirmPlayer;
   
   const isDrafting = confirmPlayer ? draftingPlayers.has(confirmPlayer.id) : false;
-  const longPressTimer = useRef<NodeJS.Timeout | null>(null);
+  const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleTouchStart = (player: PlayerWithStatus) => {
     if (!isAdmin) return;

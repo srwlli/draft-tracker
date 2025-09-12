@@ -15,10 +15,19 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params
+
+  const paramsSchema = z.object({ id: z.string().uuid('Invalid draft ID') })
+  const validation = paramsSchema.safeParse({ id })
+  if (!validation.success) {
+    return apiResponse.error(validation.error.issues[0].message, 400)
+  }
   
-  // Admin token validation (from middleware pattern)
-  const adminToken = request.headers.get('x-admin-token')
-  if (!adminToken || !(await validateAdminToken(id, adminToken))) {
+  // Admin token validation from HttpOnly cookie (fallback to header during transition)
+  const cookieName = `dt_admin_${id}`
+  const cookieToken = request.cookies.get(cookieName)?.value || ''
+  const headerToken = request.headers.get('x-admin-token') || ''
+  const token = cookieToken || headerToken
+  if (!token || !(await validateAdminToken(id, token))) {
     return apiError.forbidden()
   }
   
@@ -34,20 +43,8 @@ export async function POST(
     const { playerId } = validation.data
     
     const supabase = await createServerSupabaseAdminClient()
-    
-    // Check if player already drafted (prevent duplicates)
-    const { data: existingPick } = await supabase
-      .from('draft_picks')
-      .select('id')
-      .eq('draft_id', id)
-      .eq('player_id', playerId)
-      .single()
-    
-    if (existingPick) {
-      return apiError.conflict('Player already drafted')
-    }
-    
-    // Try to use atomic database function first
+
+    // Use atomic database function; fallback only if function missing
     let newPick = null
     let insertError = null
     
@@ -101,6 +98,16 @@ export async function POST(
         return apiResponse.error('Database function create_draft_pick_atomic not found. Please run the SQL migration.', 500)
       }
       
+      // Conflict/duplicate errors
+      const msg = insertError.message || ''
+      if (
+        msg.includes('Player already drafted') ||
+        msg.includes('uq_draft_player') ||
+        msg.includes('duplicate key value')
+      ) {
+        return apiResponse.error('Player already drafted', 409)
+      }
+
       // Check for other RPC errors
       if (insertError.code === 'PGRST202') {
         return apiResponse.error('Database function error: ' + insertError.message, 500)

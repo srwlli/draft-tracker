@@ -1,13 +1,13 @@
 import { createServerSupabaseClient, createServerSupabaseAdminClient } from '@/lib/supabase-server';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
+import { apiResponse, apiError } from '@/lib/api-responses';
 
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createServerSupabaseClient();
-    
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return apiError.unauthorized();
     }
 
     const { searchParams } = new URL(request.url);
@@ -23,14 +23,13 @@ export async function GET(request: NextRequest) {
     }
 
     const { data, error } = await query.order('custom_rank');
-
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return apiError.serverError();
     }
 
-    return NextResponse.json(data);
+    return apiResponse.success(data || []);
   } catch {
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return apiError.serverError();
   }
 }
 
@@ -38,16 +37,14 @@ export async function POST(request: NextRequest) {
   try {
     const authSupabase = await createServerSupabaseClient();
     const adminSupabase = await createServerSupabaseAdminClient();
-    
     const { data: { user }, error: authError } = await authSupabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return apiError.unauthorized();
     }
 
     const { player_id, custom_rank, position } = await request.json();
-
     if (!player_id || !custom_rank || !position) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+      return apiResponse.error('Missing required fields', 400);
     }
 
     const { data, error } = await adminSupabase
@@ -58,21 +55,19 @@ export async function POST(request: NextRequest) {
         custom_rank,
         position,
         updated_at: new Date().toISOString(),
-      }, {
-        onConflict: 'user_id,player_id'
-      })
+      }, { onConflict: 'user_id,player_id' })
       .select()
       .single();
 
     if (error) {
       console.error('Database error:', error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return apiError.serverError();
     }
 
-    return NextResponse.json(data);
+    return apiResponse.success(data);
   } catch (error) {
     console.error('API error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return apiError.serverError();
   }
 }
 
@@ -81,20 +76,18 @@ export async function PUT(request: NextRequest) {
   try {
     const authSupabase = await createServerSupabaseClient();
     const adminSupabase = await createServerSupabaseAdminClient();
-    
     console.log('Getting user from auth...');
     const { data: { user }, error: authError } = await authSupabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return apiError.unauthorized();
     }
 
     const { rankings } = await request.json();
-
     if (!Array.isArray(rankings)) {
-      return NextResponse.json({ error: 'Rankings must be an array' }, { status: 400 });
+      return apiResponse.error('Rankings must be an array', 400);
     }
 
-    const rankingsWithUser = rankings.map(ranking => ({
+    const rankingsWithUser = rankings.map((ranking: any) => ({
       user_id: user.id,
       player_id: ranking.player_id,
       custom_rank: ranking.custom_rank,
@@ -106,19 +99,17 @@ export async function PUT(request: NextRequest) {
 
     const { data, error } = await adminSupabase
       .from('user_rankings')
-      .upsert(rankingsWithUser, {
-        onConflict: 'user_id,player_id'
-      })
+      .upsert(rankingsWithUser, { onConflict: 'user_id,player_id' })
       .select();
 
     if (error) {
       console.error('Database error:', error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return apiError.serverError();
     }
 
-    return NextResponse.json(data);
+    return apiResponse.success(data || []);
   } catch (error) {
     console.error('API error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return apiError.serverError();
   }
 }
