@@ -87,7 +87,7 @@ export async function PUT(request: NextRequest) {
       return apiResponse.error('Rankings must be an array', 400);
     }
 
-    const rankingsWithUser = rankings.map((ranking: any) => ({
+    const rankingsWithUser = rankings.map((ranking: {player_id: number, custom_rank: number, position: string}) => ({
       user_id: user.id,
       player_id: ranking.player_id,
       custom_rank: ranking.custom_rank,

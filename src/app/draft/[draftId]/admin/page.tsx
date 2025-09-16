@@ -85,7 +85,8 @@ export default function DraftAdminPage() {
       recentlyCreatedPicks.current.delete(deletedPick.id);
       setDraftPicks((current) => current.filter((p) => p.id !== deletedPick.id));
     } else if (payload.eventType === 'UPDATE' && payload.new) {
-      setDraftPicks((current) => current.map((p) => (p.id === (payload.new as any).id ? (payload.new as any) : p)));
+      const updatedPick = payload.new as unknown as DraftPick;
+      setDraftPicks((current) => current.map((p) => (p.id === updatedPick.id ? updatedPick : p)));
     }
   }, []);
 
@@ -202,7 +203,7 @@ export default function DraftAdminPage() {
               onButtonClick={() => {
                 setIsAdmin(true);
                 setActiveView('available');
-                try { (window as any).scrollTo?.(0, 0); } catch {}
+                try { window.scrollTo?.(0, 0); } catch {}
               }}
             />
           </div>
